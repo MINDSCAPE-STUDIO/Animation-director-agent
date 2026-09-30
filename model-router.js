@@ -1,4 +1,11 @@
 // Cloud-only model router. API keys stay on the server.
+const fs=require('fs');
+const os=require('os');
+const path=require('path');
+const {execFile}=require('child_process');
+const {promisify}=require('util');
+const execFileAsync=promisify(execFile);
+const ffmpegPath=require('ffmpeg-static');
 const PROVIDERS={replicate:'https://api.replicate.com/v1',fal:'https://queue.fal.run'};
 const FREE_HF_SPACE=process.env.HF_SPACE_NAME||'zerogpu-aoti/wan2-2-fp8da-aoti-faster';
 
@@ -44,10 +51,7 @@ function createGenerationJob(job){
 async function submitReplicate(job){
   const token=process.env.REPLICATE_API_TOKEN;
   if(!token)throw Error('REPLICATE_API_TOKEN is not configured');
-  const r=await fetch(`${PROVIDERS.replicate}/models/${job.model}/predictions`,{
-    method:'POST',headers:{Authorization:`Bearer ${token}`,'Content-Type':'application/json'},
-    body:JSON.stringify({input:{...job.input,prompt:job.prompt}})
-  });
+  const r=await fetch(`${PROVIDERS.replicate}/models/${job.model}/predictions`,{method:'POST',headers:{Authorization:`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify({input:{...job.input,prompt:job.prompt}})});
   if(!r.ok)throw Error(`Replicate ${r.status}: ${await r.text()}`);
   return r.json();
 }
@@ -64,38 +68,110 @@ async function refreshReplicate(job){
 async function submitFal(job){
   const key=process.env.FAL_KEY;
   if(!key)throw Error('FAL_KEY is not configured');
-  const r=await fetch(`${PROVIDERS.fal}/${job.model}`,{
-    method:'POST',headers:{Authorization:`Key ${key}`,'Content-Type':'application/json'},
-    body:JSON.stringify({...job.input,prompt:job.prompt})
-  });
+  const r=await fetch(`${PROVIDERS.fal}/${job.model}`,{method:'POST',headers:{Authorization:`Key ${key}`,'Content-Type':'application/json'},body:JSON.stringify({...job.input,prompt:job.prompt})});
   if(!r.ok)throw Error(`fal ${r.status}: ${await r.text()}`);
   return r.json();
 }
 
-async function submitHfSpace(job){
-  if(job.type!=='image_to_video') throw Error('The free Hugging Face ZeroGPU route currently supports Image → Video. Select Image → Video and provide a reference image URL.');
-  if(!job.input?.image) throw Error('Free Image → Video requires a reference image URL.');
-  const {Client,handle_file}=require('@gradio/client');
-  const options={events:['status','data']};
-  if(process.env.HF_TOKEN) options.hf_token=process.env.HF_TOKEN;
-  const app=await Client.connect(job.model,options);
-  const duration=Math.max(0.5,Math.min(5,Number(job.input.duration)||3.5));
+async function saveRemoteFile(url,file){
+  const r=await fetch(url);
+  if(!r.ok)throw Error(`Could not download generated segment (${r.status}).`);
+  const buf=Buffer.from(await r.arrayBuffer());
+  fs.writeFileSync(file,buf);
+}
+
+async function extractLastFrame(video,frame){
+  await execFileAsync(ffmpegPath,['-y','-sseof','-0.15','-i',video,'-frames:v','1','-update','1',frame]);
+}
+
+async function concatVideos(files,out){
+  const list=path.join(os.tmpdir(),`mindscape-concat-${Date.now()}.txt`);
+  fs.writeFileSync(list,files.map(f=>`file '${f.replace(/'/g,"'\\''")}'`).join('\n'));
+  try{
+    await execFileAsync(ffmpegPath,['-y','-f','concat','-safe','0','-i',list,'-c:v','libx264','-preset','veryfast','-crf','20','-pix_fmt','yuv420p','-movflags','+faststart',out]);
+  }finally{try{fs.unlinkSync(list)}catch{}}
+}
+
+async function callHf(app,image,prompt,duration,seed){
   const result=await app.predict('/generate_video',[
-    handle_file(job.input.image),
-    job.prompt,
+    require('@gradio/client').handle_file(image),
+    prompt,
     4,
     '',
     duration,
     1,
     1,
-    Math.floor(Math.random()*2147483647),
+    seed,
     true
   ]);
   const data=result?.data||result;
   const video=data?.[0];
   const url=typeof video==='string'?video:video?.url||video?.path;
-  if(!url) throw Error('Hugging Face Space returned no video URL.');
-  return {output:url,raw:data};
+  if(!url)throw Error('Hugging Face Space returned no video URL.');
+  return url;
+}
+
+async function submitHfSpace(job){
+  if(job.type!=='image_to_video') throw Error('The free Hugging Face route currently supports Image → Video.');
+  if(!job.input?.image) throw Error('Free Image → Video requires a reference image.');
+  const {Client}=require('@gradio/client');
+  const options={events:['status','data']};
+  if(process.env.HF_TOKEN) options.hf_token=process.env.HF_TOKEN;
+  const app=await Client.connect(job.model,options);
+
+  // The free Wan 2.2 ZeroGPU Space accepts at most 5 seconds per generation.
+  // For requested shots longer than 5 seconds, generate sequential 5-second
+  // segments. Each next segment starts from the previous segment's final frame,
+  // then concatenate them into one continuous MP4.
+  const requested=Math.max(2,Math.min(12,Number(job.input.duration)||5));
+  const segments=[];
+  const segmentFiles=[];
+  let currentImage=job.input.image;
+  let remaining=requested;
+  let segmentIndex=0;
+  let previousFrame=null;
+
+  try{
+    while(remaining>0.01){
+      const segDuration=Math.min(5,remaining);
+      let segPrompt=job.prompt;
+      if(segmentIndex>0){
+        segPrompt += ` CONTINUATION SEGMENT ${segmentIndex+1}: Continue directly from the final frame of the previous segment. Do not restart the action or reset the characters to their original position. Preserve the exact character identity, environment, camera direction, walking rhythm and lighting. Continue the existing forward movement toward the camera smoothly and naturally. The characters must begin this segment exactly where the previous segment ended and continue getting closer to the camera.`;
+      }
+      const url=await callHf(app,currentImage,segPrompt,segDuration,Math.floor(Math.random()*2147483647));
+      const videoFile=path.join(os.tmpdir(),`mindscape-segment-${Date.now()}-${segmentIndex}.mp4`);
+      await saveRemoteFile(url,videoFile);
+      segmentFiles.push(videoFile);
+      segments.push({duration:segDuration,url});
+
+      remaining-=segDuration;
+      segmentIndex++;
+      if(remaining>0.01){
+        const frameFile=path.join(os.tmpdir(),`mindscape-frame-${Date.now()}-${segmentIndex}.png`);
+        await extractLastFrame(videoFile,frameFile);
+        previousFrame=frameFile;
+        currentImage=frameFile;
+      }
+    }
+
+    if(segmentFiles.length===1){
+      return {output:segments[0].url,segments,assembled:false};
+    }
+
+    const finalFile=path.join(os.tmpdir(),`mindscape-final-${Date.now()}.mp4`);
+    await concatVideos(segmentFiles,finalFile);
+
+    // Render can serve only files in its app directory, so copy to a public
+    // temporary directory under the application root.
+    const publicDir=path.join(__dirname,'generated');
+    fs.mkdirSync(publicDir,{recursive:true});
+    const publicFile=path.join(publicDir,path.basename(finalFile));
+    fs.copyFileSync(finalFile,publicFile);
+    return {output:`/generated/${path.basename(publicFile)}`,segments,assembled:true,duration:requested};
+  }finally{
+    for(const f of segmentFiles){try{fs.unlinkSync(f)}catch{}}
+    if(previousFrame){try{fs.unlinkSync(previousFrame)}catch{}}
+  }
 }
 
 async function submit(job){
@@ -106,7 +182,5 @@ async function submit(job){
   return {...job,status:job.provider==='hf_space'?'completed':'submitted',providerResponse:result,result:job.provider==='hf_space'?result.output:undefined,submittedAt:new Date().toISOString()};
 }
 
-async function refresh(job){
-  return job.provider==='replicate'?refreshReplicate(job):job;
-}
+async function refresh(job){return job.provider==='replicate'?refreshReplicate(job):job;}
 module.exports={selectModel,buildPrompt,createGenerationJob,submit,refresh};
