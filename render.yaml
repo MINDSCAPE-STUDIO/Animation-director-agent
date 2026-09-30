@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: mindscape-animation-director
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    autoDeploy: true
+    envVars:
+      - key: REPLICATE_API_TOKEN
+        sync: false
+      - key: VIDEO_PROVIDER
+        value: replicate
+      - key: VIDEO_MODEL
+        value: bytedance/seedance-1-pro-fast
+      - key: VIDEO_RESOLUTION
+        value: 480p
