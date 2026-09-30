@@ -34,8 +34,8 @@ function createGenerationJob(job){
   const route=selectModel(job);
   const input={...(job.input||{})};
   if(job.type.includes('video')){
-    input.duration=Math.max(2,Math.min(12,Number(input.duration)||5));
-    input.fps=Number(input.fps)||24;
+    input.duration=Math.max(10,Math.min(12,Number(input.duration)||10));
+    input.fps=Number(input.fps)||12;
     input.resolution=input.resolution||process.env.VIDEO_RESOLUTION||'480p';
     input.aspect_ratio=input.aspect_ratio||'16:9';
     input.camera_fixed=input.camera_fixed??false;
@@ -81,28 +81,46 @@ async function saveRemoteFile(url,file){
 }
 
 async function extractLastFrame(video,frame){
-  await execFileAsync(ffmpegPath,['-y','-sseof','-0.15','-i',video,'-frames:v','1','-update','1',frame]);
+  await execFileAsync(ffmpegPath,['-y','-sseof','-0.15','i',video,'-frames:v','1','-update','1',frame]).catch(async()=>{
+    await execFileAsync(ffmpegPath,['-y','-sseof','-0.15','-i',video,'-frames:v','1','-update','1',frame]);
+  });
+}
+
+async function probeDuration(video){
+  try{
+    const {stderr}=await execFileAsync(ffmpegPath,['-hide_banner','-i',video,'-f','null','-'],{maxBuffer:2*1024*1024});
+    const m=stderr.match(/Duration:\s*(\d+):(\d+):(\d+(?:\.\d+)?)/);
+    if(!m)return null;
+    return Number(m[1])*3600+Number(m[2])*60+Number(m[3]);
+  }catch(error){
+    const text=String(error.stderr||'');
+    const m=text.match(/Duration:\s*(\d+):(\d+):(\d+(?:\.\d+)?)/);
+    if(!m)return null;
+    return Number(m[1])*3600+Number(m[2])*60+Number(m[3]);
+  }
 }
 
 async function concatVideos(files,out){
   const list=path.join(os.tmpdir(),`mindscape-concat-${Date.now()}.txt`);
   fs.writeFileSync(list,files.map(f=>`file '${f.replace(/'/g,"'\\''")}'`).join('\n'));
   try{
-    await execFileAsync(ffmpegPath,['-y','-f','concat','-safe','0','-i',list,'-c:v','libx264','-preset','veryfast','-crf','20','-pix_fmt','yuv420p','-movflags','+faststart',out]);
+    await execFileAsync(ffmpegPath,['-y','-f','concat','-safe','0','-i',list,'-c:v','libx264','-preset','veryfast','-crf','20','-pix_fmt','yuv420p','-r','16','-movflags','+faststart',out]);
   }finally{try{fs.unlinkSync(list)}catch{}}
 }
 
 async function callHf(app,image,prompt,duration,seed){
+  // This is the exact input order exposed by the current free Space:
+  // image, prompt, steps, negative prompt, duration, guidance 1, guidance 2, seed, randomize.
   const result=await app.predict('/generate_video',[
     require('@gradio/client').handle_file(image),
     prompt,
     4,
     '',
-    duration,
+    Number(duration),
     1,
     1,
-    seed,
-    true
+    Number(seed),
+    false
   ]);
   const data=result?.data||result;
   const video=data?.[0];
@@ -119,11 +137,9 @@ async function submitHfSpace(job){
   if(process.env.HF_TOKEN) options.hf_token=process.env.HF_TOKEN;
   const app=await Client.connect(job.model,options);
 
-  // The free Wan 2.2 ZeroGPU Space accepts at most 5 seconds per generation.
-  // For requested shots longer than 5 seconds, generate sequential 5-second
-  // segments. Each next segment starts from the previous segment's final frame,
-  // then concatenate them into one continuous MP4.
-  const requested=Math.max(2,Math.min(12,Number(job.input.duration)||5));
+  // The current free Wan 2.2 Space exposes 8–80 frames at 16 fps, i.e. up to 5 seconds per call.
+  // Long shots are therefore assembled from real generated segments, not stretched or duplicated.
+  const requested=Math.max(10,Math.min(12,Number(job.input.duration)||10));
   const segments=[];
   const segmentFiles=[];
   let currentImage=job.input.image;
@@ -133,16 +149,21 @@ async function submitHfSpace(job){
 
   try{
     while(remaining>0.01){
+      // Use 5s maximum segments; the final segment may be shorter.
       const segDuration=Math.min(5,remaining);
       let segPrompt=job.prompt;
       if(segmentIndex>0){
-        segPrompt += ` CONTINUATION SEGMENT ${segmentIndex+1}: Continue directly from the final frame of the previous segment. Do not restart the action or reset the characters to their original position. Preserve the exact character identity, environment, camera direction, walking rhythm and lighting. Continue the existing forward movement toward the camera smoothly and naturally. The characters must begin this segment exactly where the previous segment ended and continue getting closer to the camera.`;
+        segPrompt += ` CONTINUATION SEGMENT ${segmentIndex+1}: Continue directly from the final frame of the previous segment. Do not restart the action or reset the characters to their original position. Preserve exact character identity, environment, camera direction, walking rhythm and lighting. Continue the existing physical forward movement toward the camera smoothly and naturally. The characters must begin this segment exactly where the previous segment ended and continue getting closer. This is a continuation, not a new shot.`;
       }
       const url=await callHf(app,currentImage,segPrompt,segDuration,Math.floor(Math.random()*2147483647));
       const videoFile=path.join(os.tmpdir(),`mindscape-segment-${Date.now()}-${segmentIndex}.mp4`);
       await saveRemoteFile(url,videoFile);
+      const actualDuration=await probeDuration(videoFile);
+      if(actualDuration!==null && actualDuration < segDuration*0.85){
+        throw Error(`Hugging Face returned a ${actualDuration.toFixed(2)}s segment when ${segDuration.toFixed(2)}s was requested. The short-video provider did not honor the duration; final assembly was stopped instead of returning a misleading short video.`);
+      }
       segmentFiles.push(videoFile);
-      segments.push({duration:segDuration,url});
+      segments.push({requestedDuration:segDuration,actualDuration:actualDuration,url});
 
       remaining-=segDuration;
       segmentIndex++;
@@ -154,20 +175,19 @@ async function submitHfSpace(job){
       }
     }
 
-    if(segmentFiles.length===1){
-      return {output:segments[0].url,segments,assembled:false};
-    }
-
     const finalFile=path.join(os.tmpdir(),`mindscape-final-${Date.now()}.mp4`);
     await concatVideos(segmentFiles,finalFile);
+    const finalDuration=await probeDuration(finalFile);
+    const tolerance=0.6;
+    if(finalDuration===null || Math.abs(finalDuration-requested)>tolerance){
+      throw Error(`Final assembly duration check failed: requested ${requested.toFixed(1)}s, produced ${finalDuration===null?'unknown':finalDuration.toFixed(2)+'s'}. No incorrect short video was returned.`);
+    }
 
-    // Render can serve only files in its app directory, so copy to a public
-    // temporary directory under the application root.
     const publicDir=path.join(__dirname,'generated');
     fs.mkdirSync(publicDir,{recursive:true});
     const publicFile=path.join(publicDir,path.basename(finalFile));
     fs.copyFileSync(finalFile,publicFile);
-    return {output:`/generated/${path.basename(publicFile)}`,segments,assembled:true,duration:requested};
+    return {output:`/generated/${path.basename(publicFile)}`,segments,assembled:true,duration:finalDuration};
   }finally{
     for(const f of segmentFiles){try{fs.unlinkSync(f)}catch{}}
     if(previousFrame){try{fs.unlinkSync(previousFrame)}catch{}}
