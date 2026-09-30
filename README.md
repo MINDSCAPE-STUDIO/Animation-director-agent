@@ -14,15 +14,16 @@ The browser does not render video. It sends a small JSON request to the server, 
 
 ## Deploy
 
-The repository includes `render.yaml` for Render. Render can deploy a Node service from GitHub and automatically redeploy after pushes. See the official Render documentation: https://render.com/docs/deploy-node-express-app
+The repository includes `render.yaml` for Render. Render supports GitHub-connected Node web services and environment variables/secrets through its Dashboard.
 
-1. Create a Render Web Service from this GitHub repository.
-2. Let Render use `render.yaml`, or use build command `npm install` and start command `npm start`.
-3. Add `REPLICATE_API_TOKEN` as a secret environment variable in Render.
-4. Deploy.
-5. Open the generated HTTPS URL on any phone, tablet or desktop.
+1. Open Render and choose **New → Web Service**.
+2. Connect GitHub and select `MINDSCAPE-STUDIO/Animation-director-agent`.
+3. Use the repository `render.yaml`, or use build command `npm install` and start command `npm start`.
+4. Add `REPLICATE_API_TOKEN` as a secret environment variable in the Render service's **Environment** settings. Never commit it to GitHub.
+5. Deploy.
+6. Open the generated HTTPS URL on any phone, tablet or desktop.
 
-Replicate supports asynchronous predictions, status retrieval and webhooks, which is why generation is kept off the phone. https://replicate.com/docs/topics/predictions/create-a-prediction
+Render's free web services are suitable for initial testing but can spin down after inactivity, so the first request after idle may be slower.
 
 ## Local
 
