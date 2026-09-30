@@ -1,0 +1,21 @@
+name: Validate Agent
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: node --check server.js
+      - run: node --check model-router.js
+      - run: node --check generation-queue.js
+      - run: node --check agents.js
+      - run: node --check app.js
+      - run: node server.js &
+      - run: sleep 2 && curl -fsS http://localhost:8787/health
