@@ -1,10 +1,13 @@
 {
   "name": "animation-director-agent",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "private": true,
   "description": "Mindscape Studio cloud-first animation director agent",
   "main": "server.js",
   "scripts": {"start": "node server.js"},
   "engines": {"node": ">=20"},
-  "dependencies": {"@gradio/client": "^2.7.0"}
+  "dependencies": {
+    "@gradio/client": "^2.7.0",
+    "ffmpeg-static": "^5.2.0"
+  }
 }
