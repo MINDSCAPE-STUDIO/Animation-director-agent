@@ -1,0 +1,13 @@
+// Server-side cloud generation router. Never expose provider keys in browser code.
+const PROVIDERS={replicate:'https://api.replicate.com/v1',fal:'https://queue.fal.run'};
+function selectModel(job){
+  if(job.type==='image_to_video') return process.env.VIDEO_PROVIDER==='fal'?{provider:'fal',model:process.env.VIDEO_MODEL||'fal-ai/wan/v2.6/image-to-video'}:{provider:'replicate',model:process.env.VIDEO_MODEL||'bytedance/seedance-1-pro'};
+  if(job.type==='video_understanding') return {provider:'fal',model:process.env.VISION_MODEL||'fal-ai/video-understanding'};
+  return {provider:'replicate',model:process.env.IMAGE_MODEL||'black-forest-labs/flux-1.1-pro'};
+}
+function buildPrompt(shot){return [`Character: ${shot.character}. Preserve exact identity and costume.`,`Action: ${shot.action}. Path: ${shot.path}.`,`Camera: ${shot.camera}.`,`Gaze: ${shot.performance?.gaze||'as directed'}. Expression: ${shot.performance?.expression||'as directed'}.`,`Body language: ${shot.performance?.body_language||'natural'}.`,`Environment: ${shot.background}.`,'Maintain temporal consistency, anatomy, identity, lighting, perspective and screen direction. Do not introduce unrequested characters or objects.'].join(' ')}
+function createGenerationJob(job){const route=selectModel(job);return{id:`job_${Date.now()}`,status:'queued',provider:route.provider,model:route.model,type:job.type,prompt:job.prompt||buildPrompt(job.shot),attempt:1,maxAttempts:3,createdAt:new Date().toISOString(),input:job.input||{}}}
+async function submitReplicate(job){const token=process.env.REPLICATE_API_TOKEN;if(!token)throw Error('REPLICATE_API_TOKEN is not configured');const r=await fetch(`${PROVIDERS.replicate}/models/${job.model}/predictions`,{method:'POST',headers:{Authorization:`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify({input:{...job.input,prompt:job.prompt}})});if(!r.ok)throw Error(`Replicate ${r.status}: ${await r.text()}`);return r.json()}
+async function submitFal(job){const key=process.env.FAL_KEY;if(!key)throw Error('FAL_KEY is not configured');const r=await fetch(`${PROVIDERS.fal}/${job.model}`,{method:'POST',headers:{Authorization:`Key ${key}`,'Content-Type':'application/json'},body:JSON.stringify({...job.input,prompt:job.prompt})});if(!r.ok)throw Error(`fal ${r.status}: ${await r.text()}`);return r.json()}
+async function submit(job){const result=job.provider==='fal'?await submitFal(job):await submitReplicate(job);return{...job,status:'submitted',providerResponse:result,submittedAt:new Date().toISOString()}}
+module.exports={selectModel,buildPrompt,createGenerationJob,submit};
