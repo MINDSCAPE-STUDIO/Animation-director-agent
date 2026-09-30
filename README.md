@@ -1,41 +1,45 @@
-# Animation Director Agent
+# Mindscape Animation Director Agent
 
-A director-first production planning agent for Mindscape Studio. It converts natural-language shot direction into a structured, production-ready **Shot Contract** that downstream animation agents can consume.
+A lightweight, cloud-first animation production agent. The browser is only the control surface; planning and generation run on the server/provider, so low-end phones do not render video locally.
 
-## Current version
-**v0.1 — Director Agent**
+## Current architecture
+`Director → Character → Motion → Camera → Background → Model Router → Cloud Generation → Polling → Output`
 
-### Workflow
-1. Describe a shot in natural language.
-2. Generate a structured shot specification.
-3. Review the human-readable production brief.
-4. Inspect/copy the JSON Shot Contract.
-5. Review ambiguities before production.
+## What works now
+- Natural-language shot planning
+- Structured Shot Contract
+- Specialist production contracts
+- Text-to-video and image-to-video job routing
+- Replicate default provider with Seedance 1 Pro Fast
+- Optional fal.ai provider
+- Async cloud jobs
+- Result polling
+- Retry support
+- Server-side provider credentials
+- Mobile-first lightweight UI
+- PWA/offline UI cache
+- No frontend framework or dependency-heavy build
+- Render deployment configuration
 
-### Current schema
-- `shot_id`
-- `duration_seconds`
-- `fps`
-- `character`
-- `action`
-- `path`
-- `camera`
-- `performance.gaze`
-- `performance.expression`
-- `performance.body_language`
-- `background`
-- `priorities`
-- `acceptance_criteria`
-- `ambiguities`
+The default video route uses Replicate's official `bytedance/seedance-1-pro-fast`, which supports text-to-video and image-to-video. Duration is bounded to the model's supported range and preview quality defaults to 480p for faster/cheaper iteration. Final 1080p can be selected from the UI. citeturn1search11turn1search1
 
-The first implementation is intentionally deterministic and requires no API key. This gives us a stable contract before introducing model routing.
+## Deploy
+1. Create a Render Web Service from this repository.
+2. Render detects `render.yaml`.
+3. Add `REPLICATE_API_TOKEN` as a secret environment variable.
+4. Deploy.
+5. Open the generated service URL on any phone, tablet or computer.
 
-## Roadmap
-The architecture is intended to grow into a production agent system:
+The app serves its own UI and API from one Node service, so there is no localhost URL to configure on the phone.
 
-`Director → Character → Motion → Camera → Background → Generation → Evaluator → Compositor`
+## Local
+Requires Node 20+.
 
-Future work will add model/tool routing, persistent projects and assets, generation jobs, retries, visual evaluation, continuity memory, and final scene assembly.
+```bash
+npm start
+```
 
-## Run
-This first version is a static web app. Open `index.html` in a browser or deploy the repository with GitHub Pages/another static host.
+Then open `http://localhost:8787`.
+
+## Important
+Provider compute and generation quotas/costs still apply. The goal is that the **device does not become the bottleneck**: the phone sends a small JSON job and the cloud does the heavy work.
