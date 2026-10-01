@@ -1,29 +1,36 @@
 # Mindscape Studio — Animation Director Agent
 
-Cloud-first, mobile-first animation orchestration app. The phone is only the control surface; generation runs on a cloud provider.
+Cloud-first, mobile-first animation orchestration app. The phone is only the control surface; generation runs on cloud providers.
 
 ## What it does
 
-Describe a shot in normal language. The app converts the direction into a Shot Contract, runs specialist planning agents, routes a generation job to a cloud model, and polls for the result.
+Describe a shot in normal language. The app converts the direction into a Shot Contract, routes generation jobs through a model router, and keeps image assets and video generation as separate replaceable capabilities.
 
-## Architecture
+## Current architecture
 
-`Director → Shot Contract → Character → Motion → Camera → Background → Model Router → Cloud Generation → Evaluator`
+`Director → Shot Contract → Model Router → Asset/Image Provider or Video Provider → Evaluator`
+
+Current providers:
+
+- **Assets/images:** Google Nano Banana 2 (`gemini-3.1-flash-image`)
+- **Image → Video:** Hugging Face ZeroGPU Wan 2.2 Space
+- Additional provider routes remain replaceable through environment variables.
 
 The browser does not render video. It sends a small JSON request to the server, so low-end phones can operate the system.
 
 ## Deploy
 
-The repository includes `render.yaml` for Render. Render supports GitHub-connected Node web services and environment variables/secrets through its Dashboard.
+The repository includes `render.yaml` for Render.
 
-1. Open Render and choose **New → Web Service**.
-2. Connect GitHub and select `MINDSCAPE-STUDIO/Animation-director-agent`.
-3. Use the repository `render.yaml`, or use build command `npm install` and start command `npm start`.
-4. Add `REPLICATE_API_TOKEN` as a secret environment variable in the Render service's **Environment** settings. Never commit it to GitHub.
-5. Deploy.
-6. Open the generated HTTPS URL on any phone, tablet or desktop.
+Required secret for Nano Banana 2:
 
-Render's free web services are suitable for initial testing but can spin down after inactivity, so the first request after idle may be slower.
+- `GEMINI_API_KEY`
+
+Required secret for the free Hugging Face video route when authentication is needed:
+
+- `HF_TOKEN`
+
+Never commit provider keys to GitHub. Add them to the Render service's Environment settings.
 
 ## Local
 
@@ -42,16 +49,15 @@ Open `http://localhost:8787`.
 - No heavy frontend framework.
 - Cacheable static assets.
 - PWA manifest/service worker included.
-- 480p preview default.
+- 480p preview default for video.
 - Asynchronous generation.
 - Bounded lightweight polling.
+- Reference images can be uploaded directly from a phone.
 
-## Provider
+## Model replacement principle
 
-Default: Replicate.
-
-Default model: `bytedance/seedance-1-pro-fast`. The model can be changed with `VIDEO_MODEL` without modifying the application. A fal.ai route is included for future provider fallback.
+The application does not treat any generation model as the product itself. Image and video providers are selected by the server-side model router so future models can replace the current providers without redesigning the Mindscape core.
 
 ## Important
 
-Real generation requires provider credentials and provider billing/quotas. The software cannot make cloud compute literally unlimited. The goal is that the **device does not become the bottleneck**: the phone sends a small job and the cloud performs the heavy computation.
+Real generation requires provider credentials and provider quotas/billing where applicable. The goal is that the **device does not become the bottleneck**: the phone sends a small job and cloud infrastructure performs the heavy computation.
