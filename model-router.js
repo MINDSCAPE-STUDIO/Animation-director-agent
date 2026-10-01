@@ -1,5 +1,5 @@
 // Cloud-only model router. API keys stay on the server.
-const fs=require('fs');const os=require('os');const path=require('path');const {execFile}=require('child_process');const {promisify}=require('util');const execFileAsync=promisify(execFile);const ffmpegPath=require('ffmpeg-static');const {generateImage}=require('./google-image-provider');
+const fs=require('fs');const os=require('os');const path=require('path');const {execFile}=require('child_process');const {promisify}=require('util');const execFileAsync=promisify(execFile);const ffmpegPath=require('ffmpeg-static');const {generateImage}=require('./google-image-provider');const {buildGenerationContext,injectGenerationContext}=require('./generation-context');
 const PROVIDERS={replicate:'https://api.replicate.com/v1',fal:'https://queue.fal.run',google:'https://generativelanguage.googleapis.com/v1beta/models'};
 const FREE_HF_SPACE=process.env.HF_SPACE_NAME||'zerogpu-aoti/wan2-2-fp8da-aoti-faster';
 
@@ -16,30 +16,25 @@ function selectModel(job){
 
 function buildPrompt(shot){return[`Character: ${shot.character}. Preserve exact identity, costume and silhouette.`,`Action: ${shot.action}. Path: ${shot.path}.`,`Camera: ${shot.camera}.`,`Gaze: ${shot.performance?.gaze||'as directed'}. Expression: ${shot.performance?.expression||'as directed'}.`,`Body language: ${shot.performance?.body_language||'natural'}.`,`Environment: ${shot.background}.`,`Director priorities: ${(shot.priorities||[]).join(', ')}.`,'Maintain temporal consistency, anatomy, identity, lighting, perspective and screen direction. Do not introduce unrequested characters, props or camera changes.'].join(' ')}
 
-function buildAssetPrompt(job){
-  const base=job.prompt||job.input?.prompt||job.shot?.prompt||'';
-  return `${base}\n\nMINDSCAPE ASSET RULES: Create a production-ready visual asset. Preserve any supplied reference subject identity, proportions, costume, colors and established visual style. Do not redesign an established character unless explicitly requested. Keep the composition clean and suitable as a reusable animation asset. If a reference image is supplied, treat it as the source of truth for identity and style.`;
-}
+function buildAssetPrompt(job){const base=job.prompt||job.input?.prompt||job.shot?.prompt||'';return `${base}\n\nMINDSCAPE ASSET RULES: Create a production-ready visual asset. Preserve any supplied reference subject identity, proportions, costume, colors and established visual style. Do not redesign an established character unless explicitly requested. Keep the composition clean and suitable as a reusable animation asset. If a reference image is supplied, treat it as the source of truth for identity and style.`}
 
 function createGenerationJob(job){
   const route=selectModel(job);const input={...(job.input||{})};
   if(job.type.includes('video')){input.duration=Math.max(10,Math.min(12,Number(input.duration)||10));input.fps=Number(input.fps)||12;input.resolution=input.resolution||process.env.VIDEO_RESOLUTION||'480p';input.aspect_ratio=input.aspect_ratio||'16:9';input.camera_fixed=input.camera_fixed??false}
   if(job.type==='text_to_image'||job.type==='image_to_image'){input.aspect_ratio=input.aspect_ratio||'1:1';input.image_size=input.image_size||'1K'}
-  return{id:`job_${Date.now()}_${Math.random().toString(36).slice(2,7)}`,status:'queued',provider:route.provider,model:route.model,type:job.type,prompt:job.prompt||(job.type==='text_to_image'||job.type==='image_to_image'?buildAssetPrompt(job):job.shot?.prompt||buildPrompt(job.shot||{})),attempt:1,maxAttempts:3,createdAt:new Date().toISOString(),input}
+  const jobId=`job_${Date.now()}_${Math.random().toString(36).slice(2,7)}`;
+  const draft={...job,id:jobId,provider:route.provider,model:route.model,type:job.type,input};
+  const context=buildGenerationContext(draft);
+  const basePrompt=job.prompt||(job.type==='text_to_image'||job.type==='image_to_image'?buildAssetPrompt(job):job.shot?.prompt||buildPrompt(job.shot||{}));
+  const prompt=injectGenerationContext(basePrompt,context);
+  return{...draft,status:'queued',prompt,style_bible_version:context.styleBible?.version||null,master_asset_id:context.masterAsset?.asset_id||null,master_asset_version:context.masterAsset?.version||null,attempt:1,maxAttempts:3,createdAt:new Date().toISOString(),input};
 }
 
 async function submitReplicate(job){const token=process.env.REPLICATE_API_TOKEN;if(!token)throw Error('REPLICATE_API_TOKEN is not configured');const r=await fetch(`${PROVIDERS.replicate}/models/${job.model}/predictions`,{method:'POST',headers:{Authorization:`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify({input:{...job.input,prompt:job.prompt}})});if(!r.ok)throw Error(`Replicate ${r.status}: ${await r.text()}`);return r.json()}
 async function refreshReplicate(job){const token=process.env.REPLICATE_API_TOKEN;if(!token||!job.providerResponse?.id)return job;const r=await fetch(`${PROVIDERS.replicate}/predictions/${job.providerResponse.id}`,{headers:{Authorization:`Bearer ${token}`}});if(!r.ok)return job;const p=await r.json();return{...job,status:p.status==='succeeded'?'completed':p.status==='failed'?'failed':p.status==='canceled'?'canceled':'running',providerResponse:p,result:p.output||null,error:p.error||null}}
 async function submitFal(job){const key=process.env.FAL_KEY;if(!key)throw Error('FAL_KEY is not configured');const r=await fetch(`${PROVIDERS.fal}/${job.model}`,{method:'POST',headers:{Authorization:`Key ${key}`,'Content-Type':'application/json'},body:JSON.stringify({...job.input,prompt:job.prompt})});if(!r.ok)throw Error(`fal ${r.status}: ${await r.text()}`);return r.json()}
 
-async function submitGoogleImage(job){
-  const generated=await generateImage({prompt:job.prompt,input:job.input});
-  const ext=generated.mimeType.includes('jpeg')||generated.mimeType.includes('jpg')?'jpg':generated.mimeType.includes('webp')?'webp':'png';
-  const publicDir=path.join(__dirname,'generated');fs.mkdirSync(publicDir,{recursive:true});
-  const filename=`mindscape-asset-${Date.now()}-${Math.random().toString(36).slice(2,7)}.${ext}`;
-  const publicFile=path.join(publicDir,filename);fs.writeFileSync(publicFile,Buffer.from(generated.data,'base64'));
-  return{output:`/generated/${filename}`,mimeType:generated.mimeType,model:generated.model,usageMetadata:generated.usageMetadata};
-}
+async function submitGoogleImage(job){const generated=await generateImage({prompt:job.prompt,input:job.input});const ext=generated.mimeType.includes('jpeg')||generated.mimeType.includes('jpg')?'jpg':generated.mimeType.includes('webp')?'webp':'png';const publicDir=path.join(__dirname,'generated');fs.mkdirSync(publicDir,{recursive:true});const filename=`mindscape-asset-${Date.now()}-${Math.random().toString(36).slice(2,7)}.${ext}`;const publicFile=path.join(publicDir,filename);fs.writeFileSync(publicFile,Buffer.from(generated.data,'base64'));return{output:`/generated/${filename}`,mimeType:generated.mimeType,model:generated.model,usageMetadata:generated.usageMetadata}}
 
 async function saveRemoteFile(url,file){if(typeof url!=='string'||!/^https?:\/\//i.test(url))throw Error(`Hugging Face returned an invalid video reference: ${String(url).slice(0,300)}`);const r=await fetch(url);if(!r.ok)throw Error(`Could not download generated segment (${r.status}).`);fs.writeFileSync(file,Buffer.from(await r.arrayBuffer()))}
 async function extractLastFrame(video,frame){await execFileAsync(ffmpegPath,['-y','-sseof','-0.15','-i',video,'-frames:v','1','-update','1',frame])}
