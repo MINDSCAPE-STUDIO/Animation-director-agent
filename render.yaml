@@ -15,5 +15,11 @@ services:
         sync: false
       - key: VIDEO_RESOLUTION
         value: 480p
+      - key: IMAGE_PROVIDER
+        value: google
+      - key: IMAGE_MODEL
+        value: gemini-3.1-flash-image
+      - key: GEMINI_API_KEY
+        sync: false
       - key: REPLICATE_API_TOKEN
         sync: false
