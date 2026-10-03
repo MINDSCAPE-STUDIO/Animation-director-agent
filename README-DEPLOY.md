@@ -23,7 +23,7 @@ Render's `render.yaml` currently selects Google image generation and Hugging Fac
 ## Service endpoints
 
 - `GET /health` — service health and configured route names
-- `POST /jobs`, `GET /jobs`, `GET /jobs/:id`, `POST /jobs/:id/retry` — generation jobs
+- `POST /jobs`, `GET /jobs`, `GET /jobs/:id`, `POST /jobs/:id/retry` — generation jobs. The dashboard polls job status until the selected provider returns a terminal result.
 - `GET /generation-history` — append-only local history
 - `GET` and `PATCH /style-bible` — project style contract
 - `GET` and `POST /master-assets`, `GET` and `PATCH /master-assets/:id`, `POST /master-assets/:id/approve` — master assets
@@ -34,5 +34,4 @@ Render's `render.yaml` currently selects Google image generation and Hugging Fac
 
 The queue is held in process memory. Style Bible, Master Assets, evaluations, and generation history are written to local files; generated outputs are also stored under the app directory. These files can be lost on service restart or deployment when the host does not provide persistent storage. The service has no user authentication or request rate limiting, so it is not hardened for unrestricted public use. The Render Blueprint uses a free web service and automatic deployment; verify the connected branch and service settings in Render before relying on production behavior.
 
-The code does not implement the Replicate webhook flow described in older setup notes. Provider work is submitted through the current router and queue implementation.
-
+Replicate and fal jobs are asynchronous: the server stores the provider request, polls its status when the dashboard requests the job, and only evaluates the generation after completion. Synchronous Google and Hugging Face routes complete in the initial server-side generation call. The code does not implement provider webhooks.
