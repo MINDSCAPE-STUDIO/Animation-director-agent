@@ -4,7 +4,7 @@
   "private": true,
   "description": "Mindscape Studio cloud-first animation director agent",
   "main": "server.js",
-  "scripts": {"start": "node --env-file-if-exists=.env server.js", "test": "node test/model-router.test.js && node test/runtime-health.test.js && node test/style-bible.test.js && node test/generation-workflow.test.js && node test/server-static.test.js && node test/job-status.test.js && node test/media-persistence.test.js && node test/provider-poller.test.js && node test/visual-output-reference.test.js && node test/video-assembly.test.js"},
+  "scripts": {"start": "node --env-file-if-exists=.env server.js", "test": "node test/model-router.test.js && node test/runtime-health.test.js && node test/style-bible.test.js && node test/generation-workflow.test.js && node test/server-static.test.js && node test/job-status.test.js && node test/media-persistence.test.js && node test/provider-poller.test.js && node test/visual-output-reference.test.js && node test/video-assembly.test.js && node test/hf-image-provider.test.js"},
   "engines": {"node": ">=20.19"},
   "dependencies": {
     "@gradio/client": "^2.7.0",
