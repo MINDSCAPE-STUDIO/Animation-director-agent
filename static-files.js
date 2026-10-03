@@ -4,6 +4,7 @@ const PUBLIC_FILES = new Set([
   '/index.html',
   '/agents.js',
   '/media-output.js',
+  '/job-status.js',
   '/access-client.js',
   '/app.js',
   '/dashboard.js',
