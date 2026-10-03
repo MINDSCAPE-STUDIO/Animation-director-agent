@@ -47,3 +47,31 @@ test('accepts image and video jobs with the selected project context', async () 
     ['image_to_video', 'new-project'],
   ]);
 });
+
+test('records terminal provider success and failure without losing either job', async () => {
+  const storeFile = path.join(dataDir, 'generation-lifecycle.json');
+  const queue = new GenerationQueue({
+    storeFile,
+    submitJob: async job => {
+      if (job.prompt.includes('fail this')) throw new Error('Mock provider unavailable');
+      return { ...job, status: 'completed', result: { output: '/generated/mock.png' }, providerResponse: { status: 'succeeded' } };
+    },
+    evaluateJob: async () => ({ model: 'mock-evaluator', findings: [], observations: {}, summary: 'Mock evaluation passed.' }),
+  });
+
+  const success = await queue.enqueue({ type: 'text_to_image', prompt: 'Create a production-ready character sheet' });
+  const failure = await queue.enqueue({ type: 'text_to_image', prompt: 'fail this request' });
+
+  for (let attempt = 0; attempt < 100; attempt += 1) {
+    if (queue.get(success.id)?.status === 'completed' && queue.get(failure.id)?.status === 'failed') break;
+    await new Promise(resolve => setTimeout(resolve, 5));
+  }
+
+  assert.equal(queue.get(success.id).status, 'completed');
+  assert.equal(queue.get(success.id).result.output, '/generated/mock.png');
+  assert.equal(queue.get(failure.id).status, 'failed');
+  assert.match(queue.get(failure.id).error, /Mock provider unavailable/);
+
+  const persisted = JSON.parse(fs.readFileSync(storeFile, 'utf8'));
+  assert.deepEqual(persisted.map(job => job.status), ['completed', 'failed']);
+});
