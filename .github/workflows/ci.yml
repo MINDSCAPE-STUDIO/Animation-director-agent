@@ -7,6 +7,10 @@ on:
 jobs:
   validate:
     runs-on: ubuntu-latest
+    env:
+      GEMINI_API_KEY: ci-placeholder
+      MINDSCAPE_API_KEY: ci-placeholder
+      ALLOWED_ORIGIN: '*'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -20,3 +24,6 @@ jobs:
       - run: node --check app.js
       - run: node server.js &
       - run: sleep 2 && curl -fsS http://localhost:8787/health
+      - run: curl -fsS http://localhost:8787/ready
+      - run: curl -fsS -H 'Authorization: Bearer ci-placeholder' http://localhost:8787/jobs
+      - run: curl -fsS -o /tmp/unauthorized.txt -w '%{http_code}' http://localhost:8787/jobs | grep -qx '401'
