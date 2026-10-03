@@ -29,6 +29,7 @@ jobs:
           done
           curl --fail --silent http://localhost:8787/ > /tmp/mindscape-index.html
           grep --quiet 'access-client.js' /tmp/mindscape-index.html
+          curl --fail --silent http://localhost:8787/job-status.js | grep --quiet 'terminalSuccessRate'
           private_file_status=$(curl --silent --header 'Authorization: Bearer ci-test-token' --output /tmp/mindscape-private-file.json --write-out '%{http_code}' http://localhost:8787/CLAUDE.md)
           if [ "$private_file_status" != "404" ]; then
             cat /tmp/mindscape-private-file.json
