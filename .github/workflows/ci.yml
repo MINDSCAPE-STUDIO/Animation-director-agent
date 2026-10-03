@@ -12,11 +12,38 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: npm install --no-audit --no-fund
-      - run: node --check server.js
-      - run: node --check model-router.js
-      - run: node --check generation-queue.js
-      - run: node --check agents.js
-      - run: node --check app.js
-      - run: node server.js &
-      - run: sleep 2 && curl -fsS http://localhost:8787/health
+          cache: npm
+      - name: Install runtime dependencies
+        run: npm install --no-audit --no-fund
+      - name: Syntax check all JavaScript modules
+        shell: bash
+        run: |
+          set -euo pipefail
+          for file in *.js; do
+            echo "Checking $file"
+            node --check "$file"
+          done
+      - name: Start server and smoke test core APIs
+        shell: bash
+        run: |
+          set -euo pipefail
+          node server.js > /tmp/mindscape-server.log 2>&1 &
+          echo $! > /tmp/mindscape-server.pid
+          for i in {1..10}; do
+            if curl -fsS http://localhost:8787/health > /tmp/health.json; then
+              break
+            fi
+            sleep 1
+          done
+          cat /tmp/health.json
+          curl -fsS http://localhost:8787/health
+          curl -fsS http://localhost:8787/jobs
+          curl -fsS http://localhost:8787/style-bible
+          curl -fsS http://localhost:8787/master-assets
+          curl -fsS http://localhost:8787/error-taxonomy
+          curl -fsS http://localhost:8787/evaluations
+      - name: Stop server and print logs
+        if: always()
+        run: |
+          if [ -f /tmp/mindscape-server.pid ]; then kill "$(cat /tmp/mindscape-server.pid)" || true; fi
+          if [ -f /tmp/mindscape-server.log ]; then cat /tmp/mindscape-server.log; fi
