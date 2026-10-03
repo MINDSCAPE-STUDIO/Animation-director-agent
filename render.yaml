@@ -3,7 +3,7 @@ services:
     name: mindscape-animation-director
     runtime: node
     plan: free
-    buildCommand: npm install
+    buildCommand: npm install --no-audit --no-fund
     startCommand: npm start
     autoDeploy: true
     envVars:
@@ -25,3 +25,13 @@ services:
         sync: false
       - key: REPLICATE_API_TOKEN
         sync: false
+      - key: FAL_KEY
+        sync: false
+      - key: MINDSCAPE_API_KEY
+        sync: false
+      - key: ALLOWED_ORIGIN
+        sync: false
+      - key: PROVIDER_POLL_INTERVAL_MS
+        value: '5000'
+      - key: PROVIDER_POLL_TIMEOUT_MS
+        value: '900000'
