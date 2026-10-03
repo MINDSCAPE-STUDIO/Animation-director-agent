@@ -22,7 +22,7 @@ Render's `render.yaml` currently selects Google image generation and Hugging Fac
 
 ## Service endpoints
 
-- `GET /health` — service health and configured route names
+- `GET /health` — service/queue-storage health, selected image/video/evaluator routes, credential-presence flags, and whether `APP_DATA_DIR` is set. It never returns credential values. Provider availability is reported as `not_checked`; credentials being configured does not prove a provider is reachable.
 - `POST /jobs`, `GET /jobs`, `GET /jobs/:id`, `POST /jobs/:id/retry` — generation jobs. The dashboard polls job status until the selected provider returns a terminal result.
 - `GET /generation-history` — append-only local history
 - `GET` and `PATCH /style-bible` — project style contract
@@ -34,6 +34,6 @@ Render's `render.yaml` currently selects Google image generation and Hugging Fac
 
 The queue is atomically saved to `APP_DATA_DIR/generation-queue.json` (default: `data/`). Provider-backed Replicate and fal jobs with saved request IDs resume polling after a process restart. Jobs whose provider submission state is ambiguous are marked failed with a retry explanation to avoid duplicate provider requests. Style Bible, Master Assets, evaluations, generation history, uploaded references, and generated outputs use `APP_DATA_DIR` when it is configured.
 
-The default Render service uses the free plan, whose filesystem is ephemeral and which does not support persistent disks. To retain queue, project, upload, and output data across Render restarts and deploys, the service needs a paid plan with a persistent disk mounted at a path such as `/var/data`, and `APP_DATA_DIR` must point to that mount. That infrastructure change has not been made. API access is protected when `APP_ACCESS_TOKEN` is configured; Render production refuses to start without it. The service does not include request rate limiting.
+The default Render service uses the free plan, whose filesystem is ephemeral and which does not support persistent disks. To retain queue, project, upload, and output data across Render restarts and deploys, the service needs a paid plan with a persistent disk mounted at a path such as `/var/data`, and `APP_DATA_DIR` must point to that mount. That infrastructure change has not been made. The health endpoint reports whether a data path is explicitly configured, not whether the underlying filesystem is durable. API access is protected when `APP_ACCESS_TOKEN` is configured; Render production refuses to start without it. The service does not include request rate limiting.
 
 Replicate and fal jobs are asynchronous: the server stores the provider request, polls its status when the dashboard requests the job, and only evaluates the generation after completion. Synchronous Google and Hugging Face routes complete in the initial server-side generation call. The code does not implement provider webhooks.
