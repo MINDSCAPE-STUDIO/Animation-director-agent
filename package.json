@@ -4,10 +4,11 @@
   "private": true,
   "description": "Mindscape Studio cloud-first animation director agent",
   "main": "server.js",
-  "scripts": {"start": "node server.js"},
+  "scripts": {"start": "node server.js", "test": "node test/model-router.test.js"},
   "engines": {"node": ">=20"},
   "dependencies": {
     "@gradio/client": "^2.7.0",
     "ffmpeg-static": "^5.2.0"
   }
 }
+

@@ -13,6 +13,7 @@ jobs:
         with:
           node-version: 20
       - run: npm install --no-audit --no-fund
+      - run: npm test
       - name: Check JavaScript syntax
         run: for file in *.js; do node --check "$file"; done
       - name: Smoke test the service
