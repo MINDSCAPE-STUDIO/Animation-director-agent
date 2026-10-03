@@ -1,6 +1,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const outputUrl = require('../media-output');
+const { isAuthorized, validateProductionConfig } = require('../access-control');
 
 const originalHfImageSpace = process.env.HF_IMAGE_SPACE_NAME;
 const originalHfVideoSpace = process.env.HF_SPACE_NAME;
@@ -82,6 +83,15 @@ test('finds a media URL inside common nested provider result shapes', () => {
   assert.equal(outputUrl({ data: { images: [{ url: 'https://example.test/image.png' }] } }), 'https://example.test/image.png');
   assert.equal(outputUrl({ output: '/generated/asset.png' }), '/generated/asset.png');
   assert.equal(outputUrl({ status: 'completed' }), null);
+});
+
+test('requires a matching bearer token when access control is configured', () => {
+  assert.equal(isAuthorized(undefined, 'studio-token'), false);
+  assert.equal(isAuthorized('Bearer wrong-token', 'studio-token'), false);
+  assert.equal(isAuthorized('Bearer studio-token', 'studio-token'), true);
+  assert.equal(isAuthorized(undefined, undefined), true);
+  assert.throws(() => validateProductionConfig({ NODE_ENV: 'production' }), /APP_ACCESS_TOKEN/);
+  assert.doesNotThrow(() => validateProductionConfig({ NODE_ENV: 'production', APP_ACCESS_TOKEN: 'configured' }));
 });
 
 function withMockFetch(responses, run) {

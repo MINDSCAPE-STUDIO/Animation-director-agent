@@ -18,7 +18,7 @@ jobs:
         run: for file in *.js; do node --check "$file"; done
       - name: Smoke test the service
         run: |
-          node server.js > /tmp/mindscape-server.log 2>&1 &
+          APP_ACCESS_TOKEN=ci-test-token node server.js > /tmp/mindscape-server.log 2>&1 &
           server_pid=$!
           trap 'kill "$server_pid" 2>/dev/null || true' EXIT
           for attempt in {1..20}; do
@@ -27,7 +27,15 @@ jobs:
             fi
             sleep 1
           done
-          missing_job_status=$(curl --silent --output /tmp/mindscape-missing-job.json --write-out '%{http_code}' http://localhost:8787/jobs/not-a-real-job)
+          curl --fail --silent http://localhost:8787/ > /tmp/mindscape-index.html
+          grep --quiet 'access-client.js' /tmp/mindscape-index.html
+          unauthenticated_status=$(curl --silent --output /tmp/mindscape-unauthenticated.json --write-out '%{http_code}' http://localhost:8787/jobs/not-a-real-job)
+          if [ "$unauthenticated_status" != "401" ]; then
+            cat /tmp/mindscape-unauthenticated.json
+            echo "Expected unauthenticated API request to return 401, received $unauthenticated_status"
+            exit 1
+          fi
+          missing_job_status=$(curl --silent --header 'Authorization: Bearer ci-test-token' --output /tmp/mindscape-missing-job.json --write-out '%{http_code}' http://localhost:8787/jobs/not-a-real-job)
           if [ "$missing_job_status" != "404" ]; then
             cat /tmp/mindscape-missing-job.json
             echo "Expected missing job to return 404, received $missing_job_status"

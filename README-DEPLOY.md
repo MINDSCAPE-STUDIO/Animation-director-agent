@@ -10,7 +10,7 @@ Requires Node.js 20 or later.
 2. Install dependencies with `npm install`.
 3. Start the service with `npm start` and open `http://localhost:8787`.
 
-`GEMINI_API_KEY` is required for the visual evaluator and for image generation when `IMAGE_PROVIDER=google`. `HF_TOKEN` is optional for public Hugging Face Spaces, but may be needed for authenticated access or higher limits. `REPLICATE_API_TOKEN` and `FAL_KEY` are used only when their corresponding routes are selected.
+`APP_ACCESS_TOKEN` protects the API when configured. Production startup fails closed if it is missing; the browser asks for it and keeps it only for the current tab. Set it as a secret in Render before deploying this branch. `GEMINI_API_KEY` is required for the visual evaluator and for image generation when `IMAGE_PROVIDER=google`. `HF_TOKEN` is optional for public Hugging Face Spaces, but may be needed for authenticated access or higher limits. `REPLICATE_API_TOKEN` and `FAL_KEY` are used only when their corresponding routes are selected.
 
 ## Current provider routing
 
@@ -32,6 +32,6 @@ Render's `render.yaml` currently selects Google image generation and Hugging Fac
 
 ## Current operational limits
 
-The queue is held in process memory. Style Bible, Master Assets, evaluations, and generation history are written to local files; generated outputs are also stored under the app directory. These files can be lost on service restart or deployment when the host does not provide persistent storage. The service has no user authentication or request rate limiting, so it is not hardened for unrestricted public use. The Render Blueprint uses a free web service and automatic deployment; verify the connected branch and service settings in Render before relying on production behavior.
+The queue is held in process memory. Style Bible, Master Assets, evaluations, and generation history are written to local files; generated outputs are also stored under the app directory. These files can be lost on service restart or deployment when the host does not provide persistent storage. API access is protected when `APP_ACCESS_TOKEN` is configured; Render production refuses to start without it. The service does not include request rate limiting. The Render Blueprint uses a free web service and automatic deployment; verify the connected branch and service settings in Render before relying on production behavior.
 
 Replicate and fal jobs are asynchronous: the server stores the provider request, polls its status when the dashboard requests the job, and only evaluates the generation after completion. Synchronous Google and Hugging Face routes complete in the initial server-side generation call. The code does not implement provider webhooks.
