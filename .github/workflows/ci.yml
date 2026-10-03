@@ -29,6 +29,12 @@ jobs:
           done
           curl --fail --silent http://localhost:8787/ > /tmp/mindscape-index.html
           grep --quiet 'access-client.js' /tmp/mindscape-index.html
+          private_file_status=$(curl --silent --header 'Authorization: Bearer ci-test-token' --output /tmp/mindscape-private-file.json --write-out '%{http_code}' http://localhost:8787/CLAUDE.md)
+          if [ "$private_file_status" != "404" ]; then
+            cat /tmp/mindscape-private-file.json
+            echo "Expected repository files to remain private, received $private_file_status"
+            exit 1
+          fi
           unauthenticated_status=$(curl --silent --output /tmp/mindscape-unauthenticated.json --write-out '%{http_code}' http://localhost:8787/jobs/not-a-real-job)
           if [ "$unauthenticated_status" != "401" ]; then
             cat /tmp/mindscape-unauthenticated.json
@@ -41,5 +47,12 @@ jobs:
             echo "Expected missing job to return 404, received $missing_job_status"
             exit 1
           fi
+          invalid_job_status=$(curl --silent --header 'Authorization: Bearer ci-test-token' --header 'Content-Type: application/json' --data '{"type":"unsupported","prompt":"A test scene"}' --output /tmp/mindscape-invalid-job.json --write-out '%{http_code}' http://localhost:8787/jobs)
+          if [ "$invalid_job_status" != "400" ]; then
+            cat /tmp/mindscape-invalid-job.json
+            echo "Expected invalid generation requests to return 400, received $invalid_job_status"
+            exit 1
+          fi
+          grep --quiet 'invalid_generation_request' /tmp/mindscape-invalid-job.json
           cat /tmp/mindscape-server.log
           test -s /tmp/mindscape-server.log
