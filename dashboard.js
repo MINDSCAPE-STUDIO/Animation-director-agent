@@ -1,280 +1,195 @@
-YªçŠx-®éÜj×¢ëiºÚ+Š§j[h‘éÜ¢éíó}7N‹Z–‹­¦ëeŠw¬Ô  ¤€ôøì(€½¹ÍĞ€€ô€¡¥¤€ôø‘½Õµ•¹Ğ¹•Ñ±•µ•¹Ñ	å%¡¥¤ì(€½¹ÍĞ•ÍŒ€ô€¡à¤€ôøMÑÉ¥¹œ¡à€üü€œœ¤¹É•Á±…” ½l˜ğùpˆt½œ°Œ€ôø€¡ìœ˜œèœ™…µÀìœ°œğœèœ™±Ğìœ°œøœèœ™Ğìœ°pˆœèœ™ÅÕ½Ğìœ°ˆœˆèœ˜ŒÌäìõmt¤¤ì(€½¹ÍĞ™µÑQ¥µ”€ô€¡Ù…±Õ”¤€ôøì¥˜€ …Ù…±Õ”¤É•ÑÕÉ¸€ŸŠPœìÑÉäìÉ•ÑÕÉ¸¹•Ü…Ñ”¡Ù…±Õ”¤¹Ñ½1½…±•Q¥µ•MÑÉ¥¹œ¡mt°í¡½ÕÈèœÈµ‘¥¥Ğœ°µ¥¹ÕÑ”èœÈµ‘¥¥Ğô¤ìô…Ñ ìÉ•ÑÕÉ¸€ŸŠPœìôôì(€½¹ÍĞÁÉ½Ù¥‘•É9…µ”€ô€¡©½ˆ¤€ôøMÑÉ¥¹œ¡©½ˆü¹ÁÉ½Ù¥‘•Èñğ©½ˆü¹µ½‘•°ñğ€œœ¤¹Ñ½1½İ•É…Í” ¤ì(€½¹ÍĞ¥ÍY¥‘•¼€ô€¡©½ˆ¤€ôøMÑÉ¥¹œ¡©½ˆü¹ÑåÁ”ñğ€œœ¤¹¥¹±Õ‘•Ì Ù¥‘•¼œ¤ñğÁÉ½Ù¥‘•É9…µ”¡©½ˆ¤¹¥¹±Õ‘•Ì İ…¸œ¤ì(€½¹ÍĞÍÑ…ÑÕÍ1…‰•°€ô€¡Ì¤€ôø€¡í½µÁ±•Ñ•èMÕ•ÍÌœ±ÉÕ¹¹¥¹œè•¹•É…Ñ¥¹œœ±ÅÕ•Õ•èEÕ•Õ•œ±İ…¥Ñ¥¹}™½É}ÁÔèATEÕ•Õ”œ±É•ÑÉå¥¹}ÁÔèI•ÑÉå¥¹œœ±™…¥±•è…¥±•œ±…¹•±•è…¹•±•õmÍtñğÌñğ€U¹­¹½İ¸œ¤ì(€½¹ÍĞÍÑ…ÑÕÍ±…ÍÌ€ô€¡Ì¤€ôø€¡í½µÁ±•Ñ•èÍÕ•ÍÌœ±ÉÕ¹¹¥¹œèÉÕ¹¹¥¹œœ±ÅÕ•Õ•èÅÕ•Õ•œ±İ…¥Ñ¥¹}™½É}ÁÔèÉÕ¹¹¥¹œœ±É•ÑÉå¥¹}ÁÔèÉ•ÑÉå¥¹œœ±™…¥±•è™…¥±•œ±…¹•±•è™…¥±•õmÍtñğ€ÅÕ•Õ•œ¤ì(€™Õ¹Ñ¥½¸ÕÁ‘…Ñ•¹¥¹•MÑ…ÑÌ¡©½‰Ì¤ì(€€€½¹ÍĞÉ½ÕÁÌ€ôì¹…¹¼è©½‰Ì¹™¥±Ñ•È¡©½ˆ€ôø€…¥ÍY¥‘•¼¡©½ˆ¤¤°İ…¸è©½‰Ì¹™¥±Ñ•È¡¥ÍY¥‘•¼¤ôì(€€€ml¹…¹¼œ°É½ÕÁÌ¹¹…¹½t°lİ…¸œ°É½ÕÁÌ¹İ…¹ut¹™½É…  ¡m­•ä°±¥ÍÑt¤€ôøì(€€€€€½¹ÍĞ½ÕÑ½µ•Ì€ô±¥ÍĞ¹™¥±Ñ•È¡©½ˆ€ôøl½µÁ±•Ñ•œ°€™…¥±•œ°€…¹•±•t¹¥¹±Õ‘•Ì¡©½ˆ¹ÍÑ…ÑÕÌ¤¤ì(€€€€€½¹ÍĞ½µÁ±•Ñ•€ô½ÕÑ½µ•Ì¹™¥±Ñ•È¡©½ˆ€ôø©½ˆ¹ÍÑ…ÑÕÌ€ôôô€½µÁ±•Ñ•œ¤¹±•¹Ñ ì(€€€€€½¹ÍĞÍÕ•ÍÌ€ô½ÕÑ½µ•Ì¹±•¹Ñ €ü5…Ñ ¹É½Õ¹¡½µÁ±•Ñ•€¼½ÕÑ½µ•Ì¹±•¹Ñ €¨€ÄÀÀÀ¤€¼€ÄÀ€è¹Õ±°ì(€€€€€½¹ÍĞ±…Ñ•¹åY…±Õ•Ì€ô±¥ÍĞ¹µ…À¡©½ˆ€ôø9Õµ‰•È¡©½ˆ¹‘ÕÉ…Ñ¥½¹}µÌñğ©½ˆ¹±…Ñ•¹å}µÌñğ©½ˆ¹±…Ñ•¹äñğ€À¤¤¹™¥±Ñ•È¡	½½±•…¸¤ì(€€€€€½¹ÍĞ±…Ñ•¹ä€ô±…Ñ•¹åY…±Õ•Ì¹±•¹Ñ €ü€¡±…Ñ•¹åY…±Õ•Ì¹É•‘Õ” ¡ÍÕ´°Ù…±Õ”¤€ôøÍÕ´€¬Ù…±Õ”°€À¤€¼±…Ñ•¹åY…±Õ•Ì¹±•¹Ñ €¼€ÄÀÀÀ¤¹Ñ½¥á• Ä¤€¬€Ìœ€è€ŸŠPœì(€€€€€¥˜€ ¡­•ä€¬€)½‰Ìœ¤¤€¡­•ä€¬€)½‰Ìœ¤¹Ñ•áÑ½¹Ñ•¹Ğ€ô±¥ÍĞ¹±•¹Ñ ì(€€€€€¥˜€ ¡­•ä€¬€MÕ•ÍÌœ¤¤€¡­•ä€¬€MÕ•ÍÌœ¤¹Ñ•áÑ½¹Ñ•¹Ğ€ôÍÕ•ÍÌ€ôôô¹Õ±°€ü€ŸŠPœ€èÍÕ•ÍÌ€¬€œ”œì(€€€€€¥˜€ ¡­•ä€¬€1…Ñ•¹äœ¤¤€¡­•ä€¬€1…Ñ•¹äœ¤¹Ñ•áÑ½¹Ñ•¹Ğ€ô±…Ñ•¹äì(€€€ô¤ì(€ô(€™Õ¹Ñ¥½¸•¹ÍÕÉ•%¹Ñ•±±¥•¹•MÑå±•Ì ¤ì(€€€¥˜€¡‘½Õµ•¹Ğ¹•Ñ±•µ•¹Ñ	å% µ¥¹‘Í…Á”µ¥¹Ñ•±±¥•¹”µÍÑå±•Ìœ¤¤É•ÑÕÉ¸ì(€€€½¹ÍĞÍÑå±”€ô‘½Õµ•¹Ğ¹É•…Ñ•±•µ•¹Ğ ÍÑå±”œ¤ìÍÑå±”¹¥€ô€µ¥¹‘Í…Á”µ¥¹Ñ•±±¥•¹”µÍÑå±•Ìœì(€€€ÍÑå±”¹Ñ•áÑ½¹Ñ•¹Ğ€ô€¹ÁÉ½‘ÕÑ¥½¸µ¥¹Ñ•±±¥•¹•íÁ…‘‘¥¹œèÀ€ÈáÁà€ÈáÁàíÍÉ½±°µµ…É¥¸µÑ½ÀèàÑÁáô¹¥¹Ñ•±±¥•¹”µ¡•…‘•Éí‘¥ÍÁ±…äé™±•àí©ÕÍÑ¥™äµ½¹Ñ•¹ĞéÍÁ…”µ‰•Ñİ••¸í…±¥¸µ¥Ñ•µÌé™±•àµ•¹íµ…É¥¸èÀ€À€ÄÍÁáô¹¥¹Ñ•±±¥•¹”µ¡•…‘•È Éí™½¹ĞµÍ¥é”èÄåÁàí±•ÑÑ•ÈµÍÁ…¥¹œè´¸ÀÌÕ•´íµ…É¥¸èÑÁà€Áô¹¥¹Ñ•±±¥•¹”µ¡•…‘•ÈÁí™½¹ĞµÍ¥é”èåÁàí½±½ÈèŒØàİˆäØíµ…É¥¸èÀíµ…àµİ¥‘Ñ èØÔÁÁáô¹¥¹Ñ•±±¥•¹”µ±¥Ù•í™½¹ĞµÍ¥é”èáÁàí½±½ÈèŒÜÕ‘ˆØí‰½É‘•ÈèÅÁàÍ½±¥É‰„ ØĞ°ÈÀÔ°ÄØÌ°¸Äà¤í‰…­É½Õ¹éÉ‰„ ÈĞ°àà°Øà°¸Ä¤íÁ…‘‘¥¹œèİÁà€ÄÁÁàí‰½É‘•ÈµÉ…‘¥ÕÌèäåÁáô¹¥¹Ñ•±±¥•¹”µ±¥Ù”¥í‘¥ÍÁ±…äé¥¹±¥¹”µ‰±½¬íİ¥‘Ñ èÕÁàí¡•¥¡ĞèÕÁàí‰…­É½Õ¹èŒÌå”Í„àí‰½É‘•ÈµÉ…‘¥ÕÌèÔÀ”íµ…É¥¸µÉ¥¡ĞèÕÁàí‰½àµÍ¡…‘½ÜèÀ€À€åÁà€ŒÌå”Í„àí…¹¥µ…Ñ¥½¸éµ¥¹‘AÕ±Í”€Ä¸ÕÌ¥¹™¥¹¥Ñ•ô¹¥¹Ñ•±±¥•¹”µÉ¥‘í‘¥ÍÁ±…äéÉ¥íÉ¥µÑ•µÁ±…Ñ”µ½±Õµ¹ÌèÄ¸ÌÕ™È€Å™È€Å™Èí…ÀèÄÉÁáô¹¥¹Ñ•°µ…É‘í‰½É‘•ÈèÅÁàÍ½±¥€ŒÅˆÌÀĞäí‰½É‘•ÈµÉ…‘¥ÕÌèÄÕÁàí‰…­É½Õ¹é±¥¹•…ÈµÉ…‘¥•¹Ğ ÄĞÕ‘•œ±É‰„ ÄÄ°ÈÌ°ĞÀ°¸äØ¤±É‰„ Ü°ÄĞ°ÈÔ°¸äÜ¤¤íÁ…‘‘¥¹œèÄÙÁàí‰½àµÍ¡…‘½ÜèÀ€ÄÕÁà€ĞÕÁàÉ‰„ À°À°À°¸ÄĞ¤±¥¹Í•Ğ€À€ÅÁàÉ‰„ ÈÔÔ°ÈÔÔ°ÈÔÔ°¸ÀÌÔ¤í½Ù•É™±½Üé¡¥‘‘•¸íÑÉ…¹Í¥Ñ¥½¸éÑÉ…¹Í™½É´€¸ÈÕÌ±‰½É‘•Èµ½±½È€¸ÈÕÍô¹¥¹Ñ•°µ…Éé¡½Ù•ÉíÑÉ…¹Í™½É´éÑÉ…¹Í±…Ñ•d ´ÉÁà¤í‰½É‘•Èµ½±½ÈèŒÈäĞÜØÑô¹¥¹Ñ•°µÑ¥Ñ±•í‘¥ÍÁ±…äé™±•àí©ÕÍÑ¥™äµ½¹Ñ•¹ĞéÍÁ…”µ‰•Ñİ••¸í…±¥¸µ¥Ñ•µÌé™±•àµÍÑ…ÉĞíµ…É¥¸µ‰½ÑÑ½´èÄÙÁáô¹¥¹Ñ•°µÑ¥Ñ±”ÍÁ…¹í™½¹ĞµÍ¥é”èİÁàí±•ÑÑ•ÈµÍÁ…¥¹œè¸Äá•´í½±½ÈèŒÜÀàå…„í™½¹Ğµİ•¥¡ĞèàÀÁô¹¥¹Ñ•°µÑ¥Ñ±” Íí™½¹ĞµÍ¥é”èÄÉÁàíµ…É¥¸èÑÁà€À€Áô¹¥¹Ñ•°µÑ¥Ñ±”ù‰í™½¹ĞµÍ¥é”èİÁàí½±½ÈèŒÜÄàĞå•ô¹É½ÕÑ”µ‰…‘•í½±½ÈèŒÙ•‰‘™˜…¥µÁ½ÉÑ…¹Ğí‰½É‘•ÈèÅÁàÍ½±¥€ŒÈÄĞØÙ”í‰½É‘•ÈµÉ…‘¥ÕÌèäåÁàíÁ…‘‘¥¹œèÑÁà€İÁàí‰…­É½Õ¹èŒÁŒÈÀÌİô¹µ•µ½Éäµ½Õ¹Ñí½±½ÈèŒåŒàÕ‘˜…¥µÁ½ÉÑ…¹Ñô¹Í¡½ĞµÑ¥µ•±¥¹•í¡•¥¡ĞèÄÀÉÁàíÁ½Í¥Ñ¥½¸éÉ•±…Ñ¥Ù”í‘¥ÍÁ±…äé™±•àí©ÕÍÑ¥™äµ½¹Ñ•¹ĞéÍÁ…”µ‰•Ñİ••¸íÁ…‘‘¥¹œµÑ½ÀèÕÁáô¹Ñ¥µ•±¥¹”µÑÉ…­íÁ½Í¥Ñ¥½¸é…‰Í½±ÕÑ”í±•™Ğèà”íÉ¥¡Ğèà”íÑ½ÀèÈÉÁàí¡•¥¡ĞèÉÁàí‰…­É½Õ¹èŒÄÜÉˆĞÌí½Ù•É™±½Üé¡¥‘‘•¹ô¹Ñ¥µ•±¥¹”µÑÉ…¬é…™Ñ•Éí½¹Ñ•¹ĞèˆˆíÁ½Í¥Ñ¥½¸é…‰Í½±ÕÑ”í¥¹Í•ĞèÀí‰…­É½Õ¹é±¥¹•…ÈµÉ…‘¥•¹Ğ äÁ‘•œ°ŒÍˆá™˜°ŒÍ‰‘ˆÄ¤í½Á…¥Ñäè¸ÄÙô¹Ñ¥µ•±¥¹”µÑÉ…¬ùÍÁ…¹í‘¥ÍÁ±…äé‰±½¬í¡•¥¡ĞèÄÀÀ”í‰…­É½Õ¹é±¥¹•…ÈµÉ…‘¥•¹Ğ äÁ‘•œ°ŒÑá™˜°ŒÌİ‘™ˆÀ¤í‰½àµÍ¡…‘½ÜèÀ€À€ÄÉÁàÉ‰„ ØÈ°ÄĞĞ°ÈÔÔ°¸ÔÔ¤íİ¥‘Ñ èÀíÑÉ…¹Í¥Ñ¥½¸éİ¥‘Ñ €Ä¸ÉÌÕ‰¥Œµ‰•é¥•È ¸È°¸à°¸È°Ä¥ô¹Ñ¥µ•±¥¹”µ¹½‘•íİ¥‘Ñ èÄØ”íÁ½Í¥Ñ¥½¸éÉ•±…Ñ¥Ù”íÑ•áĞµ…±¥¸é•¹Ñ•Èíèµ¥¹‘•àèÅô¹Ñ¥µ•±¥¹”µ¹½‘”¥í‘¥ÍÁ±…äéÉ¥íÁ±…”µ¥Ñ•µÌé•¹Ñ•Èíİ¥‘Ñ èÈİÁàí¡•¥¡ĞèÈİÁàíµ…É¥¸èÀ…ÕÑ¼€ÄÁÁàí‰½É‘•ÈµÉ…‘¥ÕÌèÔÀ”í™½¹ĞµÍÑå±”é¹½Éµ…°í™½¹ĞµÍ¥é”èİÁàí‰…­É½Õ¹èŒÁˆÄàÈäí‰½É‘•ÈèÅÁàÍ½±¥€ŒÈØÍŒÔàí½±½ÈèŒÜÄàĞåíÑÉ…¹Í¥Ñ¥½¸è¸ÍÍô¹Ñ¥µ•±¥¹”µ¹½‘”ÍÑÉ½¹í‘¥ÍÁ±…äé‰±½¬í™½¹ĞµÍ¥é”èİÁàí½±½ÈèŒİˆá‘„İô¹Ñ¥µ•±¥¹”µ¹½‘”Íµ…±±í‘¥ÍÁ±…äé‰±½¬í™½¹ĞµÍ¥é”èÙÁàí½±½ÈèŒÔÌØØİ˜íµ…É¥¸µÑ½ÀèÍÁáô¹Ñ¥µ•±¥¹”µ¹½‘”¹‘½¹”¥í‰½É‘•Èµ½±½ÈèŒÉ˜á”ÜÀí‰…­É½Õ¹èŒÄÀÌØÉ”í½±½ÈèŒÑ‘”Å…˜í‰½àµÍ¡…‘½ÜèÀ€À€ÄÕÁàÉ‰„ ÔÈ°ÈÈØ°ÄÜĞ°¸ÄÌ¥ô¹Ñ¥µ•±¥¹”µ¹½‘”¹…Ñ¥Ù”¥í‰½É‘•Èµ½±½ÈèŒÍˆàÑàí‰…­É½Õ¹èŒÄÄÌĞÕˆí½±½ÈèŒØá‰™™˜í‰½àµÍ¡…‘½ÜèÀ€À€ÄåÁàÉ‰„ ØÀ°ÄĞÜ°ÈÔÔ°¸Èà¤í…¹¥µ…Ñ¥½¸éµ¥¹‘9½‘•AÕ±Í”€ÉÌ¥¹™¥¹¥Ñ•ô¹Ñ¥µ•±¥¹”µ™½½Ñ•Éí‘¥ÍÁ±…äé™±•àí©ÕÍÑ¥™äµ½¹Ñ•¹ĞéÍÁ…”µ‰•Ñİ••¸í‰½É‘•ÈµÑ½ÀèÅÁàÍ½±¥€ŒÄØÈÜÍŒíÁ…‘‘¥¹œµÑ½ÀèÄÅÁàí½±½ÈèŒØÄÜĞá”í™½¹ĞµÍ¥é”èİÁáô¹Ñ¥µ•±¥¹”µ™½½Ñ•È‰í½±½Èè‘‰”Õ˜Èí™½¹ĞµÍ¥é”èåÁàíµ…É¥¸µÉ¥¡ĞèÍÁáô¹É½ÕÑ”µµ½‘•±í‘¥ÍÁ±…äé™±•àí…±¥¸µ¥Ñ•µÌé•¹Ñ•Èí…ÀèÄÁÁàíÁ…‘‘¥¹œèÄÅÁàí‰½É‘•ÈèÅÁàÍ½±¥€ŒÅˆÌÄÑˆí‰…­É½Õ¹èŒÁ„ÄØÈØí‰½É‘•ÈµÉ…‘¥ÕÌèÄÁÁáô¹É½ÕÑ”µ½É‰íİ¥‘Ñ èÌÑÁàí¡•¥¡ĞèÌÑÁàí‰½É‘•ÈµÉ…‘¥ÕÌèÄÁÁàí‘¥ÍÁ±…äéÉ¥íÁ±…”µ¥Ñ•µÌé•¹Ñ•Èí™½¹ĞµÍ¥é”èÄÙÁáô¹É½ÕÑ”µ½Éˆ¹¹…¹½í‰…­É½Õ¹é±¥¹•…ÈµÉ…‘¥•¹Ğ ÄĞÕ‘•œ°ŒÄäÍ˜ÜÌ°ŒĞäÍŒÜà¤í½±½ÈèŒÜÙˆİ™™ô¹É½ÕÑ”µµ½‘•°ÍÑÉ½¹í‘¥ÍÁ±…äé‰±½¬í™½¹ĞµÍ¥é”èÄÁÁáô¹É½ÕÑ”µµ½‘•°Íµ…±±í‘¥ÍÁ±…äé‰±½¬í½±½ÈèŒØÔÜääĞí™½¹ĞµÍ¥é”èİÁàíµ…É¥¸µÑ½ÀèÍÁàíµ…àµİ¥‘Ñ èÄØÁÁàí±¥¹”µ¡•¥¡ĞèÄ¸Ñô¹É½ÕÑ”µµ½‘•°ùÍÁ…¹íµ…É¥¸µ±•™Ğé…ÕÑ¼í™½¹ĞµÍ¥é”èåÁàí½±½ÈèŒÔÑ‘™ˆÁô¹É½ÕÑ”µ‰…ÉÍí‘¥ÍÁ±…äéÉ¥í…ÀèÕÁàíµ…É¥¸µÑ½ÀèÄÍÁáô¹É½ÕÑ”µ‰…ÉÌ±…‰•±í‘¥ÍÁ±…äé™±•àí©ÕÍÑ¥™äµ½¹Ñ•¹ĞéÍÁ…”µ‰•Ñİ••¸í½±½ÈèŒÜĞàÔåí™½¹ĞµÍ¥é”èİÁáô¹É½ÕÑ”µ‰…ÉÌ±…‰•°ÍÁ…¹í½±½Èè‰İ”İô¹É½ÕÑ”µ‰…ÉÌù‘¥Ùí¡•¥¡ĞèÑÁàí‰…­É½Õ¹èŒÄØÈàÍí‰½É‘•ÈµÉ…‘¥ÕÌèäåÁàí½Ù•É™±½Üé¡¥‘‘•¸íµ…É¥¸µ‰½ÑÑ½´èÍÁáô¹É½ÕÑ”µ‰…ÉÌ¥í‘¥ÍÁ±…äé‰±½¬í¡•¥¡ĞèÄÀÀ”íİ¥‘Ñ èÀí‰½É‘•ÈµÉ…‘¥ÕÌèäåÁàí‰…­É½Õ¹é±¥¹•…ÈµÉ…‘¥•¹Ğ äÁ‘•œ°ŒÌäİ•™˜°ŒĞÙ‘…”¤íÑÉ…¹Í¥Ñ¥½¸éİ¥‘Ñ €ÅÌ•…Í”í‰½àµÍ¡…‘½ÜèÀ€À€áÁàÉ‰„ ÔĞ°ÄÔÌ°ÈÔÔ°¸ÈÔ¥ô¹É½ÕÑ”µ‘•Ñ…¥±íİ¥‘Ñ èÄÀÀ”íµ…É¥¸µÑ½ÀèÄÁÁàí‰½É‘•ÈèÀí‰½É‘•ÈµÑ½ÀèÅÁàÍ½±¥€ŒÄàÈäÍ”íÁ…‘‘¥¹œèÄÁÁà€À€Àí‰…­É½Õ¹éÑÉ…¹ÍÁ…É•¹Ğí½±½ÈèŒİ•„ÑĞíÑ•áĞµ…±¥¸é±•™Ğí™½¹ĞµÍ¥é”èİÁàíÕÉÍ½ÈéÁ½¥¹Ñ•Éô¹É½ÕÑ”µ‘•Ñ…¥°ÍÁ…¹í™±½…ĞéÉ¥¡Ñô¹±•…É¹¥¹œµ¥Ñ•µí‘¥ÍÁ±…äé™±•àí…ÀèåÁàíÁ…‘‘¥¹œèåÁà€Àí‰½É‘•Èµ‰½ÑÑ½´èÅÁàÍ½±¥€ŒÄØÈÜÍô¹±•…É¹¥¹œµ¥Ñ•´é±…ÍĞµ¡¥±‘í‰½É‘•Èµ‰½ÑÑ½´èÁô¹±•…É¹¥¹œµ¥½¹íİ¥‘Ñ èÈÕÁàí¡•¥¡ĞèÈÕÁàí‰½É‘•ÈµÉ…‘¥ÕÌèáÁàí‘¥ÍÁ±…äéÉ¥íÁ±…”µ¥Ñ•µÌé•¹Ñ•Èí™½¹ĞµÍ¥é”èåÁàí™±•àèÀ€À…ÕÑ½ô¹±•…É¹¥¹œµ¥½¸¹É••¹í‰…­É½Õ¹èŒÁÌĞÉ„í½±½ÈèŒĞÑ‘‘„åô¹±•…É¹¥¹œµ¥½¸¹…µ‰•Éí‰…­É½Õ¹èŒĞÄÌÀÄØí½±½Èè™™ŒÀÑ•ô¹±•…É¹¥¹œµ¥½¸¹‰±Õ•í‰…­É½Õ¹èŒÄÀÉ˜ÔÀí½±½ÈèŒÔÕ‰…™™ô¹±•…É¹¥¹œµ¥Ñ•´ÍÑÉ½¹í‘¥ÍÁ±…äé‰±½¬í™½¹ĞµÍ¥é”èáÁáô¹±•…É¹¥¹œµ¥Ñ•´Íµ…±±í‘¥ÍÁ±…äé‰±½¬í½±½ÈèŒØÔÜàäÈí™½¹ĞµÍ¥é”èİÁàí±¥¹”µ¡•¥¡ĞèÄ¸ĞÔíµ…É¥¸µÑ½ÀèÍÁáõ­•å™É…µ•Ìµ¥¹‘AÕ±Í•ìÀ”°ÄÀÀ•í½Á…¥ÑäèÅôÔÀ•í½Á…¥Ñäè¸Ñõõ­•å™É…µ•Ìµ¥¹‘9½‘•AÕ±Í•ìÀ”°ÄÀÀ•í‰½àµÍ¡…‘½ÜèÀ€À€ÀÉ‰„ ØÀ°ÄĞÜ°ÈÔÔ°À¤°À€À€ÀÉ‰„ ØÀ°ÄĞÜ°ÈÔÔ°À¥ôÔÀ•í‰½àµÍ¡…‘½ÜèÀ€À€À€ÑÁàÉ‰„ ØÀ°ÄĞÜ°ÈÔÔ°¸Àà¤°À€À€ÈÁÁàÉ‰„ ØÀ°ÄĞÜ°ÈÔÔ°¸Èà¥õõµ•‘¥„¡µ…àµİ¥‘Ñ èÄÄàÁÁà¥ì¹¥¹Ñ•±±¥•¹”µÉ¥‘íÉ¥µÑ•µÁ±…Ñ”µ½±Õµ¹ÌèÅ™È€Å™Éô¹Ñ¥µ•±¥¹”µ…É‘íÉ¥µ½±Õµ¸èÄ€¼ÍÁ…¸€Éõõµ•‘¥„¡µ…àµİ¥‘Ñ èàØÁÁà¥ì¹¥¹Ñ•±±¥•¹”µÉ¥‘íÉ¥µÑ•µÁ±…Ñ”µ½±Õµ¹ÌèÅ™Éô¹Ñ¥µ•±¥¹”µ…É‘íÉ¥µ½±Õµ¸é…ÕÑ½õõµ•‘¥„¡µ…àµİ¥‘Ñ èØĞÁÁà¥ì¹ÁÉ½‘ÕÑ¥½¸µ¥¹Ñ•±±¥•¹•íÁ…‘‘¥¹œèÀ€ÄÁÁà€ÄÙÁáô¹¥¹Ñ•±±¥•¹”µ¡•…‘•Éí…±¥¸µ¥Ñ•µÌé™±•àµÍÑ…ÉĞí…ÀèÄÉÁáô¹¥¹Ñ•±±¥•¹”µ¡•…‘•ÈÁíµ…àµİ¥‘Ñ é¹½¹•ô¹¥¹Ñ•±±¥•¹”µ±¥Ù•í‘¥ÍÁ±…äé¹½¹•ô¹¥¹Ñ•°µ…É‘íÁ…‘‘¥¹œèÄÍÁáô¹Í¡½ĞµÑ¥µ•±¥¹•í¡•¥¡ĞèÄÀáÁàí½Ù•É™±½Üé¡¥‘‘•¹ô¹Ñ¥µ•±¥¹”µ¹½‘”ÍÑÉ½¹í™½¹ĞµÍ¥é”èÙÁáô¹Ñ¥µ•±¥¹”µ¹½‘”Íµ…±±í™½¹ĞµÍ¥é”èÕÁáô¹Ñ¥µ•±¥¹”µ™½½Ñ•Éí…ÀèİÁáô¹É½ÕÑ”µµ½‘•°Íµ…±±íµ…àµİ¥‘Ñ èÄÌÁÁáõõµ•‘¥„¡ÁÉ•™•ÉÌµÉ•‘Õ•µµ½Ñ¥½¸éÉ•‘Õ”¥ìÁÉ½‘ÕÑ¥½¸µ¥¹Ñ•±±¥•¹”€¨°ÁÉ½‘ÕÑ¥½¸µ¥¹Ñ•±±¥•¹”€¨é‰•™½É”°ÁÉ½‘ÕÑ¥½¸µ¥¹Ñ•±±¥•¹”€¨é…™Ñ•Éí…¹¥µ…Ñ¥½¸µ‘ÕÉ…Ñ¥½¸è¸ÀÅµÌ…¥µÁ½ÉÑ…¹ĞíÑÉ…¹Í¥Ñ¥½¸µ‘ÕÉ…Ñ¥½¸è¸ÀÅµÌ…¥µÁ½ÉÑ…¹Ñõõ€ì(€€€‘½Õµ•¹Ğ¹¡•…¹…ÁÁ•¹‘¡¥±¡ÍÑå±”¤ì(€ô((€™Õ¹Ñ¥½¸•¹ÍÕÉ•%¹Ñ•±±¥•¹•A…¹•° ¤ì(€€€•¹ÍÕÉ•%¹Ñ•±±¥•¹•MÑå±•Ì ¤ì(€€€¥˜€¡‘½Õµ•¹Ğ¹•Ñ±•µ•¹Ñ	å% ÁÉ½‘ÕÑ¥½¸µ¥¹Ñ•±±¥•¹”œ¤¤É•ÑÕÉ¸ì(€€€½¹ÍĞ…¹¡½È€ô‘½Õµ•¹Ğ¹•Ñ±•µ•¹Ñ	å% •¹•É…Ñ¥½¸µÅÕ•Õ”œ¤ì(€€€¥˜€ ……¹¡½Èñğ€……¹¡½È¹Á…É•¹Ñ9½‘”¤É•ÑÕÉ¸ì(€€€½¹ÍĞÍ•Ñ¥½¸€ô‘½Õµ•¹Ğ¹É•…Ñ•±•µ•¹Ğ Í•Ñ¥½¸œ¤ìÍ•Ñ¥½¸¹¥€ô€ÁÉ½‘ÕÑ¥½¸µ¥¹Ñ•±±¥•¹”œìÍ•Ñ¥½¸¹±…ÍÍ9…µ”€ô€ÁÉ½‘ÕÑ¥½¸µ¥¹Ñ•±±¥•¹”œì(€€€Í•Ñ¥½¸¹¥¹¹•É!Q50€ô€ñ‘¥Ø±…ÍÌô‰¥¹Ñ•±±¥•¹”µ¡•…‘•Èˆøñ‘¥ØøñÍÁ…¸±…ÍÌô‰Í•Ñ¥½¸µ­¥­•Èˆù%IQ=H=9QI=0ğ½ÍÁ…¸øñ ÈùAÉ½‘ÕÑ¥½¸%¹Ñ•±±¥•¹”ğ½ ÈøñÀùQ¡”‘…Í¡‰½…ÉÍ¡½İÌİ¡¥ ½¹™¥ÕÉ•É½ÕÑ”É…¸°İ¡…Ğ•Ù…±Õ…Ñ¥½¹ÌÉ•½É‘•°…¹İ¡•É”…ÑÑ•¹Ñ¥½¸¥Ì¹••‘•¸ğ½Àøğ½‘¥ØøñÍÁ…¸±…ÍÌô‰¥¹Ñ•±±¥•¹”µ±¥Ù”ˆøñ¤øğ½¤øÙ¥‘•¹”ÑÉ…­•ğ½ÍÁ…¸øğ½‘¥Øøñ‘¥Ø±…ÍÌô‰¥¹Ñ•±±¥•¹”µÉ¥ˆøñ…ÉÑ¥±”±…ÍÌô‰¥¹Ñ•°µ…ÉÑ¥µ•±¥¹”µ…Éˆøñ‘¥Ø±…ÍÌô‰¥¹Ñ•°µÑ¥Ñ±”ˆøñ‘¥ØøñÍÁ…¸ùM!=P1=\ğ½ÍÁ…¸øñ ÌùÕÉÉ•¹ĞÁÉ½‘ÕÑ¥½¸Á…Ñ ğ½ Ìøğ½‘¥Øøñˆ¥ô‰Ñ¥µ•±¥¹•MÑ…Ñ”ˆùIdğ½ˆøğ½‘¥Øøñ‘¥Ø±…ÍÌô‰Í¡½ĞµÑ¥µ•±¥¹”ˆøñ‘¥Ø±…ÍÌô‰Ñ¥µ•±¥¹”µÑÉ…¬ˆøñÍÁ…¸¥ô‰Ñ¥µ•±¥¹•AÉ½É•ÍÌˆøğ½ÍÁ…¸øğ½‘¥Øøñ‘¥Ø±…ÍÌô‰Ñ¥µ•±¥¹”µ¹½‘”ˆøñ¤øÀÄğ½¤øñÍÑÉ½¹œù	É¥•˜ğ½ÍÑÉ½¹œøñÍµ…±°ù¥É•Ñ½Èğ½Íµ…±°øğ½‘¥Øøñ‘¥Ø±…ÍÌô‰Ñ¥µ•±¥¹”µ¹½‘”ˆøñ¤øÀÈğ½¤øñÍÑÉ½¹œùMÑå±”ğ½ÍÑÉ½¹œøñÍµ…±°ù	¥‰±”ğ½Íµ…±°øğ½‘¥Øøñ‘¥Ø±…ÍÌô‰Ñ¥µ•±¥¹”µ¹½‘”ˆøñ¤øÀÌğ½¤øñÍÑÉ½¹œùÍÍ•Ğğ½ÍÑÉ½¹œøñÍµ…±°ù%µ…”É½ÕÑ”ğ½Íµ…±°øğ½‘¥Øøñ‘¥Ø±…ÍÌô‰Ñ¥µ•±¥¹”µ¹½‘”ˆøñ¤øÀĞğ½¤øñÍÑÉ½¹œù5½Ñ¥½¸ğ½ÍÑÉ½¹œøñÍµ…±°ùY¥‘•¼É½ÕÑ”ğ½Íµ…±°øğ½‘¥Øøñ‘¥Ø±…ÍÌô‰Ñ¥µ•±¥¹”µ¹½‘”ˆøñ¤øÀÔğ½¤øñÍÑÉ½¹œùÙ…±Õ…Ñ”ğ½ÍÑÉ½¹œøñÍµ…±°ùEÕ…±¥Ñä…Ñ”ğ½Íµ…±°øğ½‘¥Øøñ‘¥Ø±…ÍÌô‰Ñ¥µ•±¥¹”µ¹½‘”ˆøñ¤øÀØğ½¤øñÍÑÉ½¹œù!¥ÍÑ½Éäğ½ÍÑÉ½¹œøñÍµ…±°ùI•½É‘Ìğ½Íµ…±°øğ½‘¥Øøğ½‘¥Øøñ‘¥Ø±…ÍÌô‰Ñ¥µ•±¥¹”µ™½½Ñ•ÈˆøñÍÁ…¸øñˆ¥ô‰Ñ¥µ•±¥¹•)½‰ÌˆøÀğ½ˆøÑÉ…­•©½‰Ìğ½ÍÁ…¸øñÍÁ…¸øñˆ¥ô‰Ñ¥µ•±¥¹•I•Ù¥•İÌˆøÀğ½ˆøÉ•Ù¥•ÜÍ¥¹…±Ìğ½ÍÁ…¸øñÍÁ…¸øñˆ¥ô‰Ñ¥µ•±¥¹•…¥±ÕÉ•ÌˆøÀğ½ˆø™…¥±ÕÉ•Ìğ½ÍÁ…¸øğ½‘¥Øøğ½…ÉÑ¥±”øñ…ÉÑ¥±”±…ÍÌô‰¥¹Ñ•°µ…ÉÉ½ÕÑ¥¹œµ…Éˆøñ‘¥Ø±…ÍÌô‰¥¹Ñ•°µÑ¥Ñ±”ˆøñ‘¥ØøñÍÁ…¸ù5=0I=UQ%9ğ½ÍÁ…¸øñ Ìù1…ÍĞÕÍ•É½ÕÑ”ğ½ Ìøğ½‘¥Øøñˆ±…ÍÌô‰É½ÕÑ”µ‰…‘”ˆ¥ô‰É½ÕÑ•	…‘”ˆù=9%UIğ½ˆøğ½‘¥Øøñ‘¥Ø±…ÍÌô‰É½ÕÑ”µµ½‘•°ˆøñ‘¥Ø±…ÍÌô‰É½ÕÑ”µ½Éˆ¹…¹¼ˆûŠ^8ğ½‘¥Øøñ‘¥ØøñÍÑÉ½¹œ¥ô‰É½ÕÑ•5½‘•°ˆùİ…¥Ñ¥¹œ©½ˆğ½ÍÑÉ½¹œøñÍµ…±°¥ô‰É½ÕÑ•I•…Í½¸ˆù½¹™¥ÕÉ•É½ÕÑ”ìÁÉ½Ù¥‘•È…Ù…¥±…‰¥±¥Ñä¡…Ì¹½Ğ‰••¸¡•­•¸ğ½Íµ…±°øğ½‘¥ØøñÍÁ…¸¥ô‰É½ÕÑ•M½É”ˆûŠPğ½ÍÁ…¸øğ½‘¥Øøñ‘¥Ø±…ÍÌô‰É½ÕÑ”µ‰…ÉÌˆøñ±…‰•°ùMÑå±”½¹Í¥ÍÑ•¹ä€ñÍÁ…¸¥ô‰É½ÕÑ•MÑå±”ˆûŠPğ½ÍÁ…¸øğ½±…‰•°øñ‘¥Øøñ¤¥ô‰É½ÕÑ•MÑå±•	…Èˆøğ½¤øğ½‘¥Øøñ±…‰•°ùAÉ½µÁĞ…‘¡•É•¹”€ñÍÁ…¸¥ô‰É½ÕÑ•I•˜ˆûŠPğ½ÍÁ…¸øğ½±…‰•°øñ‘¥Øøñ¤¥ô‰É½ÕÑ•I•™	…Èˆøğ½¤øğ½‘¥Øøñ±…‰•°ùI••¹ĞÍÕ•ÍÌÉ…Ñ”€ñÍÁ…¸¥ô‰É½ÕÑ•MÕ•ÍÌˆûŠPğ½ÍÁ…¸øğ½±…‰•°øñ‘¥Øøñ¤¥ô‰É½ÕÑ•MÕ•ÍÍ	…Èˆøğ½¤øğ½‘¥Øøğ½‘¥ØøñÀ±…ÍÌô‰É½ÕÑ”µ‘•Ñ…¥°ˆùAÉ½Ù¥‘•ÈÍ•±•Ñ¥½¸™½±±½İÌÍ•ÉÙ•È½¹™¥ÕÉ…Ñ¥½¸¸ğ½Àøğ½…ÉÑ¥±”øñ…ÉÑ¥±”±…ÍÌô‰¥¹Ñ•°µ…É±•…É¹¥¹œµ…Éˆøñ‘¥Ø±…ÍÌô‰¥¹Ñ•°µÑ¥Ñ±”ˆøñ‘¥ØøñÍÁ…¸ùY%955=Idğ½ÍÁ…¸øñ ÌùI•½É‘••Ù¥‘•¹”ğ½ Ìøğ½‘¥Øøñˆ±…ÍÌô‰µ•µ½Éäµ½Õ¹Ğˆ¥ô‰µ•µ½Éå½Õ¹ĞˆøÀÍ¥¹…±Ìğ½ˆøğ½‘¥Øøñ‘¥Ø±…ÍÌô‰±•…É¹¥¹œµ¥Ñ•´ˆøñÍÁ…¸±…ÍÌô‰±•…É¹¥¹œµ¥½¸É••¸ˆûŠrLğ½ÍÁ…¸øñ‘¥ØøñÍÑÉ½¹œùÁÁÉ½Ù••Ù…±Õ…Ñ¥½¹Ìğ½ÍÑÉ½¹œøñÍµ…±°¥ô‰…ÁÁÉ½Ù•‘M¥¹…°ˆù9¼…ÁÁÉ½Ù•Á…ÑÑ•É¸É•½É‘•å•Ğ¸ğ½Íµ…±°øğ½‘¥Øøğ½‘¥Øøñ‘¥Ø±…ÍÌô‰±•…É¹¥¹œµ¥Ñ•´ˆøñÍÁ…¸±…ÍÌô‰±•…É¹¥¹œµ¥½¸…µ‰•ÈˆûŠZÌğ½ÍÁ…¸øñ‘¥ØøñÍÑÉ½¹œùI••¹Ğ…ÑÑ•¹Ñ¥½¸ğ½ÍÑÉ½¹œøñÍµ…±°¥ô‰•ÉÉ½ÉM¥¹…°ˆù9¼™±…•¥Ñ•µÌ¥¸Ñ¡¥ÌÍ¹…ÁÍ¡½Ğ¸ğ½Íµ…±°øğ½‘¥Øøğ½‘¥Øøñ‘¥Ø±…ÍÌô‰±•…É¹¥¹œµ¥Ñ•´ˆøñÍÁ…¸±…ÍÌô‰±•…É¹¥¹œµ¥½¸‰±Õ”ˆûŠ2ğ½ÍÁ…¸øñ‘¥ØøñÍÑÉ½¹œù5½‘•°•Ù¥‘•¹”ğ½ÍÑÉ½¹œøñÍµ…±°¥ô‰µ½‘•±M¥¹…°ˆù•¹•É…Ñ¥½¸•Ù¥‘•¹”İ¥±°…ÁÁ•…È¡•É”…™Ñ•ÈÑ¡”™¥ÉÍĞ©½ˆ¸ğ½Íµ…±°øğ½‘¥Øøğ½‘¥Øøğ½…ÉÑ¥±”øğ½‘¥Øù€ì(€€€…¹¡½È¹Á…É•¹Ñ9½‘”¹¥¹Í•ÉÑ	•™½É”¡Í•Ñ¥½¸°…¹¡½È¤ì(€€€‘½Õµ•¹Ğ¹•Ñ±•µ•¹Ñ	å% É½ÕÑ••Ñ…¥°œ¤ü¹…‘‘Ù•¹Ñ1¥ÍÑ•¹•È ±¥¬œ°€ ¤€ôø‘½Õµ•¹Ğ¹•Ñ±•µ•¹Ñ	å% µ½‘•°µÁ•É™½Éµ…¹”œ¤ü¹ÍÉ½±±%¹Ñ½Y¥•Ü¡í‰•¡…Ù¥½ÈèÍµ½½Ñ ô¤¤ì(€ô((€™Õ¹Ñ¥½¸É•¹‘•ÉEÕ•Õ”¡©½‰Ì¤ì(€€€½¹ÍĞÉ½İÌ€ô€ ÅÕ•Õ•I½İÌœ¤ì(€€€¥˜€ …É½İÌ¤É•ÑÕÉ¸ì(€€€½¹ÍĞ…Ñ¥Ù”€ô©½‰Ì¹™¥±Ñ•È¡©½ˆ€ôølÅÕ•Õ•œ°€ÉÕ¹¹¥¹œœ°€İ…¥Ñ¥¹}™½É}ÁÔœ°€É•ÑÉå¥¹}ÁÔt¹¥¹±Õ‘•Ì¡©½ˆ¹ÍÑ…ÑÕÌ¤¤¹±•¹Ñ ì(€€€¥˜€  ÅÕ•Õ•Ñ¥Ù•½Õ¹Ğœ¤¤€ ÅÕ•Õ•Ñ¥Ù•½Õ¹Ğœ¤¹Ñ•áÑ½¹Ñ•¹Ğ€ô…Ñ¥Ù”ì(€€€¥˜€  ¹…ÙEÕ•Õ•½Õ¹Ğœ¤¤€ ¹…ÙEÕ•Õ•½Õ¹Ğœ¤¹Ñ•áÑ½¹Ñ•¹Ğ€ô…Ñ¥Ù”ì(€€€¥˜€ …©½‰Ì¹±•¹Ñ ¤ì(€€€€€É½İÌ¹¥¹¹•É!Q50€ô€œñÑÈøñÓ}7¶‰ËkºwµçH
-È	Ïİ‰È
-È\ØÊ›Ø‹œÚİÚY›Ø‹œÚİËœÚİÚY›Ø‹š[œ]ËœÚİÚY	ø %	ÊH
-È	ÏİÜ[ˆÛ\ÜÏH™[™Ú[™K[Z[šH¸¥ãÈ	È
-È\ØÊ[™Ú[™JH
-È	ÏÜÜ[İÜ[ˆÛ\ÜÏHœİ]\Ë\[	È
-Èİ]\ĞÛ\ÜÊ›Ø‹œİ]\ÊH
-È	È‰È
-Èİ]\ÓX™[
-›Ø‹œİ]\ÊH
-È	ÏÜÜ[İ]ˆÛ\ÜÏHœ›ÙÜ™\ÜËXÙ[Ü[Hİ[OHÚY‰È
-È
-›ÙÜ™\ÜÈOOH[Èˆ›ÙÜ™\ÜÊH
-È	ÉHÚOÜÜ[‰È
-È›ÙÜ™\ÜÕ^
-È	ÏØÙ]İ‰È
-È›][YJ›Ø‹˜Ü™X]Y]›Ø‹˜Ü™X]YØ]›Ø‹˜Ü™X]Y
-H
-È	Ïİ]ÛˆÛ\ÜÏHœ›İË[Y[Hˆ]OH’›Øˆ]Z[È¸ (¸ (¸ (Ø]Ûİİ‰ÎÂˆJKš›Ú[Š	ÉÊNÂˆB‚ˆ[˜İ[Ûˆ™[™\”™XÙ[
-™XÛÜ™Ë]˜[X][ÛœÊHÂˆÛÛœİ[H	
-	Ü™XÙ[Xİ]š]IÊNÂˆYˆ
-Y[
-H™]\›ÂˆÛÛœİ][\ÈH×NÂˆ
-™XÛÜ™È×JKœÛXÙJJK™›Ü‘XXÚ
-™XÛÜ™OˆÂˆÛÛœİ˜Z[YH™XÛÜ™œİ]\ÈOOH	Ù˜Z[Y	È™XÛÜ™œİ]\ÈOOH	ØØ[˜Ù[Y	ÎÂˆ][\Ëœ\Ú
-ÂˆÚ[™ˆ˜Z[YÈ	Ù˜Z[	Èˆ	ÜİXØÙ\ÜÉËˆ]Nˆ™XÛÜ™™]™[
-™XÛÜ™œİ]\ÈOOH	ØÛÛ\]Y	ÈÈ	ÑÙ[™\˜][ÛˆÛÛ\]Y	Èˆ	ÑÙ[™\˜][Ûˆ]™[	ÊKˆİXˆ™XÛÜ™›[Ù[™XÛÜ™œ›İšY\ˆ™XÛÜ™š›Ø—ÚY	ÙÙ[™\˜][Û‰Ëˆ[YNˆ™XÛÜ™œ™XÛÜ™YØ]™XÛÜ™[Y\İ[\™XÛÜ™˜Ü™X]Y]ˆX™[ˆ˜Z[YÈ	Ñ˜Z[Y	Èˆ™XÛÜ™œİ]\ÈOOH	ØÛÛ\]Y	ÈÈ	ĞÛÛ\]Y	Èˆ	Ô™XÛÜ™Y	ËˆJNÂˆJNÂˆ
-]˜[X][ÛœÈ×JKœÛXÙJÊK™›Ü‘XXÚ
-]˜[X][ÛˆOˆÂˆÛÛœİİ]\ÈHİš[™Ê]˜[X][Û‹œİ]\È	ÉÊKÓİÙ\Ø\ÙJ
-NÂˆÛÛœİ˜Z[YHÉÜ™Z™XİY	Ë	Ù]˜[X][Û—Ù\œ›Ü‰×Kš[˜ÛY\Êİ]\ÊNÂˆÛÛœİ›YÙÙYHİ]\ÈOOH	Û™YY×Ü™]šY]ÉÎÂˆ][\Ëœ\Ú
-ÂˆÚ[™ˆ˜Z[YÈ	Ù˜Z[	Èˆ›YÙÙYÈ	Ü™]šY]ÉÈˆ	ÜİXØÙ\ÜÉËˆ]Nˆİ]\ÈOOH	Ø\›İ™Y	ÈÈ	Ñ]˜[X][Ûˆ\›İ™Y	Èˆİ]\ÈOOH	Ü™Z™XİY	ÈÈ	Ñ]˜[X][Ûˆ™Z™XİY	Èˆİ]\ÈOOH	Ù]˜[X][Û—Ù\œ›Ü‰ÈÈ	Ñ]˜[X][Ûˆ[˜]˜Z[X›IÈˆİ]\ÈOOH	Û™YY×Ü™]šY]ÉÈÈ	Ñ]˜[X][Ûˆ™YYÈ™]šY]ÉÈˆ	Ñ]˜[X][Ûˆ	È
-È
-İ]\È	Ü™XÛÜ™Y	ÊKˆİXˆ]˜[X][Û‹š›Ø—ÚY]˜[X][Û‹™Ù[™\˜][Û—ÚY	Ù]˜[X][Û‰Ëˆ[YNˆ]˜[X][Û‹˜Ü™X]YØ]]˜[X][Û‹˜Ü™X]Y]]˜[X][Û‹[Y\İ[\ˆX™[ˆ˜Z[YÈ	Ğ][[Û‰Èˆ›YÙÙYÈ	Ó™YYÈ™]šY]ÉÈˆİ]\ÈOOH	Ø\›İ™Y	ÈÈ	Ğ\›İ™Y	Èˆ	Ô™XÛÜ™Y	ËˆJNÂˆJNÂˆ][\ËœÛÜ
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const esc = (x) => String(x ?? '').replace(/[&<>\"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[c]));
+  const fmtTime = (value) => { if (!value) return 'â€”'; try { return new Date(value).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}); } catch { return 'â€”'; } };
+  const providerName = (job) => String(job?.provider || job?.model || '').toLowerCase();
+  const isVideo = (job) => String(job?.type || '').includes('video') || providerName(job).includes('wan');
+  const statusLabel = (s) => ({completed:'Success',running:'Generating',queued:'Queued',waiting_for_gpu:'GPU Queue',retrying_gpu:'Retrying',failed:'Failed',canceled:'Canceled'}[s] || s || 'Unknown');
+  const statusClass = (s) => ({completed:'success',running:'running',queued:'queued',waiting_for_gpu:'running',retrying_gpu:'retrying',failed:'failed',canceled:'failed'}[s] || 'queued');
+  function updateEngineStats(jobs) {
+    const groups = { nano: jobs.filter(job => !isVideo(job)), wan: jobs.filter(isVideo) };
+    [['nano', groups.nano], ['wan', groups.wan]].forEach(([key, list]) => {
+      const outcomes = list.filter(job => ['completed', 'failed', 'canceled'].includes(job.status));
+      const completed = outcomes.filter(job => job.status === 'completed').length;
+      const success = outcomes.length ? Math.round(completed / outcomes.length * 1000) / 10 : null;
+      const latencyValues = list.map(job => Number(job.duration_ms || job.latency_ms || job.latency || 0)).filter(Boolean);
+      const latency = latencyValues.length ? (latencyValues.reduce((sum, value) => sum + value, 0) / latencyValues.length / 1000).toFixed(1) + 's' : 'â€”';
+      if ($(key + 'Jobs')) $(key + 'Jobs').textContent = list.length;
+      if ($(key + 'Success')) $(key + 'Success').textContent = success === null ? 'â€”' : success + '%';
+      if ($(key + 'Latency')) $(key + 'Latency').textContent = latency;
+    });
+  }
+  function ensureIntelligenceStyles() {
+    if (document.getElementById('mindscape-intelligence-styles')) return;
+    const style = document.createElement('style'); style.id = 'mindscape-intelligence-styles';
+    style.textContent = `.production-intelligence{padding:0 28px 28px;scroll-margin-top:84px}.intelligence-header{display:flex;justify-content:space-between;align-items:flex-end;margin:0 0 13px}.intelligence-header h2{font-size:19px;letter-spacing:-.035em;margin:4px 0}.intelligence-header p{font-size:9px;color:#687b96;margin:0;max-width:650px}.intelligence-live{font-size:8px;color:#75dcb6;border:1px solid rgba(64,205,163,.18);background:rgba(24,88,68,.1);padding:7px 10px;border-radius:99px}.intelligence-live i{display:inline-block;width:5px;height:5px;background:#39e3a8;border-radius:50%;margin-right:5px;box-shadow:0 0 9px #39e3a8;animation:mindPulse 1.5s infinite}.intelligence-grid{display:grid;grid-template-columns:1.35fr 1fr 1fr;gap:12px}.intel-card{border:1px solid #1b3049;border-radius:15px;background:linear-gradient(145deg,rgba(11,23,40,.96),rgba(7,14,25,.97));padding:16px;box-shadow:0 15px 45px rgba(0,0,0,.14),inset 0 1px rgba(255,255,255,.035);overflow:hidden;transition:transform .25s,border-color .25s}.intel-card:hover{transform:translateY(-2px);border-color:#294764}.intel-title{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px}.intel-title span{font-size:7px;letter-spacing:.18em;color:#7089aa;font-weight:800}.intel-title h3{font-size:12px;margin:4px 0 0}.intel-title>b{font-size:7px;color:#71849e}.route-badge{color:#6ebdff!important;border:1px solid #21466e;border-radius:99px;padding:4px 7px;background:#0c2037}.memory-count{color:#9c85df!important}.shot-timeline{height:102px;position:relative;display:flex;justify-content:space-between;padding-top:5px}.timeline-track{position:absolute;left:8%;right:8%;top:22px;height:2px;background:#172b43;overflow:hidden}.timeline-track:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#3b8cff,#3bdcb1);opacity:.16}.timeline-track>span{display:block;height:100%;background:linear-gradient(90deg,#4d8cff,#37dfb0);box-shadow:0 0 12px rgba(62,144,255,.55);width:0;transition:width 1.2s cubic-bezier(.2,.8,.2,1)}.timeline-node{width:16%;position:relative;text-align:center;z-index:1}.timeline-node i{display:grid;place-items:center;width:27px;height:27px;margin:0 auto 10px;border-radius:50%;font-style:normal;font-size:7px;background:#0b1829;border:1px solid #263c58;color:#71849d;transition:.3s}.timeline-node strong{display:block;font-size:7px;color:#7b8da7}.timeline-node small{display:block;font-size:6px;color:#53667f;margin-top:3px}.timeline-node.done i{border-color:#2f8e70;background:#10362e;color:#4de1af;box-shadow:0 0 15px rgba(52,226,174,.13)}.timeline-node.active i{border-color:#3b84d8;background:#11345b;color:#68bfff;box-shadow:0 0 19px rgba(60,147,255,.28);animation:mindNodePulse 2s infinite}.timeline-footer{display:flex;justify-content:space-between;border-top:1px solid #16273c;padding-top:11px;color:#61748e;font-size:7px}.timeline-footer b{color:#dbe5f2;font-size:9px;margin-right:3px}.route-model{display:flex;align-items:center;gap:10px;padding:11px;border:1px solid #1b314b;background:#0a1626;border-radius:10px}.route-orb{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-size:16px}.route-orb.nano{background:linear-gradient(145deg,#193f73,#493c78);color:#76b7ff}.route-model strong{display:block;font-size:10px}.route-model small{display:block;color:#657994;font-size:7px;margin-top:3px;max-width:160px;line-height:1.4}.route-model>span{margin-left:auto;font-size:9px;color:#54dfb0}.route-bars{display:grid;gap:5px;margin-top:13px}.route-bars label{display:flex;justify-content:space-between;color:#74859d;font-size:7px}.route-bars label span{color:#cbd7e7}.route-bars>div{height:4px;background:#16283d;border-radius:99px;overflow:hidden;margin-bottom:3px}.route-bars i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,#397eff,#46dcae);transition:width 1s ease;box-shadow:0 0 8px rgba(54,153,255,.25)}.route-detail{width:100%;margin-top:10px;border:0;border-top:1px solid #18293e;padding:10px 0 0;background:transparent;color:#7ea4d4;text-align:left;font-size:7px;cursor:pointer}.route-detail span{float:right}.learning-item{display:flex;gap:9px;padding:9px 0;border-bottom:1px solid #16273c}.learning-item:last-child{border-bottom:0}.learning-icon{width:25px;height:25px;border-radius:8px;display:grid;place-items:center;font-size:9px;flex:0 0 auto}.learning-icon.green{background:#0d342a;color:#44dda9}.learning-icon.amber{background:#413016;color:#ffc04e}.learning-icon.blue{background:#102f50;color:#55baff}.learning-item strong{display:block;font-size:8px}.learning-item small{display:block;color:#657892;font-size:7px;line-height:1.45;margin-top:3px}@keyframes mindPulse{0%,100%{opacity:1}50%{opacity:.4}}@keyframes mindNodePulse{0%,100%{box-shadow:0 0 0 rgba(60,147,255,0),0 0 0 rgba(60,147,255,0)}50%{box-shadow:0 0 0 4px rgba(60,147,255,.08),0 0 20px rgba(60,147,255,.28)}}@media(max-width:1180px){.intelligence-grid{grid-template-columns:1fr 1fr}.timeline-card{grid-column:1 / span 2}}@media(max-width:860px){.intelligence-grid{grid-template-columns:1fr}.timeline-card{grid-column:auto}}@media(max-width:640px){.production-intelligence{padding:0 10px 16px}.intelligence-header{align-items:flex-start;gap:12px}.intelligence-header p{max-width:none}.intelligence-live{display:none}.intel-card{padding:13px}.shot-timeline{height:108px;overflow:hidden}.timeline-node strong{font-size:6px}.timeline-node small{font-size:5px}.timeline-footer{gap:7px}.route-model small{max-width:130px}}@media(prefers-reduced-motion:reduce){#production-intelligence *,#production-intelligence *:before,#production-intelligence *:after{animation-duration:.01ms!important;transition-duration:.01ms!important}}`;
+    document.head.appendChild(style);
+  }
 
-KŠHOˆ™]È]J‹[YH
-HH™]È]JK[YH
-JNÂˆ[š[›™\’SH][\ËœÛXÙJŠK›X\
-][HOˆ	Ï]ˆÛ\ÜÏH˜Xİ]š]KZ][HÜ[ˆÛ\ÜÏH˜Xİ]š]KZXÛÛˆ	È
-È][KšÚ[™
-È	È‰È
-È
-][KšÚ[™OOH	Ù˜Z[	ÈÈ	ø¥¬ÉÈˆ][KšÚ[™OOH	Ü™]šY]ÉÈÈ	ø¥­‰Èˆ	ø¥©ÉÊH
-È	ÏÜÜ[]İ›Û™Ï‰È
-È\ØÊ][K]JH
-È	ÏÜİ›Û™ÏÛX[‰È
-È\ØÊ][KœİXŠH
-È	ÏÜÛX[Ù][YO‰È
-È\ØÊ›][YJ][K[YJJH
-È	Ïİ[YO[HÛ\ÜÏH˜Xİ]š]K]YÈ	È
-È][KšÚ[™
-È	È‰È
-È\ØÊ][K›X™[
-H
-È	ÏÙ[OÙ]‰ÊKš›Ú[Š	ÉÊH	Ï]ˆÛ\ÜÏH™[\K\İ]H“›ÈÙ[™\˜][ÛˆXİ]š]H™XÛÜ™YY]Ù]‰ÎÂˆB‚ˆ[˜İ[Ûˆ\]Q[™Ú[™Tİ]Ê›ØœÊ^ØÛÛœİÜ›İ\Ï^Û˜[›Îš›ØœË™š[\ŠOˆZ\ÕšY[ÊŠJKØ[š›ØœË™š[\Š\ÕšY[Ê_NÖÖÉÛ˜[›ÉËÜ›İ\Ë›˜[›×KÉİØ[‰ËÜ›İ\ËØ[—WK™›Ü‘XXÚ
+  function ensureIntelligencePanel() {
+    ensureIntelligenceStyles();
+    if (document.getElementById('production-intelligence')) return;
+    const anchor = document.getElementById('generation-queue');
+    if (!anchor || !anchor.parentNode) return;
+    const section = document.createElement('section'); section.id = 'production-intelligence'; section.className = 'production-intelligence';
+    section.innerHTML = `<div class="intelligence-header"><div><span class="section-kicker">DIRECTOR CONTROL</span><h2>Production Intelligence</h2><p>The dashboard shows which configured route ran, what evaluations recorded, and where attention is needed.</p></div><span class="intelligence-live"><i></i> Evidence tracked</span></div><div class="intelligence-grid"><article class="intel-card timeline-card"><div class="intel-title"><div><span>SHOT FLOW</span><h3>Current production path</h3></div><b id="timelineState">READY</b></div><div class="shot-timeline"><div class="timeline-track"><span id="timelineProgress"></span></div><div class="timeline-node"><i>01</i><strong>Brief</strong><small>Director</small></div><div class="timeline-node"><i>02</i><strong>Style</strong><small>Bible</small></div><div class="timeline-node"><i>03</i><strong>Asset</strong><small>Image route</small></div><div class="timeline-node"><i>04</i><strong>Motion</strong><small>Video route</small></div><div class="timeline-node"><i>05</i><strong>Evaluate</strong><small>Quality gate</small></div><div class="timeline-node"><i>06</i><strong>History</strong><small>Records</small></div></div><div class="timeline-footer"><span><b id="timelineJobs">0</b> tracked jobs</span><span><b id="timelineReviews">0</b> review signals</span><span><b id="timelineFailures">0</b> failures</span></div></article><article class="intel-card routing-card"><div class="intel-title"><div><span>MODEL ROUTING</span><h3>Last used route</h3></div><b class="route-badge" id="routeBadge">CONFIGURED</b></div><div class="route-model"><div class="route-orb nano">â—</div><div><strong id="routeModel">Awaiting job</strong><small id="routeReason">Configured route; provider availability has not been checked.</small></div><span id="routeScore">â€”</span></div><div class="route-bars"><label>Style consistency <span id="routeStyle">â€”</span></label><div><i id="routeStyleBar"></i></div><label>Prompt adherence <span id="routeRef">â€”</span></label><div><i id="routeRefBar"></i></div><label>Recent success rate <span id="routeSuccess">â€”</span></label><div><i id="routeSuccessBar"></i></div></div><p class="route-detail">Provider selection follows server configuration.</p></article><article class="intel-card learning-card"><div class="intel-title"><div><span>EVIDENCE MEMORY</span><h3>Recorded evidence</h3></div><b class="memory-count" id="memoryCount">0 signals</b></div><div class="learning-item"><span class="learning-icon green">âœ“</span><div><strong>Approved evaluations</strong><small id="approvedSignal">No approved pattern recorded yet.</small></div></div><div class="learning-item"><span class="learning-icon amber">â–³</span><div><strong>Recent attention</strong><small id="errorSignal">No flagged items in this snapshot.</small></div></div><div class="learning-item"><span class="learning-icon blue">âŒ</span><div><strong>Model evidence</strong><small id="modelSignal">Generation evidence will appear here after the first job.</small></div></div></article></div>`;
+    anchor.parentNode.insertBefore(section, anchor);
+    document.getElementById('routeDetail')?.addEventListener('click', () => document.getElementById('model-performance')?.scrollIntoView({behavior:'smooth'}));
+  }
 
-ÚÙ^K\İJOOØÛÛœİİ[[\İ›[™İÛ™O[\İ™š[\ŠOš‹œİ]\ÏOOIØÛÛ\]Y	ÊK›[™İİXØÙ\ÜÏ]İ[ÓX]œ›İ[™
-Û™Kİİ[
-ŒL
-KÌL›[][˜ŞU˜[Y\Ï[\İ›X\
-O“[X™\Š‹™\˜][Û—Û\ß‹›][˜ŞWÛ\ß‹›][˜Ş_
-JK™š[\Š›ÛÛX[ŠK][˜ŞO[][˜ŞU˜[Y\Ë›[™İÊ][˜ŞU˜[Y\Ëœ™YXÙJ
-KŠOO˜JØ‹
-KÛ][˜ŞU˜[Y\Ë›[™İÌL
-KÑš^Y
-JJÉÜÉÎ‰ø %	ÎÚYŠ	
-	ÚÙ^_R›ØœØ
-JI
-	ÚÙ^_R›ØœØ
-K^ÛÛ[]İ[	Ì	ÎÚYŠ	
-	ÚÙ^_TİXØÙ\ÜØ
-JI
-	ÚÙ^_TİXØÙ\ÜØ
-K^ÛÛ[\İXØÙ\ÜÏO[[Éø %	Î˜	ÜİXØÙ\ÜßIXÚYŠ	
-	ÚÙ^_S][˜ŞX
-JI
-	ÚÙ^_S][˜ŞX
-K^ÛÛ[[][˜ŞNßJNßB‚ˆ[˜İ[Ûˆ\]R[[YÙ[˜ÙJ›ØœË]˜[X][ÛœË™XÛÜ™ËX[
-HÂˆ[œİ\™R[[YÙ[˜ÙT[™[
+  function renderQueue(jobs) {
+    const rows = $('queueRows');
+    if (!rows) return;
+    const active = jobs.filter(job => ['queued', 'running', 'waiting_for_gpu', 'retrying_gpu'].includes(job.status)).length;
+    if ($('queueActiveCount')) $('queueActiveCount').textContent = active;
+    if ($('navQueueCount')) $('navQueueCount').textContent = active;
+    if (!jobs.length) {
+      rows.innerHTML = '<tr><td colspan="9" class="empty-state">No jobs in the queue.</td></tr>';
+      return;
+    }
+    rows.innerHTML = jobs.slice(0, 12).map((job, index) => {
+      const video = isVideo(job);
+      const progressValue = typeof job.progress === 'number' ? job.progress : Number.NaN;
+      const progress = job.status === 'completed' ? 100
+        : ['failed', 'canceled'].includes(job.status) ? 0
+          : Number.isFinite(progressValue) && progressValue >= 0 && progressValue <= 100 ? progressValue : null;
+      const project = job.project_name || job.project_id || job.projectId || 'default';
+      const engine = job.model || job.provider || 'Unknown';
+      const progressText = progress === null ? 'â€”' : Math.round(progress) + '%';
+      return '<tr><td>' + (index + 1) + '</td><td><span class="type-pill ' + (video ? 'video' : 'image') + '">' + (video ? 'Video' : 'Image') + '</span></td><td>' + esc(project) + '</td><td>' + esc(job.shot_id || job.shot?.shot_id || job.input?.shot_id || 'â€”') + '</td><td><span class="engine-mini">â— ' + esc(engine) + '</span></td><td><span class="status-pill ' + statusClass(job.status) + '">' + statusLabel(job.status) + '</span></td><td><div class="progress-cell"><span><i style="width:' + (progress === null ? 0 : progress) + '%"></i></span><b>' + progressText + '</b></div></td><td>' + fmtTime(job.createdAt || job.created_at || job.created) + '</td><td><button class="row-menu" title="Job details">â€¢â€¢â€¢</button></td></tr>';
+    }).join('');
+  }
 
-NÂˆÛÛœİXİ]™HH›ØœË™š[\Š›ØˆOˆÉÜ]Y]YY	Ë	Ü[›š[™ÉË	İØZ][™×Ù›Ü—ÙÜIË	Ü™]Z[™×ÙÜI×Kš[˜ÛY\Ê›Ø‹œİ]\ÊJK›[™İÂˆÛÛœİ˜Z[YH›ØœË™š[\Š›ØˆOˆÉÙ˜Z[Y	Ë	ØØ[˜Ù[Y	×Kš[˜ÛY\Ê›Ø‹œİ]\ÊJK›[™İÂˆÛÛœİ™]šY]ÜÈH]˜[X][ÛœË™š[\Š][HOˆÉÛ™YY×Ü™]šY]ÉË	Ü™Z™XİY	Ë	Ù]˜[X][Û—Ù\œ›Ü‰×Kš[˜ÛY\Ê][Kœİ]\ÊJK›[™İÂˆÛÛœİ]\İH›ØœËœÛXÙJ
-KœÛÜ
+  function renderRecent(records, evaluations) {
+    const el = $('recentActivity');
+    if (!el) return;
+    const items = [];
+    (records || []).slice(0, 5).forEach(record => {
+      const failed = record.status === 'failed' || record.status === 'canceled';
+      items.push({
+        kind: failed ? 'fail' : 'success',
+        title: record.event || (record.status === 'completed' ? 'Generation completed' : 'Generation event'),
+        sub: record.model || record.provider || record.job_id || 'generation',
+        time: record.recorded_at || record.timestamp || record.createdAt,
+        label: failed ? 'Failed' : record.status === 'completed' ? 'Completed' : 'Recorded',
+      });
+    });
+    (evaluations || []).slice(0, 3).forEach(evaluation => {
+      const status = String(evaluation.status || '').toLowerCase();
+      const failed = ['rejected', 'evaluation_error'].includes(status);
+      const flagged = status === 'needs_review';
+      items.push({
+        kind: failed ? 'fail' : flagged ? 'review' : 'success',
+        title: status === 'approved' ? 'Evaluation approved' : status === 'rejected' ? 'Evaluation rejected' : status === 'evaluation_error' ? 'Evaluation unavailable' : status === 'needs_review' ? 'Evaluation needs review' : 'Evaluation: ' + (status || 'recorded'),
+        sub: evaluation.job_id || evaluation.generation_id || 'evaluation',
+        time: evaluation.created_at || evaluation.createdAt || evaluation.timestamp,
+        label: failed ? 'Attention' : flagged ? 'Needs Review' : status === 'approved' ? 'Approved' : 'Recorded',
+      });
+    });
+    items.sort((a, b) => new Date(b.time || 0) - new Date(a.time || 0));
+    el.innerHTML = items.slice(0, 6).map(item => '<div class="activity-item"><span class="activity-icon ' + item.kind + '">' + (item.kind === 'fail' ? 'â–³' : item.kind === 'review' ? 'â–¶' : 'â–§') + '</span><div><strong>' + esc(item.title) + '</strong><small>' + esc(item.sub) + '</small></div><time>' + esc(fmtTime(item.time)) + '</time><em class="activity-tag ' + item.kind + '">' + esc(item.label) + '</em></div>').join('') || '<div class="empty-state">No generation activity recorded yet.</div>';
+  }
 
-KŠHOˆ™]È]J‹˜Ü™X]Y]‹˜Ü™X]YØ]
-HH™]È]JK˜Ü™X]Y]K˜Ü™X]YØ]
-JVÌNÂˆYˆ
-	
-	İ[Y[[™R›ØœÉÊJH	
-	İ[Y[[™R›ØœÉÊK^ÛÛ[H›ØœË›[™İÂˆYˆ
-	
-	İ[Y[[™T™]šY]ÜÉÊJH	
-	İ[Y[[™T™]šY]ÜÉÊK^ÛÛ[H™]šY]ÜÎÂˆYˆ
-	
-	İ[Y[[™Q˜Z[\™\ÉÊJH	
-	İ[Y[[™Q˜Z[\™\ÉÊK^ÛÛ[H˜Z[YÂˆYˆ
-	
-	İ[Y[[™Tİ]IÊJH	
-	İ[Y[[™Tİ]IÊK^ÛÛ[HXİ]™HÈ	Ô•S“’S‘ÉÈˆ˜Z[YÈ	Ó‘QQÈUS•SÓ‰Èˆ›ØœË›[™İÈ	Ô‘PÓÔ‘Q	Èˆ	Ô‘PQIÎÂˆÛÛœİ™\ÜY›ÙÜ™\ÜÈH\[Ùˆ]\İËœ›ÙÜ™\ÜÈOOH	Û[X™\‰ÈÈ]\İœ›ÙÜ™\ÜÈˆ[X™\‹“˜SÂˆÛÛœİ[Y[[™T\˜Ù[H]\İËœİ]\ÈOOH	ØÛÛ\]Y	ÈÈLˆÉÙ˜Z[Y	Ë	ØØ[˜Ù[Y	×Kš[˜ÛY\Ê]\İËœİ]\ÊHÈˆ[X™\‹š\Ñš[š]J™\ÜY›ÙÜ™\ÜÊH	‰ˆ™\ÜY›ÙÜ™\ÜÈH	‰ˆ™\ÜY›ÙÜ™\ÜÈHLÈ™\ÜY›ÙÜ™\ÜÈˆ[ÂˆYˆ
-	
-	İ[Y[[™T›ÙÜ™\ÜÉÊJHÂˆ	
-	İ[Y[[™T›ÙÜ™\ÜÉÊKœİ[KÚYH
-[Y[[™T\˜Ù[OOH[Èˆ[Y[[™T\˜Ù[
-H
-È	ÉIÎÂˆ	
-	İ[Y[[™T›ÙÜ™\ÜÉÊKœİ[K›ÜXÚ]HH[Y[[™T\˜Ù[OOH[È	Ì	Èˆ	ÌIÎÂˆBˆYˆ
-	
-	ÛY[[ÜPÛİ[	ÊJH	
-	ÛY[[ÜPÛİ[	ÊK^ÛÛ[H
-]˜[X][ÛœË›[™İ
-È™XÛÜ™Ë›[™İ
-H
-È	ÈÚYÛ˜[ÉÎÂˆYˆ
-	
-	Ø\›İ™YÚYÛ˜[	ÊJH	
-	Ø\›İ™YÚYÛ˜[	ÊK^ÛÛ[H]˜[X][ÛœË›[™İÈ]˜[X][ÛœË™š[\Š][HOˆÉØ\›İ™Y	Ë	Ü\ÜÙY	Ë	ØXØÙ\Y	×Kš[˜ÛY\Êİš[™Ê][Kœİ]\È	ÉÊKÓİÙ\Ø\ÙJ
-JJK›[™İ
-È	È\›İ™Y]˜[X][Ûˆİ]ÛÛY\È™XÛÜ™Y‰Èˆ	Ó›È]˜[X][Ûˆİ]ÛÛYH™XÛÜ™YY]‰ÎÂˆYˆ
-	
-	Ù\œ›Ü”ÚYÛ˜[	ÊJH	
-	Ù\œ›Ü”ÚYÛ˜[	ÊK^ÛÛ[H˜Z[YÈ˜Z[Y
-È	ÈÙ[™\˜][Ûˆ˜Z[\™IÈ
-È
-˜Z[YOOHHÈ	ÉÈˆ	ÜÉÊH
-È	È™XÛÜ™YÈ[™\İYØ]H™Y›Ü™H™\X][™Ë‰Èˆ™]šY]ÜÈÈ™]šY]ÜÈ
-È	È][IÈ
-È
-™]šY]ÜÈOOHHÈ	ÉÈˆ	ÜÉÊH
-È	È™YYš\İX[™]šY]Ë‰Èˆ	Ó›È›YÙÙY][\È[ˆ\ÈÛ˜\Úİ‰ÎÂˆYˆ
-	
-	Û[Ù[ÚYÛ˜[	ÊJH	
-	Û[Ù[ÚYÛ˜[	ÊK^ÛÛ[H›ØœË›[™İÈ	Ô›İ]H]šY[˜ÙH\È™XÛÜ™Y›Üˆ	È
-È›ØœË›[™İ
-È	È™XÙ[›Ø‰È
-È
-›ØœË›[™İOOHHÈ	ÉÈˆ	ÜÉÊH
-È	Ë‰Èˆ	ÑÙ[™\˜][Ûˆ]šY[˜ÙHÚ[\X\ˆ\™HY\ˆHš\œİ›Ø‹‰ÎÂˆÛÛœİÛÛ™šYİ\™Y›İ]HHX[Ëœ›İšY\œÏËš[XYÙNÂˆYˆ
-	
-	Ü›İ]S[Ù[	ÊJH	
-	Ü›İ]S[Ù[	ÊK^ÛÛ[H]\İÈ]\İ›[Ù[]\İœ›İšY\ˆ	Õ[šÛ›İÛˆ›İ]IÈˆÛÛ™šYİ\™Y›İ]HÈÛÛ™šYİ\™Y›İ]K›[Ù[ÛÛ™šYİ\™Y›İ]Kœ›İšY\ˆˆ	Õ[˜]˜Z[X›IÎÂˆYˆ
-	
-	Ü›İ]T™X\ÛÛ‰ÊJH	
-	Ü›İ]T™X\ÛÛ‰ÊK^ÛÛ[H]\İÈ	Ô›İ]H™\ÜYHH]\İÙ[™\˜][Ûˆ›Ø‹‰ÈˆÛÛ™šYİ\™Y›İ]HÈ	ĞÛÛ™šYİ\™Y[XYÙH›İ]NÈ›İšY\ˆ]˜Z[Xš[]H\È›İ™Y[ˆÚXÚÙY‰Èˆ	Ô[[YH›İ]H[™›Ü›X][Ûˆ\È[˜]˜Z[X›K‰ÎÂˆÛÛœİØÛÜ™\ÈH]˜[X][ÛœË›X\
-][HOˆ][KœØÛÜ™\ÈßJNÂˆÛÛœİ]™\˜YÙHHÙ^HOˆÂˆÛÛœİ˜[Y\ÈHØÛÜ™\Ë›X\
-][HOˆ[X™\Š][VÚÙ^WJJK™š[\Š˜[YHOˆ[X™\‹š\Ñš[š]J˜[YJJNÂˆ™]\›ˆ˜[Y\Ë›[™İÈX]œ›İ[™
-˜[Y\Ëœ™YXÙJ
-İ[K˜[YJHOˆİ[H
-È˜[YK
-HÈ˜[Y\Ë›[™İ
-Hˆ[ÂˆNÂˆÛÛœİİ[HH]™\˜YÙJ	Üİ[WØÛÛœÚ\İ[˜ŞIÊNÂˆÛÛœİY\™[˜ÙHH]™\˜YÙJ	Ü›Û\ØY\™[˜ÙIÊNÂˆÛÛœİ\›Z[˜[›ØœÈH›ØœË™š[\Š›ØˆOˆÉØÛÛ\]Y	Ë	Ù˜Z[Y	Ë	ØØ[˜Ù[Y	×Kš[˜ÛY\Ê›Ø‹œİ]\ÊJNÂˆÛÛœİİXØÙ\ÜÈH\›Z[˜[›ØœË›[™İÈX]œ›İ[™
-\›Z[˜[›ØœË™š[\Š›ØˆOˆ›Ø‹œİ]\ÈOOH	ØÛÛ\]Y	ÊK›[™İÈ\›Z[˜[›ØœË›[™İ
-ˆL
-Hˆ[ÂˆYˆ
-	
-	Ü›İ]P˜YÙIÊJH	
-	Ü›İ]P˜YÙIÊK^ÛÛ[H]\İÈ	ÓUTÕ“Ğ‰Èˆ	ĞÓÓ‘’QÕT‘Q	ÎÂˆÖÉÜ›İ]Tİ[IËİ[WKÉÜ›İ]T™Y‰ËY\™[˜ÙWKÉÜ›İ]TİXØÙ\ÜÉËİXØÙ\Ü×WK™›Ü‘XXÚ
+  function updateEngineStats(jobs){const groups={nano:jobs.filter(j=>!isVideo(j)),wan:jobs.filter(isVideo)};[['nano',groups.nano],['wan',groups.wan]].forEach(([key,list])=>{const total=list.length,done=list.filter(j=>j.status==='completed').length,success=total?Math.round(done/total*1000)/10:null,latencyValues=list.map(j=>Number(j.duration_ms||j.latency_ms||j.latency||0)).filter(Boolean),latency=latencyValues.length?(latencyValues.reduce((a,b)=>a+b,0)/latencyValues.length/1000).toFixed(1)+'s':'â€”';if($(`${key}Jobs`))$(`${key}Jobs`).textContent=total||'0';if($(`${key}Success`))$(`${key}Success`).textContent=success==null?'â€”':`${success}%`;if($(`${key}Latency`))$(`${key}Latency`).textContent=latency;});}
 
-ÚY˜[YWJHOˆÂˆYˆ
-	
-Y
-JH	
-Y
-K^ÛÛ[H˜[YHOOH[È	ø %	Èˆ˜[YH
-È	ÉIÎÂˆJNÂˆÖÉÜ›İ]Tİ[P˜\‰Ëİ[WKÉÜ›İ]T™Y˜\‰ËY\™[˜ÙWKÉÜ›İ]TİXØÙ\ÜĞ˜\‰ËİXØÙ\Ü×WK™›Ü‘XXÚ
+  function updateIntelligence(jobs, evaluations, records, health) {
+    ensureIntelligencePanel();
+    const active = jobs.filter(job => ['queued', 'running', 'waiting_for_gpu', 'retrying_gpu'].includes(job.status)).length;
+    const failed = jobs.filter(job => ['failed', 'canceled'].includes(job.status)).length;
+    const reviews = evaluations.filter(item => ['needs_review', 'rejected', 'evaluation_error'].includes(item.status)).length;
+    const latest = jobs.slice().sort((a, b) => new Date(b.createdAt || b.created_at || 0) - new Date(a.createdAt || a.created_at || 0))[0];
+    if ($('timelineJobs')) $('timelineJobs').textContent = jobs.length;
+    if ($('timelineReviews')) $('timelineReviews').textContent = reviews;
+    if ($('timelineFailures')) $('timelineFailures').textContent = failed;
+    if ($('timelineState')) $('timelineState').textContent = active ? 'RUNNING' : failed ? 'NEEDS ATTENTION' : jobs.length ? 'RECORDED' : 'READY';
+    const reportedProgress = typeof latest?.progress === 'number' ? latest.progress : Number.NaN;
+    const timelinePercent = latest?.status === 'completed' ? 100 : ['failed', 'canceled'].includes(latest?.status) ? 0 : Number.isFinite(reportedProgress) && reportedProgress >= 0 && reportedProgress <= 100 ? reportedProgress : null;
+    if ($('timelineProgress')) {
+      $('timelineProgress').style.width = (timelinePercent === null ? 0 : timelinePercent) + '%';
+      $('timelineProgress').style.opacity = timelinePercent === null ? '0' : '1';
+    }
+    if ($('memoryCount')) $('memoryCount').textContent = (evaluations.length + records.length) + ' signals';
+    if ($('approvedSignal')) $('approvedSignal').textContent = evaluations.length ? evaluations.filter(item => ['approved', 'passed', 'accepted'].includes(String(item.status || '').toLowerCase())).length + ' approved evaluation outcomes recorded.' : 'No evaluation outcome recorded yet.';
+    if ($('errorSignal')) $('errorSignal').textContent = failed ? failed + ' generation failure' + (failed === 1 ? '' : 's') + ' recorded; investigate before repeating.' : reviews ? reviews + ' item' + (reviews === 1 ? '' : 's') + ' need visual review.' : 'No flagged items in this snapshot.';
+    if ($('modelSignal')) $('modelSignal').textContent = jobs.length ? 'Route evidence is recorded for ' + jobs.length + ' recent job' + (jobs.length === 1 ? '' : 's') + '.' : 'Generation evidence will appear here after the first job.';
+    const configuredRoute = health?.providers?.image;
+    if ($('routeModel')) $('routeModel').textContent = latest ? latest.model || latest.provider || 'Unknown route' : configuredRoute ? configuredRoute.model || configuredRoute.provider : 'Unavailable';
+    if ($('routeReason')) $('routeReason').textContent = latest ? 'Route reported by the latest generation job.' : configuredRoute ? 'Configured image route; provider availability has not been checked.' : 'Runtime route information is unavailable.';
+    const scores = evaluations.map(item => item.scores || {});
+    const average = key => {
+      const values = scores.map(item => Number(item[key])).filter(value => Number.isFinite(value));
+      return values.length ? Math.round(values.reduce((sum, value) => sum + value, 0) / values.length) : null;
+    };
+    const style = average('style_consistency');
+    const adherence = average('prompt_adherence');
+    const terminalJobs = jobs.filter(job => ['completed', 'failed', 'canceled'].includes(job.status));
+    const success = terminalJobs.length ? Math.round(terminalJobs.filter(job => job.status === 'completed').length / terminalJobs.length * 100) : null;
+    if ($('routeBadge')) $('routeBadge').textContent = latest ? 'LATEST JOB' : 'CONFIGURED';
+    [['routeStyle', style], ['routeRef', adherence], ['routeSuccess', success]].forEach(([id, value]) => {
+      if ($(id)) $(id).textContent = value === null ? 'â€”' : value + '%';
+    });
+    [['routeStyleBar', style], ['routeRefBar', adherence], ['routeSuccessBar', success]].forEach(([id, value]) => {
+      if ($(id)) $(id).style.width = (value === null ? 0 : value) + '%';
+    });
+  }
 
-ÚY˜[YWJHOˆÂˆYˆ
-	
-Y
-JH	
-Y
-Kœİ[KÚYH
-˜[YHOOH[Èˆ˜[YJH
-È	ÉIÎÂˆJNÂˆB‚ˆ\Ş[˜È[˜İ[Ûˆ™Yœ™\Ú
+  async function refresh() {
+    try {
+      const [jobsResponse, historyResponse, evaluationsResponse, healthResponse] = await Promise.all([
+        fetch('/jobs'),
+        fetch('/generation-history?limit=30'),
+        fetch('/evaluations?limit=20'),
+        fetch('/health')
+      ]);
+      const jobsData = await jobsResponse.json();
+      const historyData = await historyResponse.json();
+      const evaluationsData = await evaluationsResponse.json();
+      const health = healthResponse.ok ? await healthResponse.json() : null;
+      const jobs = jobsData.jobs || [];
+      const records = historyData.records || [];
+      const evaluations = evaluationsData.evaluations || [];
+      const active = jobs.filter(job => ['queued', 'running', 'waiting_for_gpu', 'retrying_gpu'].includes(job.status)).length;
+      const completed = jobs.filter(job => job.status === 'completed').length;
+      const failed = jobs.filter(job => ['failed', 'canceled'].includes(job.status)).length;
+      const review = evaluations.filter(item => ['needs_review', 'rejected', 'evaluation_error'].includes(item.status)).length;
+      if ($('metricActive')) $('metricActive').textContent = active;
+      if ($('metricCompleted')) $('metricCompleted').textContent = completed;
+      if ($('metricFailed')) $('metricFailed').textContent = failed;
+      if ($('metricReview')) $('metricReview').textContent = review;
+      if ($('activityCompleted')) $('activityCompleted').textContent = completed;
+      if ($('activityFailed')) $('activityFailed').textContent = failed;
+      if ($('activityReview')) $('activityReview').textContent = review;
+      if ($('systemStatus')) $('systemStatus').textContent = health?.ok ? 'System Online' : 'System Attention';
+      if ($('lastUpdated')) $('lastUpdated').textContent = 'Last updated: ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      if ($('healthPercent')) $('healthPercent').textContent = health ? health.ok ? 'OK' : 'CHECK' : 'â€”';
+      const healthLabels = {
+        healthApi: health ? health.ok ? 'Available' : 'Unavailable' : 'Unknown',
+        healthQueue: health ? health.storage_ok ? 'Writable' : 'Unavailable' : 'Unknown',
+        healthState: health ? health.storage_path_configured ? 'Configured path' : 'Default path' : 'Unknown',
+        healthModels: health ? health.provider_setup_ready ? 'Credentials set' : 'Setup needed' : 'Unknown',
+        healthStorage: health ? health.storage_path_configured ? 'Configured path' : 'Default path' : 'Unknown',
+      };
+      for (const [id, label] of Object.entries(healthLabels)) if ($(id)) $(id).textContent = label;
+      const providerNames = { google: 'Google', fal: 'fal.ai', hf_image: 'Hugging Face', hf_space: 'Hugging Face', replicate: 'Replicate' };
+      for (const [kind, route] of Object.entries({ image: health?.providers?.image, video: health?.providers?.video })) {
+        if (!route) continue;
+        const name = providerNames[route.provider] || route.provider;
+        if ($(kind + 'EngineName')) $(kind + 'EngineName').textContent = name;
+        if ($(kind + 'EngineModel')) $(kind + 'EngineModel').textContent = route.model || 'Model not reported';
+        if ($(kind + 'RouteNote')) $(kind + 'RouteNote').textContent = name + ' Â· ' + (route.model || 'model not reported') + ' Â· availability not checked';
+      }
+      updateEngineStats(jobs);
+      renderQueue(jobs);
+      renderRecent(records, evaluations);
+      updateIntelligence(jobs, evaluations, records, health);
+    } catch (error) {
+      if ($('systemStatus')) $('systemStatus').textContent = 'System Attention';
+      if ($('lastUpdated')) $('lastUpdated').textContent = 'Telemetry unavailable';
+      if ($('healthPercent')) $('healthPercent').textContent = 'CHECK';
+      ensureIntelligencePanel();
+    }
+  }
 
-HÂˆHÂˆÛÛœİÚ›ØœÔ™\ÜÛœÙK\İÜT™\ÜÛœÙK]˜[X][ÛœÔ™\ÜÛœÙKX[™\ÜÛœÙWHH]ØZ]›ÛZ\ÙK˜[
-Âˆ™]Ú
-	ËÚ›ØœÉÊKˆ™]Ú
-	ËÙÙ[™\˜][Û‹Z\İÜOÛ[Z]LÌ	ÊKˆ™]Ú
-	ËÙ]˜[X][ÛœÏÛ[Z]LŒ	ÊKˆ™]Ú
-	ËÚX[	ÊBˆJNÂˆÛÛœİ›ØœÑ]HH]ØZ]›ØœÔ™\ÜÛœÙKšœÛÛŠ
-NÂˆÛÛœİ\İÜQ]HH]ØZ]\İÜT™\ÜÛœÙKšœÛÛŠ
-NÂˆÛÛœİ]˜[X][ÛœÑ]HH]ØZ]]˜[X][ÛœÔ™\ÜÛœÙKšœÛÛŠ
-NÂˆÛÛœİX[HX[™\ÜÛœÙK›ÚÈÈ]ØZ]X[™\ÜÛœÙKšœÛÛŠ
-Hˆ[ÂˆÛÛœİ›ØœÈH›ØœÑ]Kš›ØœÈ×NÂˆÛÛœİ™XÛÜ™ÈH\İÜQ]Kœ™XÛÜ™È×NÂˆÛÛœİ]˜[X][ÛœÈH]˜[X][ÛœÑ]K™]˜[X][ÛœÈ×NÂˆÛÛœİXİ]™HH›ØœË™š[\Š›ØˆOˆÉÜ]Y]YY	Ë	Ü[›š[™ÉË	İØZ][™×Ù›Ü—ÙÜIË	Ü™]Z[™×ÙÜI×Kš[˜ÛY\Ê›Ø‹œİ]\ÊJK›[™İÂˆÛÛœİÛÛ\]YH›ØœË™š[\Š›ØˆOˆ›Ø‹œİ]\ÈOOH	ØÛÛ\]Y	ÊK›[™İÂˆÛÛœİ˜Z[YH›ØœË™š[\Š›ØˆOˆÉÙ˜Z[Y	Ë	ØØ[˜Ù[Y	×Kš[˜ÛY\Ê›Ø‹œİ]\ÊJK›[™İÂˆÛÛœİ™]šY]ÈH]˜[X][ÛœË™š[\Š][HOˆÉÛ™YY×Ü™]šY]ÉË	Ü™Z™XİY	Ë	Ù]˜[X][Û—Ù\œ›Ü‰×Kš[˜ÛY\Ê][Kœİ]\ÊJK›[™İÂˆYˆ
-	
-	ÛY]šXĞXİ]™IÊJH	
-	ÛY]šXĞXİ]™IÊK^ÛÛ[HXİ]™NÂˆYˆ
-	
-	ÛY]šXĞÛÛ\]Y	ÊJH	
-	ÛY]šXĞÛÛ\]Y	ÊK^ÛÛ[HÛÛ\]YÂˆYˆ
-	
-	ÛY]šXÑ˜Z[Y	ÊJH	
-	ÛY]šXÑ˜Z[Y	ÊK^ÛÛ[H˜Z[YÂˆYˆ
-	
-	ÛY]šXÔ™]šY]ÉÊJH	
-	ÛY]šXÔ™]šY]ÉÊK^ÛÛ[H™]šY]ÎÂˆYˆ
-	
-	ØXİ]š]PÛÛ\]Y	ÊJH	
-	ØXİ]š]PÛÛ\]Y	ÊK^ÛÛ[HÛÛ\]YÂˆYˆ
-	
-	ØXİ]š]Q˜Z[Y	ÊJH	
-	ØXİ]š]Q˜Z[Y	ÊK^ÛÛ[H˜Z[YÂˆYˆ
-	
-	ØXİ]š]T™]šY]ÉÊJH	
-	ØXİ]š]T™]šY]ÉÊK^ÛÛ[H™]šY]ÎÂˆYˆ
-	
-	ÜŞ\İ[Tİ]\ÉÊJH	
-	ÜŞ\İ[Tİ]\ÉÊK^ÛÛ[HX[Ë›ÚÈÈ	ÔŞ\İ[HÛ›[™IÈˆ	ÔŞ\İ[H][[Û‰ÎÂˆYˆ
-	
-	Û\İ\]Y	ÊJH	
-	Û\İ\]Y	ÊK^ÛÛ[H	Ó\İ\]Yˆ	È
-È™]È]J
-KÓØØ[U[YTİš[™Ê×KÈİ\ˆ	Ì‹YYÚ]	ËZ[]Nˆ	Ì‹YYÚ]	ÈJNÂˆYˆ
-	
-	ÚX[\˜Ù[	ÊJH	
-	ÚX[\˜Ù[	ÊK^ÛÛ[HX[ÈX[›ÚÈÈ	ÓÒÉÈˆ	ĞÒPÒÉÈˆ	ø %	ÎÂˆÛÛœİX[X™[ÈHÂˆX[\NˆX[ÈX[›ÚÈÈ	Ğ]˜Z[X›IÈˆ	Õ[˜]˜Z[X›IÈˆ	Õ[šÛ›İÛ‰ËˆX[]Y]YNˆX[ÈX[œİÜ˜YÙWÛÚÈÈ	ÕÜš]X›IÈˆ	Õ[˜]˜Z[X›IÈˆ	Õ[šÛ›İÛ‰ËˆX[İ]NˆX[ÈX[œİÜ˜YÙWÜ]ØÛÛ™šYİ\™YÈ	ĞÛÛ™šYİ\™Y]	Èˆ	ÑY˜][]	Èˆ	Õ[šÛ›İÛ‰ËˆX[[Ù[ÎˆX[ÈX[œ›İšY\—ÜÙ]\Ü™XYHÈ	ĞÜ™Y[X[ÈÙ]	Èˆ	ÔÙ]\™YYY	Èˆ	Õ[šÛ›İÛ‰ËˆX[İÜ˜YÙNˆX[ÈX[œİÜ˜YÙWÜ]ØÛÛ™šYİ\™YÈ	ĞÛÛ™šYİ\™Y]	Èˆ	ÑY˜][]	Èˆ	Õ[šÛ›İÛ‰ËˆNÂˆ›Üˆ
-ÛÛœİÚYX™[HÙˆØš™Xİ™[šY\ÊX[X™[ÊJHYˆ
-	
-Y
-JH	
-Y
-K^ÛÛ[HX™[ÂˆÛÛœİ›İšY\“˜[Y\ÈHÈÛÛÙÛNˆ	ÑÛÛÙÛIË˜[ˆ	Ù˜[˜ZIË—Ú[XYÙNˆ	ÒYÙÚ[™È˜XÙIË—ÜÜXÙNˆ	ÒYÙÚ[™È˜XÙIË™\XØ]Nˆ	Ô™\XØ]IÈNÂˆ›Üˆ
-ÛÛœİÚÚ[™›İ]WHÙˆØš™Xİ™[šY\ÊÈ[XYÙNˆX[Ëœ›İšY\œÏËš[XYÙKšY[ÎˆX[Ëœ›İšY\œÏËšY[ÈJJHÂˆYˆ
-\›İ]JHÛÛ[YNÂˆÛÛœİ˜[YHH›İšY\“˜[Y\ÖÜ›İ]Kœ›İšY\—H›İ]Kœ›İšY\ÂˆYˆ
-	
-Ú[™
-È	Ñ[™Ú[™S˜[YIÊJH	
-Ú[™
-È	Ñ[™Ú[™S˜[YIÊK^ÛÛ[H˜[YNÂˆYˆ
-	
-Ú[™
-È	Ñ[™Ú[™S[Ù[	ÊJH	
-Ú[™
-È	Ñ[™Ú[™S[Ù[	ÊK^ÛÛ[H›İ]K›[Ù[	Ó[Ù[›İ™\ÜY	ÎÂˆYˆ
-	
-Ú[™
-È	Ô›İ]S›İIÊJH	
-Ú[™
-È	Ô›İ]S›İIÊK^ÛÛ[H˜[YH
-È	È0­È	È
-È
-›İ]K›[Ù[	Û[Ù[›İ™\ÜY	ÊH
-È	È0­È]˜Z[Xš[]H›İÚXÚÙY	ÎÂˆBˆ\]Q[™Ú[™Tİ]Ê›ØœÊNÂˆ™[™\”]Y]YJ›ØœÊNÂˆ™[™\”™XÙ[
-™XÛÜ™Ë]˜[X][ÛœÊNÂˆ\]R[[YÙ[˜ÙJ›ØœË]˜[X][ÛœË™XÛÜ™ËX[
-NÂˆHØ]Ú
-\œ›ÜŠHÂˆYˆ
-	
-	ÜŞ\İ[Tİ]\ÉÊJH	
-	ÜŞ\İ[Tİ]\ÉÊK^ÛÛ[H	ÔŞ\İ[H][[Û‰ÎÂˆYˆ
-	
-	Û\İ\]Y	ÊJH	
-	Û\İ\]Y	ÊK^ÛÛ[H	Õ[[Y]H[˜]˜Z[X›IÎÂˆYˆ
-	
-	ÚX[\˜Ù[	ÊJH	
-	ÚX[\˜Ù[	ÊK^ÛÛ[H	ĞÒPÒÉÎÂˆ[œİ\™R[[YÙ[˜ÙT[™[
-
-NÂˆBˆB‚ˆØİ[Y[œ]Y\TÙ[XİÜ[
-	Ë›˜]‹Z][IÊK™›Ü‘XXÚ
-OO˜K˜Y]™[\İ[™\Š	ØÛXÚÉË
-
-OOÙØİ[Y[œ]Y\TÙ[XİÜ[
-	Ë›˜]‹Z][IÊK™›Ü‘XXÚ
-O˜Û\ÜÓ\İœ™[[İ™J	ØXİ]™IÊJNØK˜Û\ÜÓ\İ˜Y
-	ØXİ]™IÊNßJJNÙØİ[Y[œ]Y\TÙ[XİÜ[
-	Ë˜Xİ[Û‹X‹™\šËX‹šXÛÛ‹X‹œ›Ùš[KX‰ÊK™›Ü‘XXÚ
-O˜‹˜Y]™[\İ[™\Š	Û[İ\ÙYİÛ‰Ë
-
-OO˜‹˜Û\ÜÓ\İ˜Y
-	Ü™\ÜÙY	ÊJJNÙØİ[Y[œ]Y\TÙ[XİÜ[
-	Ø]Û‰ÊK™›Ü‘XXÚ
-O˜‹˜Y]™[\İ[™\Š	Û[İ\Ù]\	Ë
-
-OO˜‹˜Û\ÜÓ\İœ™[[İ™J	Ü™\ÜÙY	ÊJJNÉ
-	Ü™Yœ™\Ú\Ú›Ø\™	ÊOË˜Y]™[\İ[™\Š	ØÛXÚÉË™Yœ™\Ú
-NÙ[œİ\™R[[YÙ[˜ÙT[™[
-
-NÜ™Yœ™\Ú
-
-NÜÙ][\˜[
-™Yœ™\ÚML
-NÂˆÚ[™İËœ™Yœ™\Ú\Ú›Ø\™H™Yœ™\ÚÂŸJJ
-NÂ
+  document.querySelectorAll('.nav-item').forEach(a=>a.addEventListener('click',()=>{document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));a.classList.add('active');}));document.querySelectorAll('.action-btn,.dark-btn,.icon-btn,.profile-btn').forEach(b=>b.addEventListener('mousedown',()=>b.classList.add('pressed')));document.querySelectorAll('button').forEach(b=>b.addEventListener('mouseup',()=>b.classList.remove('pressed')));$('refreshDashboard')?.addEventListener('click',refresh);ensureIntelligencePanel();refresh();setInterval(refresh,15000);
+  window.refreshDashboard = refresh;
+})();
