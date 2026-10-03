@@ -4,7 +4,7 @@ Mindscape Studio has a browser director interface and a Node.js service. The bro
 
 ## Local setup
 
-Requires Node.js 20 or later.
+Requires Node.js 20.19 or later; the start script reads `.env` using Node's built-in environment-file support.
 
 1. Copy `.env.example` to `.env` and add provider credentials locally. Do not commit `.env`.
 2. Install dependencies with `npm install`.
@@ -32,6 +32,8 @@ Render's `render.yaml` currently selects Google image generation and Hugging Fac
 
 ## Current operational limits
 
-The queue is held in process memory. Style Bible, Master Assets, evaluations, and generation history are written to local files; generated outputs are also stored under the app directory. These files can be lost on service restart or deployment when the host does not provide persistent storage. API access is protected when `APP_ACCESS_TOKEN` is configured; Render production refuses to start without it. The service does not include request rate limiting. The Render Blueprint uses a free web service and automatic deployment; verify the connected branch and service settings in Render before relying on production behavior.
+The queue is atomically saved to `APP_DATA_DIR/generation-queue.json` (default: `data/`). Provider-backed Replicate and fal jobs with saved request IDs resume polling after a process restart. Jobs whose provider submission state is ambiguous are marked failed with a retry explanation to avoid duplicate provider requests. Style Bible, Master Assets, evaluations, generation history, uploaded references, and generated outputs use `APP_DATA_DIR` when it is configured.
+
+The default Render service uses the free plan, whose filesystem is ephemeral and which does not support persistent disks. To retain queue, project, upload, and output data across Render restarts and deploys, the service needs a paid plan with a persistent disk mounted at a path such as `/var/data`, and `APP_DATA_DIR` must point to that mount. That infrastructure change has not been made. API access is protected when `APP_ACCESS_TOKEN` is configured; Render production refuses to start without it. The service does not include request rate limiting.
 
 Replicate and fal jobs are asynchronous: the server stores the provider request, polls its status when the dashboard requests the job, and only evaluates the generation after completion. Synchronous Google and Hugging Face routes complete in the initial server-side generation call. The code does not implement provider webhooks.

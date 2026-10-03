@@ -1,5 +1,8 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const os = require('node:os');
+const path = require('node:path');
 const outputUrl = require('../media-output');
 const { isAuthorized, validateProductionConfig } = require('../access-control');
 
@@ -8,6 +11,7 @@ const originalHfVideoSpace = process.env.HF_SPACE_NAME;
 process.env.HF_IMAGE_SPACE_NAME = 'org/image-space';
 process.env.HF_SPACE_NAME = 'org/video-space';
 const { selectModel, submit, refresh } = require('../model-router');
+const { GenerationQueue } = require('../generation-queue');
 if (originalHfImageSpace === undefined) delete process.env.HF_IMAGE_SPACE_NAME;
 else process.env.HF_IMAGE_SPACE_NAME = originalHfImageSpace;
 if (originalHfVideoSpace === undefined) delete process.env.HF_SPACE_NAME;
@@ -135,6 +139,22 @@ test('keeps Replicate submissions running until polling returns a result', async
   }
 });
 
+test('reports missing credentials instead of leaving accepted provider jobs running forever', async () => {
+  const oldReplicateToken = process.env.REPLICATE_API_TOKEN;
+  const oldFalKey = process.env.FAL_KEY;
+  delete process.env.REPLICATE_API_TOKEN;
+  delete process.env.FAL_KEY;
+  try {
+    await assert.rejects(refresh({ provider: 'replicate', providerResponse: { id: 'prediction-1' } }), /REPLICATE_API_TOKEN is not configured/);
+    await assert.rejects(refresh({ provider: 'fal', model: 'fal-ai/video-model', providerResponse: { request_id: 'request-1' } }), /FAL_KEY is not configured/);
+  } finally {
+    if (oldReplicateToken === undefined) delete process.env.REPLICATE_API_TOKEN;
+    else process.env.REPLICATE_API_TOKEN = oldReplicateToken;
+    if (oldFalKey === undefined) delete process.env.FAL_KEY;
+    else process.env.FAL_KEY = oldFalKey;
+  }
+});
+
 test('polls fal status and fetches the result only after completion', async () => {
   const oldKey = process.env.FAL_KEY;
   process.env.FAL_KEY = 'test-key';
@@ -159,5 +179,64 @@ test('polls fal status and fetches the result only after completion', async () =
   } finally {
     if (oldKey === undefined) delete process.env.FAL_KEY;
     else process.env.FAL_KEY = oldKey;
+  }
+});
+
+test('persists completed jobs atomically without storing inline image bytes', () => {
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'mindscape-queue-test-'));
+  const storeFile = path.join(directory, 'generation-queue.json');
+  try {
+    const queue = new GenerationQueue({ storeFile });
+    queue.setJob({
+      id: 'completed-job',
+      status: 'completed',
+      createdAt: '2026-10-03T00:00:00.000Z',
+      input: { imageData: 'data:image/png;base64,PRIVATE_TEST_BYTES', image: 'data:image/png;base64,PRIVATE_TEST_BYTES' },
+      result: { output: '/generated/asset.png' }
+    });
+    const storedText = fs.readFileSync(storeFile, 'utf8');
+    const stored = JSON.parse(storedText)[0];
+    assert.equal(stored.input.imageData, undefined);
+    assert.equal(stored.input.image, '[omitted-image-data]');
+    assert.equal(storedText.includes('PRIVATE_TEST_BYTES'), false);
+    const restarted = new GenerationQueue({ storeFile });
+    assert.equal(restarted.get('completed-job').status, 'completed');
+    assert.equal(restarted.get('completed-job').result.output, '/generated/asset.png');
+  } finally {
+    fs.rmSync(directory, { recursive: true, force: true });
+  }
+});
+
+test('resumes provider-backed jobs after restart and fails ambiguous in-flight jobs safely', () => {
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'mindscape-queue-recovery-test-'));
+  const storeFile = path.join(directory, 'generation-queue.json');
+  try {
+    const queue = new GenerationQueue({ storeFile });
+    queue.setJob({ id: 'remote-job', status: 'running', provider: 'replicate', providerResponse: { id: 'prediction-1' }, createdAt: '2026-10-03T00:00:00.000Z' });
+    queue.setJob({ id: 'ambiguous-job', status: 'running', provider: 'hf_space', createdAt: '2026-10-03T00:00:01.000Z' });
+    const restarted = new GenerationQueue({ storeFile });
+    assert.equal(restarted.get('remote-job').status, 'running');
+    assert.equal(restarted.get('ambiguous-job').status, 'failed');
+    assert.equal(restarted.get('ambiguous-job').provider_state, 'server_restart');
+  } finally {
+    fs.rmSync(directory, { recursive: true, force: true });
+  }
+});
+
+test('coalesces concurrent refresh requests for the same job', async () => {
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'mindscape-queue-poll-test-'));
+  try {
+    const queue = new GenerationQueue({ storeFile: path.join(directory, 'generation-queue.json') });
+    queue.setJob({ id: 'remote-job', status: 'running', provider: 'replicate', providerResponse: { id: 'prediction-1' }, createdAt: '2026-10-03T00:00:00.000Z' });
+    let polls = 0;
+    queue.refreshJob = async id => {
+      polls += 1;
+      await new Promise(resolve => setTimeout(resolve, 10));
+      return queue.get(id);
+    };
+    await Promise.all([queue.refresh('remote-job'), queue.refresh('remote-job')]);
+    assert.equal(polls, 1);
+  } finally {
+    fs.rmSync(directory, { recursive: true, force: true });
   }
 });
