@@ -7,6 +7,10 @@ on:
 jobs:
   validate:
     runs-on: ubuntu-latest
+    env:
+      GEMINI_API_KEY: ci-placeholder
+      MINDSCAPE_API_KEY: ci-placeholder
+      ALLOWED_ORIGIN: http://localhost:8787
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -18,5 +22,10 @@ jobs:
       - run: node --check generation-queue.js
       - run: node --check agents.js
       - run: node --check app.js
-      - run: node server.js &
+      - run: node server.js > /tmp/mindscape.log 2>&1 &
       - run: sleep 2 && curl -fsS http://localhost:8787/health
+      - run: curl -fsS http://localhost:8787/ready
+      - run: curl -fsS -H 'Authorization: Bearer ci-placeholder' http://localhost:8787/jobs
+      - run: test "$(curl -sS -o /tmp/unauthorized.txt -w '%{http_code}' http://localhost:8787/jobs)" = "401"
+      - run: curl -fsS http://localhost:8787/ > /tmp/dashboard.html
+      - run: grep -q "Mindscape" /tmp/dashboard.html || grep -q "Animation" /tmp/dashboard.html
