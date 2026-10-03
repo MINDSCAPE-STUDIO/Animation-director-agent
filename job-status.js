@@ -29,7 +29,14 @@
     return `No final status arrived within ${minutes} minutes. The job may still be active on the server; check the generation queue for updates.`;
   }
 
-  const api = { classifySubmissionError, pollingFailure, pollingTimeoutMessage };
+  function terminalSuccessRate(jobs) {
+    const outcomes = jobs.filter(job => ['completed', 'failed', 'canceled'].includes(job.status));
+    if (!outcomes.length) return null;
+    const completed = outcomes.filter(job => job.status === 'completed').length;
+    return Math.round(completed / outcomes.length * 1000) / 10;
+  }
+
+  const api = { classifySubmissionError, pollingFailure, pollingTimeoutMessage, terminalSuccessRate };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   if (global) global.MindscapeJobStatus = api;
 })(typeof globalThis === 'undefined' ? this : globalThis);

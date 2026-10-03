@@ -9,9 +9,7 @@
   function updateEngineStats(jobs) {
     const groups = { nano: jobs.filter(job => !isVideo(job)), wan: jobs.filter(isVideo) };
     [['nano', groups.nano], ['wan', groups.wan]].forEach(([key, list]) => {
-      const outcomes = list.filter(job => ['completed', 'failed', 'canceled'].includes(job.status));
-      const completed = outcomes.filter(job => job.status === 'completed').length;
-      const success = outcomes.length ? Math.round(completed / outcomes.length * 1000) / 10 : null;
+      const success = window.MindscapeJobStatus.terminalSuccessRate(list);
       const latencyValues = list.map(job => Number(job.duration_ms || job.latency_ms || job.latency || 0)).filter(Boolean);
       const latency = latencyValues.length ? (latencyValues.reduce((sum, value) => sum + value, 0) / latencyValues.length / 1000).toFixed(1) + 's' : '—';
       if ($(key + 'Jobs')) $(key + 'Jobs').textContent = list.length;
@@ -90,7 +88,6 @@
     el.innerHTML = items.slice(0, 6).map(item => '<div class="activity-item"><span class="activity-icon ' + item.kind + '">' + (item.kind === 'fail' ? '△' : item.kind === 'review' ? '▶' : '▧') + '</span><div><strong>' + esc(item.title) + '</strong><small>' + esc(item.sub) + '</small></div><time>' + esc(fmtTime(item.time)) + '</time><em class="activity-tag ' + item.kind + '">' + esc(item.label) + '</em></div>').join('') || '<div class="empty-state">No generation activity recorded yet.</div>';
   }
 
-  function updateEngineStats(jobs){const groups={nano:jobs.filter(j=>!isVideo(j)),wan:jobs.filter(isVideo)};[['nano',groups.nano],['wan',groups.wan]].forEach(([key,list])=>{const total=list.length,done=list.filter(j=>j.status==='completed').length,success=total?Math.round(done/total*1000)/10:null,latencyValues=list.map(j=>Number(j.duration_ms||j.latency_ms||j.latency||0)).filter(Boolean),latency=latencyValues.length?(latencyValues.reduce((a,b)=>a+b,0)/latencyValues.length/1000).toFixed(1)+'s':'—';if($(`${key}Jobs`))$(`${key}Jobs`).textContent=total||'0';if($(`${key}Success`))$(`${key}Success`).textContent=success==null?'—':`${success}%`;if($(`${key}Latency`))$(`${key}Latency`).textContent=latency;});}
 
   function updateIntelligence(jobs, evaluations, records, health) {
     ensureIntelligencePanel();
