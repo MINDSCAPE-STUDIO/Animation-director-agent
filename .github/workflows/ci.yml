@@ -1,9 +1,5 @@
 name: Validate Agent
-on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+on: [push, pull_request]
 jobs:
   validate:
     runs-on: ubuntu-latest
