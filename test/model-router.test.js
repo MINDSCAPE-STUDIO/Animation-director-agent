@@ -10,7 +10,7 @@ const originalHfImageSpace = process.env.HF_IMAGE_SPACE_NAME;
 const originalHfVideoSpace = process.env.HF_SPACE_NAME;
 process.env.HF_IMAGE_SPACE_NAME = 'org/image-space';
 process.env.HF_SPACE_NAME = 'org/video-space';
-const { selectModel, validateGenerationInput, submit, refresh } = require('../model-router');
+const { selectModel, validateGenerationInput, normalizeVideoDuration, submit, refresh } = require('../model-router');
 const { GenerationQueue } = require('../generation-queue');
 if (originalHfImageSpace === undefined) delete process.env.HF_IMAGE_SPACE_NAME;
 else process.env.HF_IMAGE_SPACE_NAME = originalHfImageSpace;
@@ -37,6 +37,14 @@ function withEnvironment(values, run) {
   }
 }
 
+test('preserves supported 5 to 12 second video durations', () => {
+  assert.equal(normalizeVideoDuration(5), 5);
+  assert.equal(normalizeVideoDuration(10), 10);
+  assert.equal(normalizeVideoDuration(12), 12);
+  assert.equal(normalizeVideoDuration(2), 5);
+  assert.equal(normalizeVideoDuration(15), 12);
+  assert.equal(normalizeVideoDuration('invalid'), 10);
+});
 test('rejects unsupported generation types and empty directions before routing', () => {
   assert.throws(() => validateGenerationInput({ type: 'unknown', prompt: 'A scene' }), error => error.statusCode === 400 && error.code === 'invalid_generation_request');
   assert.throws(() => validateGenerationInput({ type: 'text_to_image', prompt: '  ' }), /non-empty prompt or structured shot direction/);
