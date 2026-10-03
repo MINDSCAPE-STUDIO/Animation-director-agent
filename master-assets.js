@@ -1,8 +1,9 @@
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const { APP_DATA_DIR } = require('./storage-paths');
 
-const DATA_DIR = path.join(__dirname, 'data');
+const DATA_DIR = APP_DATA_DIR;
 const FILE = path.join(DATA_DIR, 'master-assets.json');
 
 function ensureStore() {

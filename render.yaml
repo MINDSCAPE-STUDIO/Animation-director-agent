@@ -21,6 +21,8 @@ services:
         value: gemini-3.1-flash-image
       - key: VISION_MODEL
         value: gemini-3.8-flash
+      - key: APP_ACCESS_TOKEN
+        sync: false
       - key: GEMINI_API_KEY
         sync: false
       - key: REPLICATE_API_TOKEN

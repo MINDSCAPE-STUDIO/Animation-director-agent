@@ -1,8 +1,8 @@
 const fs = require('fs');
 const path = require('path');
+const { APP_DATA_DIR, writeJsonAtomically } = require('./storage-paths');
 
-const DATA_DIR = path.join(__dirname, 'data');
-const FILE = path.join(DATA_DIR, 'style-bible.json');
+const FILE = path.join(APP_DATA_DIR, 'style-bible.json');
 
 const DEFAULT_BIBLE = {
   schema_version: 1,
@@ -35,33 +35,42 @@ const DEFAULT_BIBLE = {
   updated_at: null,
 };
 
-function ensureStore() {
-  if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
+function readProjects() {
+  if (!fs.existsSync(FILE)) return new Map();
+  const stored = JSON.parse(fs.readFileSync(FILE, 'utf8'));
+  if (stored && stored.schema_version === 2 && stored.projects && typeof stored.projects === 'object' && !Array.isArray(stored.projects)) {
+    return new Map(Object.entries(stored.projects));
+  }
+  // Migrate the original one-project document in memory. The next update writes
+  // the versioned multi-project envelope without discarding its contents.
+  if (stored && typeof stored.project_id === 'string') return new Map([[stored.project_id, stored]]);
+  throw new Error(`Style Bible store has an invalid format: ${FILE}`);
+}
+
+function writeProjects(projects) {
+  writeJsonAtomically(FILE, { schema_version: 2, projects: Object.fromEntries(projects) });
 }
 
 function readBible(projectId = 'default') {
-  ensureStore();
-  if (!fs.existsSync(FILE)) {
-    const bible = { ...DEFAULT_BIBLE, project_id: projectId, created_at: new Date().toISOString(), updated_at: new Date().toISOString() };
-    fs.writeFileSync(FILE, JSON.stringify(bible, null, 2));
-    return bible;
-  }
-  const bible = JSON.parse(fs.readFileSync(FILE, 'utf8'));
-  if (projectId && bible.project_id !== projectId) return { ...DEFAULT_BIBLE, project_id: projectId };
-  return bible;
+  const id = projectId || 'default';
+  const bible = readProjects().get(id);
+  return bible ? { ...bible } : { ...DEFAULT_BIBLE, project_id: id };
 }
 
 function updateBible(projectId, patch = {}) {
-  const current = readBible(projectId);
+  const id = projectId || 'default';
+  const projects = readProjects();
+  const current = projects.get(id) || { ...DEFAULT_BIBLE, project_id: id };
   const next = {
     ...current,
     ...patch,
-    project_id: projectId,
+    project_id: id,
     version: (current.version || 0) + 1,
+    created_at: current.created_at || new Date().toISOString(),
     updated_at: new Date().toISOString(),
   };
-  ensureStore();
-  fs.writeFileSync(FILE, JSON.stringify(next, null, 2));
+  projects.set(id, next);
+  writeProjects(projects);
   return next;
 }
 
