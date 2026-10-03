@@ -20,7 +20,7 @@ async function poll(id,type){
       if(job.status==='completed'){
         const url=window.mindscapeOutputUrl(job.result);
         if(!url){setStatus('Output unavailable','The job completed, but the provider response did not contain an accessible output. Check the generation queue or server logs.');refreshDashboard();return}
-        setStatus('Complete',`${isVideo?'Video':'Asset'} generated with ${job.model}.`);
+        setStatus(job.output_persistence_warning?'Complete · save output':'Complete',job.output_persistence_warning?`${isVideo?'Video':'Asset'} generated, but a durable local copy could not be saved. Download it now; the provider link may expire.`:`${isVideo?'Video':'Asset'} generated with ${job.model}.`);
         const link=$(isVideo?'videoResultLink':'imageResultLink');link.href=url;link.classList.remove('hidden');refreshDashboard();return;
       }
       if(job.status==='failed'||job.status==='canceled'){
