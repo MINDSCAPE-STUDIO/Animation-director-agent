@@ -10,7 +10,7 @@ const originalHfImageSpace = process.env.HF_IMAGE_SPACE_NAME;
 const originalHfVideoSpace = process.env.HF_SPACE_NAME;
 process.env.HF_IMAGE_SPACE_NAME = 'org/image-space';
 process.env.HF_SPACE_NAME = 'org/video-space';
-const { selectModel, submit, refresh } = require('../model-router');
+const { selectModel, validateGenerationInput, submit, refresh } = require('../model-router');
 const { GenerationQueue } = require('../generation-queue');
 if (originalHfImageSpace === undefined) delete process.env.HF_IMAGE_SPACE_NAME;
 else process.env.HF_IMAGE_SPACE_NAME = originalHfImageSpace;
@@ -37,6 +37,20 @@ function withEnvironment(values, run) {
   }
 }
 
+test('rejects unsupported generation types and empty directions before routing', () => {
+  assert.throws(() => validateGenerationInput({ type: 'unknown', prompt: 'A scene' }), error => error.statusCode === 400 && error.code === 'invalid_generation_request');
+  assert.throws(() => validateGenerationInput({ type: 'text_to_image', prompt: '  ' }), /non-empty prompt or structured shot direction/);
+});
+
+test('requires reference images for image-driven generation', () => {
+  assert.throws(() => validateGenerationInput({ type: 'image_to_video', prompt: 'Animate a scene' }), /requires a reference image/);
+  assert.throws(() => validateGenerationInput({ type: 'image_to_image', prompt: 'Restyle this image' }), /requires a reference image/);
+});
+
+test('accepts the dashboard structured shot when an image-to-video reference is present', () => {
+  const job = validateGenerationInput({ type: 'image_to_video', shot: { character: 'Kai', action: 'walks toward camera' }, input: { image: '/uploads/reference.png' } });
+  assert.equal(job.type, 'image_to_video');
+});
 test('selects the configured Google image model', () => {
   withEnvironment({ IMAGE_PROVIDER: 'google', IMAGE_MODEL: 'gemini-image-test' }, () => {
     assert.deepEqual(selectModel({ type: 'text_to_image' }), {
