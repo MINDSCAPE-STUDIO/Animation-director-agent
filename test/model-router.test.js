@@ -1,5 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
+const outputUrl = require('../media-output');
 
 const originalHfImageSpace = process.env.HF_IMAGE_SPACE_NAME;
 const originalHfVideoSpace = process.env.HF_SPACE_NAME;
@@ -74,6 +75,13 @@ test('defaults video jobs to Replicate when no video provider is selected', () =
       model: 'bytedance/seedance-1-pro-fast'
     });
   });
+});
+
+test('finds a media URL inside common nested provider result shapes', () => {
+  assert.equal(outputUrl([{ video: { url: 'https://example.test/clip.mp4' } }]), 'https://example.test/clip.mp4');
+  assert.equal(outputUrl({ data: { images: [{ url: 'https://example.test/image.png' }] } }), 'https://example.test/image.png');
+  assert.equal(outputUrl({ output: '/generated/asset.png' }), '/generated/asset.png');
+  assert.equal(outputUrl({ status: 'completed' }), null);
 });
 
 function withMockFetch(responses, run) {
