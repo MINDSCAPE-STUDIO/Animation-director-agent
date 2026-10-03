@@ -8,6 +8,7 @@ const originalDataDir = process.env.APP_DATA_DIR;
 const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'mindscape-style-bible-'));
 process.env.APP_DATA_DIR = dataDir;
 const { getStyleContract, readBible, updateBible } = require('../style-bible');
+const { buildGenerationContext } = require('../generation-context');
 
 test.after(() => {
   if (originalDataDir === undefined) delete process.env.APP_DATA_DIR;
@@ -23,6 +24,15 @@ test('keeps Style Bibles isolated between projects', () => {
   assert.equal(readBible('project-a').visual_language.style, 'project-a-style');
   assert.equal(readBible('project-b').project_id, 'project-b');
   assert.equal(getStyleContract('project-a').project_id, 'project-a');
+});
+
+test('uses the selected project Style Bible when preparing a generation job', () => {
+  updateBible('shadow-of-innocence', { visual_language: { style: 'approved-shadow-style' } });
+  const context = buildGenerationContext({ project_id: 'shadow-of-innocence' });
+
+  assert.equal(context.styleBible.project_id, 'shadow-of-innocence');
+  assert.equal(context.styleContract.visual_language.style, 'approved-shadow-style');
+  assert.match(context.styleRules, /approved-shadow-style/);
 });
 
 test('migrates a legacy single-project Style Bible without losing its content', () => {
