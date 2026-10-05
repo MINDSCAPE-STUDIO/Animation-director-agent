@@ -13,10 +13,13 @@ jobs:
         with:
           node-version: 20
       - run: npm install --no-audit --no-fund
+      - run: node --check bootstrap.js
       - run: node --check server.js
       - run: node --check model-router.js
+      - run: node --check omniroute-router.js
       - run: node --check generation-queue.js
       - run: node --check agents.js
       - run: node --check app.js
-      - run: node server.js &
+      - run: npm start > /tmp/mindscape-server.log 2>&1 &
       - run: sleep 2 && curl -fsS http://localhost:8787/health
+      - run: cat /tmp/mindscape-server.log
