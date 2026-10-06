@@ -11,11 +11,19 @@ services:
       - key: VIDEO_PROVIDER
         value: hf_space
       - key: HF_SPACE_NAME
-        value: zerogpu-aoti/wan2-2-fp8da-aoti-faster
+        value: OpenKing/wan2-video-generation
       - key: HF_TOKEN
         sync: false
       - key: VIDEO_RESOLUTION
         value: 480p
+      - key: HF_VIDEO_WIDTH
+        value: '512'
+      - key: HF_VIDEO_HEIGHT
+        value: '288'
+      - key: HF_VIDEO_STEPS
+        value: '25'
+      - key: HF_VIDEO_GUIDANCE
+        value: '5'
       - key: IMAGE_PROVIDER
         value: hf_image
       - key: HF_IMAGE_SPACE_NAME
