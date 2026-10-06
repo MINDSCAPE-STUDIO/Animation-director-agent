@@ -6,6 +6,7 @@ services:
     buildCommand: npm install --no-audit --no-fund
     startCommand: npm start
     autoDeploy: true
+    healthCheckPath: /health
     envVars:
       - key: VIDEO_PROVIDER
         value: hf_space
@@ -16,9 +17,11 @@ services:
       - key: VIDEO_RESOLUTION
         value: 480p
       - key: IMAGE_PROVIDER
-        value: google
+        value: hf_image
+      - key: HF_IMAGE_SPACE_NAME
+        value: Qwen/Qwen-Image-2.1
       - key: IMAGE_MODEL
-        value: gemini-3.1-flash-image
+        value: Qwen/Qwen-Image-2.1
       - key: VISION_MODEL
         value: gemini-3.8-flash
       - key: GEMINI_API_KEY
