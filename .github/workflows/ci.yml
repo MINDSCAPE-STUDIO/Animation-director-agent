@@ -23,3 +23,15 @@ jobs:
       - run: npm start > /tmp/mindscape-server.log 2>&1 &
       - run: sleep 2 && curl -fsS http://localhost:8787/health
       - run: cat /tmp/mindscape-server.log
+      - name: Production smoke test
+        env:
+          PRODUCTION_URL: https://animation-director-agent.onrender.com
+        run: |
+          for i in $(seq 1 30); do
+            if curl -fsS "$PRODUCTION_URL/health" && curl -fsS "$PRODUCTION_URL/ready" && curl -fsS "$PRODUCTION_URL/"; then
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "Production smoke test failed"
+          exit 1
