@@ -87,7 +87,7 @@ async function submitPixazo(job){
 async function refreshPixazo(job){
   const id=job.providerResponse?.request_id;
   if(!id)return job;
-  const response=await requestJson(`${PIXAZO_BASE_URL}${PIXAZO_STATUS_BASE}/${encodeURIComponent(id)}`,{method:'GET',headers:{'Content-Type':undefined}});
+  const response=await requestJson(`${PIXAZO_BASE_URL}${PIXAZO_STATUS_BASE}/${encodeURIComponent(id)}`,{method:'GET'});
   const state=String(response?.status||'').toUpperCase();
   if(state==='COMPLETED'){
     const url=response?.output?.media_url?.[0]||response?.output?.preview_video?.url;
