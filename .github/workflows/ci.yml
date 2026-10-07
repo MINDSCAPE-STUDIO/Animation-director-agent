@@ -16,6 +16,7 @@ jobs:
       - run: node --check bootstrap.js
       - run: node --check server.js
       - run: node --check model-router.js
+      - run: node --check pixazo-ltx-provider.js
       - run: node --check omniroute-router.js
       - run: node --check generation-queue.js
       - run: node --check agents.js
