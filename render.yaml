@@ -38,6 +38,10 @@ services:
         sync: false
       - key: FAL_KEY
         sync: false
+      - key: PIXAZO_API_KEY
+        sync: false
+      - key: PUBLIC_BASE_URL
+        value: https://animation-director-agent.onrender.com
       - key: MINDSCAPE_API_KEY
         sync: false
       - key: ALLOWED_ORIGIN
