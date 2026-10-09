@@ -12,8 +12,10 @@ services:
         value: qwencloud
       - key: QWEN_CLOUD_API_KEY
         sync: false
-      - key: QWEN_VIDEO_MODEL
+      - key: QWEN_I2V_MODEL
         value: wan2.7-i2v
+      - key: QWEN_T2V_MODEL
+        value: wan2.7-t2v
       - key: VIDEO_RESOLUTION
         value: 720P
       - key: IMAGE_PROVIDER
