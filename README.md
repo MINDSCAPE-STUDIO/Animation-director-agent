@@ -9,7 +9,7 @@ Cloud-first, mobile-first animation orchestration app. The phone is only the con
 Current providers:
 
 - **Assets/images:** Google Nano Banana 2 (`gemini-3.1-flash-image`)
-- **Image → Video:** Hugging Face ZeroGPU Wan 2.2 Space (existing route) + optional Pixazo LTX free-preview route
+- **Image → Video and Text → Video:** QwenCloud Wan 2.7 API (primary route); optional Pixazo LTX route remains available by explicit configuration
 - **Visual evaluation:** Google Gemini 3.8 Flash (`gemini-3.8-flash`)
 
 Gemini 3.8 Flash is used as the evaluator because it accepts text, image and video inputs, supports structured outputs, and is currently available at a relatively low API cost. Google documents a 1M-token context window and video understanding for the model. The evaluator remains provider-agnostic so a future vision model can replace it without changing Mindscape's evaluation schema.
@@ -23,7 +23,7 @@ The repository includes `render.yaml` for Render.
 Required secrets:
 
 - `GEMINI_API_KEY` — Nano Banana 2 and Gemini visual evaluator
-- `HF_TOKEN` — optional/authentication for the free Hugging Face video route when required
+- `QWEN_CLOUD_API_KEY` — QwenCloud/DashScope API key required for Wan 2.7 video generation (set `VIDEO_PROVIDER=qwencloud`)
 - `PIXAZO_API_KEY` — required only when `VIDEO_PROVIDER=pixazo_ltx`
 - `PUBLIC_BASE_URL` — public HTTPS base URL used to expose temporary reference images to Pixazo; Render is configured with `https://animation-director-agent.onrender.com`
 
@@ -63,6 +63,10 @@ The application does not treat any generation or evaluation model as the product
 ## Important
 
 Real generation and evaluation require provider credentials and provider quotas/billing where applicable. The goal is that the **device does not become the bottleneck**: the phone sends a small job and cloud infrastructure performs the heavy computation.
+
+## QwenCloud Wan 2.7 video route
+
+Set `VIDEO_PROVIDER=qwencloud` (the default) and configure `QWEN_CLOUD_API_KEY` in Render Environment settings. The adapter supports asynchronous Wan 2.7 image-to-video and text-to-video jobs, polls task status, downloads the MP4 promptly, and stores it under `/generated/`. QwenCloud free quota is finite; enable its “Free quota only” setting to prevent usage beyond free quota from being billed. New accounts do not receive additional free quota merely for signing up again.
 
 ## Optional Pixazo LTX route
 
