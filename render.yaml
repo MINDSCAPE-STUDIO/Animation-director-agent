@@ -9,27 +9,17 @@ services:
     healthCheckPath: /health
     envVars:
       - key: VIDEO_PROVIDER
-        value: hf_space
-      - key: HF_SPACE_NAME
-        value: OpenKing/wan2-video-generation
-      - key: HF_TOKEN
+        value: qwencloud
+      - key: QWEN_CLOUD_API_KEY
         sync: false
+      - key: QWEN_VIDEO_MODEL
+        value: wan2.7-i2v
       - key: VIDEO_RESOLUTION
-        value: 480p
-      - key: HF_VIDEO_WIDTH
-        value: '512'
-      - key: HF_VIDEO_HEIGHT
-        value: '288'
-      - key: HF_VIDEO_STEPS
-        value: '25'
-      - key: HF_VIDEO_GUIDANCE
-        value: '5'
+        value: 720P
       - key: IMAGE_PROVIDER
-        value: hf_image
-      - key: HF_IMAGE_SPACE_NAME
-        value: Qwen/Qwen-Image-2.1
+        value: google
       - key: IMAGE_MODEL
-        value: Qwen/Qwen-Image-2.1
+        value: gemini-3.1-flash-image
       - key: VISION_MODEL
         value: gemini-3.8-flash
       - key: GEMINI_API_KEY
