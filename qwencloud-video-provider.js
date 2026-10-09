@@ -42,7 +42,7 @@ async function submitQwenCloud(job) {
   const duration = Math.max(2, Math.min(15, Math.round(Number(job.input?.duration) || 10)));
   const resolutionRaw = String(job.input?.resolution || process.env.VIDEO_RESOLUTION || '720P').toUpperCase();
   const resolution = resolutionRaw.includes('1080') ? '1080P' : '720P';
-  const model = process.env.QWEN_VIDEO_MODEL || (isI2V ? 'wan2.7-i2v' : 'wan2.7-t2v');
+  const model = process.env.QWEN_VIDEO_MODEL || (isI2V ? (process.env.QWEN_I2V_MODEL || 'wan2.7-i2v') : (process.env.QWEN_T2V_MODEL || 'wan2.7-t2v'));
   const input = { prompt: job.prompt || '' };
   if (isI2V) input.media = [{ type: 'first_frame', url: imageAsDataUrl(job.input?.image) }];
   if (job.input?.negative_prompt) input.negative_prompt = String(job.input.negative_prompt).slice(0, 500);
