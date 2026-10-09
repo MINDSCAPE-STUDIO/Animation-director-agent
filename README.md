@@ -70,4 +70,4 @@ Set `VIDEO_PROVIDER=qwencloud` (the default) and configure `QWEN_CLOUD_API_KEY` 
 
 ## Optional Pixazo LTX route
 
-Set `VIDEO_PROVIDER=pixazo_ltx` to use Pixazo's LTX Video Image → Video endpoint instead of the existing Hugging Face route. The provider is asynchronous: Mindscape submits the job, polls the provider status endpoint, and only marks the generation complete after a real MP4 URL is returned. Pixazo currently documents the base LTX 2.3 route as free during preview with a fair-use rate limit; it still requires an API key and a publicly accessible HTTPS input image. The existing Hugging Face/Wan route is unchanged unless this provider is explicitly selected.
+Set `VIDEO_PROVIDER=pixazo_ltx` to use Pixazo's LTX Video Image → Video endpoint instead of QwenCloud when explicitly selected. The provider is asynchronous: Mindscape submits the job, polls the provider status endpoint, and only marks the generation complete after a real MP4 URL is returned. Pixazo still requires an API key and a publicly accessible HTTPS input image.
