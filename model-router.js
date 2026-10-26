@@ -7,11 +7,11 @@ const FREE_HF_IMAGE_SPACE=process.env.HF_IMAGE_SPACE_NAME||'Qwen/Qwen-Image-2.1'
 function selectModel(job){if(job.type==='text_to_video'||job.type==='image_to_video'){if(process.env.VIDEO_PROVIDER==='qwencloud'||!process.env.VIDEO_PROVIDER)return{provider:'qwencloud',model:process.env.QWEN_VIDEO_MODEL||(job.type==='image_to_video'?'wan2.7-i2v':'wan2.7-t2v')};if(process.env.VIDEO_PROVIDER==='pixazo_ltx')return{provider:'pixazo_ltx',model:PIXAZO_MODEL};if(process.env.VIDEO_PROVIDER==='fal')return{provider:'fal',model:process.env.VIDEO_MODEL||(job.type==='image_to_video'?'wan/v2.6/image-to-video':'wan/v2.6/text-to-video')};return{provider:'replicate',model:process.env.VIDEO_MODEL||'bytedance/seedance-1-pro-fast'}}if(job.type==='video_understanding')return{provider:'fal',model:process.env.VISION_MODEL||'fal-ai/video-understanding'};if(process.env.IMAGE_PROVIDER==='fal')return{provider:'fal',model:process.env.IMAGE_MODEL||'fal-ai/flux-pro/v1.1'};return{provider:'google',model:process.env.IMAGE_MODEL||'gemini-3.1-flash-image'}}
 function quotaFallbackJob(job,error){
  const message=String(error?.message||error||'').toLowerCase();
- const quotaLike=/\\b429\\b|quota|rate.?limit|resource_exhausted|insufficient.{0,20}credit|billing.{0,20}limit|capacity.{0,20}exceeded/.test(message);
+ const quotaLike=/\b429\b|quota|rate.?limit|resource_exhausted|insufficient.{0,20}credit|billing.{0,20}limit|capacity.{0,20}exceeded/.test(message);
  if(!quotaLike)return null;
  if((job.provider==='google'||job.provider==='hf_image')&&process.env.FAL_KEY){return{...job,provider:'fal',model:process.env.IMAGE_FALLBACK_MODEL||process.env.IMAGE_MODEL_FALLBACK||'fal-ai/flux/schnell',fallback_from:job.provider,fallback_reason:'provider_quota'};}
  if(job.provider==='qwencloud'){
-  if(process.env.PIXAZO_API_KEY)return{...job,provider:'pixazo_ltx',model:PIXAZO_MODEL,fallback_from:job.provider,fallback_reason:'provider_quota'};
+  if(job.type==='image_to_video'&&process.env.PIXAZO_API_KEY)return{...job,provider:'pixazo_ltx',model:PIXAZO_MODEL,fallback_from:job.provider,fallback_reason:'provider_quota'};
   if(process.env.FAL_KEY&&job.type==='image_to_video'&&process.env.FAL_I2V_FALLBACK_MODEL)return{...job,provider:'fal',model:process.env.FAL_I2V_FALLBACK_MODEL,fallback_from:job.provider,fallback_reason:'provider_quota'};
   if(process.env.FAL_KEY&&job.type==='text_to_video'&&process.env.FAL_T2V_FALLBACK_MODEL)return{...job,provider:'fal',model:process.env.FAL_T2V_FALLBACK_MODEL,fallback_from:job.provider,fallback_reason:'provider_quota'};
  }
