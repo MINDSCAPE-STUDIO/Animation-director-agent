@@ -15,6 +15,7 @@ jobs:
       - run: npm install --no-audit --no-fund
       - run: node --check bootstrap.js
       - run: node --check server.js
+      - run: node --check dashboard.js
       - run: node --check model-router.js
       - run: node --check provider-readiness.js
       - run: npm test
