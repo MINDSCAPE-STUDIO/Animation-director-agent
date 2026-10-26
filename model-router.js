@@ -2,20 +2,33 @@
 const fs=require('fs');const os=require('os');const path=require('path');const {execFile}=require('child_process');const {promisify}=require('util');const execFileAsync=promisify(execFile);const ffmpegPath=require('ffmpeg-static');const {generateImage}=require('./google-image-provider');const {buildGenerationContext,injectGenerationContext}=require('./generation-context');
 const PROVIDERS={replicate:'https://api.replicate.com/v1',fal:'https://queue.fal.run',google:'https://generativelanguage.googleapis.com/v1beta/models'};
 const {PIXAZO_MODEL,submitPixazo}=require('./pixazo-ltx-provider');
+const {resolveImageRoute,resolveVideoRoute,resolveVideoFallback,resolveImageFallback}=require('./provider-readiness');
 const FREE_HF_SPACE=process.env.HF_SPACE_NAME||'zerogpu-aoti/wan2-2-fp8da-aoti-faster';
 const FREE_HF_IMAGE_SPACE=process.env.HF_IMAGE_SPACE_NAME||'Qwen/Qwen-Image-2.1';
-function selectModel(job){if(job.type==='text_to_video'||job.type==='image_to_video'){if(process.env.VIDEO_PROVIDER==='qwencloud'||!process.env.VIDEO_PROVIDER)return{provider:'qwencloud',model:process.env.QWEN_VIDEO_MODEL||(job.type==='image_to_video'?'wan2.7-i2v':'wan2.7-t2v')};if(process.env.VIDEO_PROVIDER==='pixazo_ltx')return{provider:'pixazo_ltx',model:PIXAZO_MODEL};if(process.env.VIDEO_PROVIDER==='fal')return{provider:'fal',model:process.env.VIDEO_MODEL||(job.type==='image_to_video'?'wan/v2.6/image-to-video':'wan/v2.6/text-to-video')};return{provider:'replicate',model:process.env.VIDEO_MODEL||'bytedance/seedance-1-pro-fast'}}if(job.type==='video_understanding')return{provider:'fal',model:process.env.VISION_MODEL||'fal-ai/video-understanding'};if(process.env.IMAGE_PROVIDER==='fal')return{provider:'fal',model:process.env.IMAGE_MODEL||'fal-ai/flux-pro/v1.1'};return{provider:'google',model:process.env.IMAGE_MODEL||'gemini-3.1-flash-image'}}
+function selectModel(job){
+ if(job.type==='text_to_video'||job.type==='image_to_video'){
+  const route=resolveVideoRoute(job.type);
+  return{provider:route.provider,model:route.model};
+ }
+ if(job.type==='video_understanding')return{provider:'fal',model:process.env.VISION_MODEL||'fal-ai/video-understanding'};
+ const route=resolveImageRoute();
+ return{provider:route.provider,model:route.model};
+}
 function quotaFallbackJob(job,error){
  const message=String(error?.message||error||'').toLowerCase();
  const quotaLike=/\b429\b|quota|rate.?limit|resource_exhausted|insufficient.{0,20}credit|billing.{0,20}limit|capacity.{0,20}exceeded/.test(message);
- if(!quotaLike)return null;
- if((job.provider==='google'||job.provider==='hf_image')&&process.env.FAL_KEY){return{...job,provider:'fal',model:process.env.IMAGE_FALLBACK_MODEL||process.env.IMAGE_MODEL_FALLBACK||'fal-ai/flux/schnell',fallback_from:job.provider,fallback_reason:'provider_quota'};}
- if(job.provider==='qwencloud'){
-  if(job.type==='image_to_video'&&process.env.PIXAZO_API_KEY)return{...job,provider:'pixazo_ltx',model:PIXAZO_MODEL,fallback_from:job.provider,fallback_reason:'provider_quota'};
-  if(process.env.FAL_KEY&&job.type==='image_to_video'&&process.env.FAL_I2V_FALLBACK_MODEL)return{...job,provider:'fal',model:process.env.FAL_I2V_FALLBACK_MODEL,fallback_from:job.provider,fallback_reason:'provider_quota'};
-  if(process.env.FAL_KEY&&job.type==='text_to_video'&&process.env.FAL_T2V_FALLBACK_MODEL)return{...job,provider:'fal',model:process.env.FAL_T2V_FALLBACK_MODEL,fallback_from:job.provider,fallback_reason:'provider_quota'};
+ const unavailable=/not configured|missing.{0,30}(?:api key|credential)|(?:api key|credential).{0,30}missing|unauthorized|forbidden|\b401\b|\b403\b/.test(message);
+ if(!quotaLike&&!unavailable)return null;
+ const reason=quotaLike?'provider_quota':'provider_unavailable';
+ if(job.type==='text_to_image'||job.type==='image_to_image'||job.provider==='google'||job.provider==='hf_image'||(job.provider==='fal'&&!String(job.type||'').includes('video'))){
+  const exclude=job.provider==='hf_image'?'google':job.provider;
+  const fallback=resolveImageFallback(process.env,exclude);
+  if(fallback.ready&&fallback.provider!==job.provider)return{...job,provider:fallback.provider,model:fallback.model,fallback_from:job.provider,fallback_reason:reason};
  }
- if(job.provider==='pixazo_ltx'&&process.env.FAL_KEY){const model=job.type==='image_to_video'?process.env.FAL_I2V_FALLBACK_MODEL:process.env.FAL_T2V_FALLBACK_MODEL;if(model)return{...job,provider:'fal',model,fallback_from:job.provider,fallback_reason:'provider_quota'};}
+ if(job.type==='text_to_video'||job.type==='image_to_video'){
+  const fallback=resolveVideoFallback(job.type,process.env,job.provider);
+  if(fallback.ready&&fallback.provider!==job.provider)return{...job,provider:fallback.provider,model:fallback.model,fallback_from:job.provider,fallback_reason:reason};
+ }
  return null;
 }
 function buildPrompt(shot){return[`Character: ${shot.character}. Preserve exact identity, costume and silhouette.`,`Action: ${shot.action}. Path: ${shot.path}.`,`Camera: ${shot.camera}.`,`Gaze: ${shot.performance?.gaze||'as directed'}. Expression: ${shot.performance?.expression||'as directed'}.`,`Body language: ${shot.performance?.body_language||'natural'}.`,`Environment: ${shot.background}.`,`Director priorities: ${(shot.priorities||[]).join(', ')}.`,'Maintain temporal consistency, anatomy, identity, lighting, perspective and screen direction. Do not introduce unrequested characters, props or camera changes.'].join(' ')}
