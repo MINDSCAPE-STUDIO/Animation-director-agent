@@ -5,6 +5,9 @@ on:
     branches: [main]
     paths:
       - 'model-router.js'
+      - 'provider-readiness.js'
+      - 'dashboard.js'
+      - 'server.js'
       - 'tests/**'
       - 'package.json'
       - '.github/workflows/provider-fallback-tests.yml'
