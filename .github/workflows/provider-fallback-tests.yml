@@ -1,0 +1,31 @@
+name: Provider fallback regression tests
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'model-router.js'
+      - 'tests/**'
+      - 'package.json'
+      - '.github/workflows/provider-fallback-tests.yml'
+  pull_request:
+    paths:
+      - 'model-router.js'
+      - 'tests/**'
+      - 'package.json'
+      - '.github/workflows/provider-fallback-tests.yml'
+
+jobs:
+  quota-fallback-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: Run offline routing tests
+        run: npm test
