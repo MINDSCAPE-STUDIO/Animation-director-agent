@@ -16,6 +16,8 @@ jobs:
       - run: node --check bootstrap.js
       - run: node --check server.js
       - run: node --check model-router.js
+      - run: node --check provider-readiness.js
+      - run: npm test
       - run: node --check pixazo-ltx-provider.js
       - run: node --check omniroute-router.js
       - run: node --check generation-queue.js
@@ -24,15 +26,30 @@ jobs:
       - run: npm start > /tmp/mindscape-server.log 2>&1 &
       - run: sleep 2 && curl -fsS http://localhost:8787/health
       - run: cat /tmp/mindscape-server.log
-      - name: Production smoke test
+      - name: Production smoke test and readiness diagnostics
         env:
           PRODUCTION_URL: https://animation-director-agent.onrender.com
         run: |
-          for i in $(seq 1 30); do
-            if curl -fsS "$PRODUCTION_URL/health" && curl -fsS "$PRODUCTION_URL/ready" && curl -fsS "$PRODUCTION_URL/"; then
-              exit 0
+          healthy=false
+          for i in $(seq 1 12); do
+            if curl -fsS "$PRODUCTION_URL/health" -o /tmp/production-health.json && curl -fsS "$PRODUCTION_URL/" -o /tmp/production-home.html; then
+              healthy=true
+              break
             fi
-            sleep 10
+            sleep 5
           done
-          echo "Production smoke test failed"
-          exit 1
+          if [ "$healthy" != "true" ]; then
+            echo "Production liveness/homepage smoke test failed"
+            exit 1
+          fi
+          echo "Production health response:"
+          cat /tmp/production-health.json
+          ready_status=$(curl -sS -o /tmp/production-ready.json -w "%{http_code}" "$PRODUCTION_URL/ready")
+          echo
+          echo "Production readiness HTTP $ready_status:"
+          cat /tmp/production-ready.json
+          echo
+          if [ "$ready_status" != "200" ]; then
+            echo "App is live but readiness is degraded; see missing_variables and storage details above."
+            exit 1
+          fi
