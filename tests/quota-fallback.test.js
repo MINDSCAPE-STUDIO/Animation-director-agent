@@ -1,6 +1,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { quotaFallbackJob } = require('../model-router');
+const { getFallbackReadiness } = require('../provider-readiness');
 
 function withEnv(values, run) {
   const before = {};
@@ -89,4 +90,28 @@ test('does not claim a fallback exists when no compatible provider is configured
       null
     );
   });
+});
+
+test('reports image fallback readiness without exposing credentials', () => {
+  const ready = getFallbackReadiness({ FAL_KEY: 'image-secret' });
+  assert.equal(ready.image_generation.ready, true);
+  assert.equal(ready.image_generation.provider, 'fal');
+  assert.equal(ready.image_generation.model, 'fal-ai/flux/schnell');
+  assert.equal(JSON.stringify(ready).includes('image-secret'), false);
+});
+
+test('requires Pixazo key and public URL setup for image-to-video readiness', () => {
+  const ready = getFallbackReadiness({ PIXAZO_API_KEY: 'video-secret', PUBLIC_BASE_URL: 'https://example.invalid' });
+  assert.equal(ready.image_to_video.ready, true);
+  assert.equal(ready.image_to_video.provider, 'pixazo_ltx');
+  const notReady = getFallbackReadiness({ PIXAZO_API_KEY: 'video-secret' });
+  assert.equal(notReady.image_to_video.ready, false);
+});
+
+test('requires FAL key and an explicit text-to-video fallback model', () => {
+  const noModel = getFallbackReadiness({ FAL_KEY: 'video-secret' });
+  assert.equal(noModel.text_to_video.ready, false);
+  const configured = getFallbackReadiness({ FAL_KEY: 'video-secret', FAL_T2V_FALLBACK_MODEL: 'fal-ai/example-t2v' });
+  assert.equal(configured.text_to_video.ready, true);
+  assert.equal(configured.text_to_video.model, 'fal-ai/example-t2v');
 });
