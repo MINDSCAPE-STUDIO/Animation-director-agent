@@ -1,4 +1,4 @@
-const CACHE = 'mindscape-agent-v6';
+const CACHE = 'mindscape-agent-v7';
 const ASSETS = ['/', '/index.html', '/styles.css', '/app.js', '/agents.js', '/dashboard.js', '/manifest.json'];
 const DYNAMIC_PREFIXES = [
   '/health',
