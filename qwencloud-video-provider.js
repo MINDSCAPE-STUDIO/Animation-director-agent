@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const { GENERATED_DIR } = require('./storage-paths');
 
 const API_BASE = () => String(process.env.QWEN_VIDEO_API_BASE || 'https://maas.qwencloudapi.com/api/v1').replace(/\/$/, '');
 const TASK_BASE = () => String(process.env.QWEN_TASK_API_BASE || 'https://dashscope-intl.aliyuncs.com/api/v1').replace(/\/$/, '');
@@ -85,7 +86,7 @@ async function submitQwenCloud(job) {
       if (!videoResponse.ok) throw new Error(`QwenCloud video download failed (${videoResponse.status}).`);
       const bytes = Buffer.from(await videoResponse.arrayBuffer());
       if (bytes.length < 1024) throw new Error('QwenCloud returned an unexpectedly small video file.');
-      const publicDir = path.join(__dirname, 'generated');
+      const publicDir = GENERATED_DIR;
       fs.mkdirSync(publicDir, { recursive: true });
       const filename = `mindscape-qwen-${Date.now()}-${Math.random().toString(36).slice(2, 7)}.mp4`;
       fs.writeFileSync(path.join(publicDir, filename), bytes);

@@ -2,6 +2,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const { quotaFallbackJob } = require('../model-router');
 const { getFallbackReadiness, getProviderReadiness, getStorageHealth } = require('../provider-readiness');
+const { submit } = require('../model-router');
 
 function withEnv(values, run) {
   const before = {};
@@ -155,5 +156,100 @@ test('storage health tests actual write access and separates writability from du
     assert.equal(status.history_writable, true);
   } finally {
     fs.rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test('image fallback stays off unless explicitly configured', () => {
+  withEnv({
+    IMAGE_PROVIDER: 'google',
+    GEMINI_API_KEY: 'test-primary-key',
+    REPLICATE_API_TOKEN: 'test-replicate-token',
+    IMAGE_FALLBACK_PROVIDER: null,
+    IMAGE_FALLBACK_MODEL: null,
+    FAL_KEY: null
+  }, () => {
+    const status = getFallbackReadiness();
+    assert.equal(status.image_generation.ready, false);
+    const fallback = quotaFallbackJob(
+      { type: 'text_to_image', provider: 'google' },
+      new Error('Gemini 429: quota exceeded')
+    );
+    assert.equal(fallback, null);
+  });
+});
+
+test('explicitly configured Replicate image fallback is selected without checking billing', () => {
+  withEnv({
+    IMAGE_PROVIDER: 'google',
+    GEMINI_API_KEY: 'test-primary-key',
+    REPLICATE_API_TOKEN: 'test-replicate-token',
+    IMAGE_FALLBACK_PROVIDER: 'replicate',
+    IMAGE_FALLBACK_MODEL: 'black-forest-labs/flux-schnell',
+    FAL_KEY: null
+  }, () => {
+    const status = getFallbackReadiness();
+    assert.equal(status.image_generation.ready, true);
+    assert.equal(status.image_generation.provider, 'replicate');
+    assert.equal(status.image_generation.model, 'black-forest-labs/flux-schnell');
+    assert.equal(status.image_generation.billing_status, 'not_checked');
+    const fallback = quotaFallbackJob(
+      { type: 'text_to_image', provider: 'google' },
+      new Error('Gemini 429: quota exceeded')
+    );
+    assert.equal(fallback.provider, 'replicate');
+    assert.equal(fallback.model, 'black-forest-labs/flux-schnell');
+    assert.equal(JSON.stringify(status).includes('test-replicate-token'), false);
+  });
+});
+
+test('Replicate submission remains running until the provider reports completion', async () => {
+  const oldFetch = global.fetch;
+  const oldToken = process.env.REPLICATE_API_TOKEN;
+  process.env.REPLICATE_API_TOKEN = 'test-only-token';
+  global.fetch = async () => ({
+    ok: true,
+    status: 201,
+    json: async () => ({ id: 'prediction-test-123', status: 'starting' })
+  });
+  try {
+    const job = await submit({
+      id: 'replicate-test', provider: 'replicate', model: 'owner/model',
+      type: 'text_to_video', prompt: 'offline test', input: { duration: 10 }
+    });
+    assert.equal(job.status, 'running');
+    assert.equal(job.provider_state, 'starting');
+    assert.equal(job.providerResponse.id, 'prediction-test-123');
+  } finally {
+    global.fetch = oldFetch;
+    if (oldToken === undefined) delete process.env.REPLICATE_API_TOKEN;
+    else process.env.REPLICATE_API_TOKEN = oldToken;
+  }
+});
+
+test('Pixazo submission preserves provider queue state rather than reporting false completion', async () => {
+  const oldFetch = global.fetch;
+  const oldKey = process.env.PIXAZO_API_KEY;
+  const oldBase = process.env.PUBLIC_BASE_URL;
+  process.env.PIXAZO_API_KEY = 'test-only-key';
+  process.env.PUBLIC_BASE_URL = 'https://example.invalid';
+  global.fetch = async () => ({
+    ok: true,
+    status: 202,
+    text: async () => JSON.stringify({ request_id: 'pixazo-test-request' })
+  });
+  try {
+    const job = await submit({
+      id: 'pixazo-test', provider: 'pixazo_ltx', model: 'ltx-video',
+      type: 'image_to_video', prompt: 'offline test',
+      input: { image: 'https://example.invalid/reference.png', duration: 10, fps: 12 }
+    });
+    assert.equal(job.status, 'running');
+    assert.equal(job.providerResponse.request_id, 'pixazo-test-request');
+  } finally {
+    global.fetch = oldFetch;
+    if (oldKey === undefined) delete process.env.PIXAZO_API_KEY;
+    else process.env.PIXAZO_API_KEY = oldKey;
+    if (oldBase === undefined) delete process.env.PUBLIC_BASE_URL;
+    else process.env.PUBLIC_BASE_URL = oldBase;
   }
 });

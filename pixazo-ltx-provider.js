@@ -1,5 +1,6 @@
 const fs=require('fs');
 const path=require('path');
+const {GENERATED_DIR}=require('./storage-paths');
 
 const PIXAZO_BASE_URL=String(process.env.PIXAZO_BASE_URL||'https://gateway.pixazo.ai').replace(/\/$/,'');
 const PIXAZO_I2V_ENDPOINT=process.env.PIXAZO_I2V_ENDPOINT||'/ltx-video/v1/image-to-video';
@@ -25,7 +26,7 @@ function imageUrl(image){
     if(!match)throw Error('Pixazo requires a publicly accessible HTTPS reference image; unsupported data URL format.');
     const ext=match[1].toLowerCase()==='jpg'?'jpeg':match[1].toLowerCase();
     const filename=`pixazo-input-${Date.now()}-${Math.random().toString(36).slice(2,8)}.${ext}`;
-    const dir=path.join(__dirname,'generated');
+    const dir=GENERATED_DIR;
     fs.mkdirSync(dir,{recursive:true});
     fs.writeFileSync(path.join(dir,filename),Buffer.from(match[2],'base64'));
     return `${publicBaseUrl()}/generated/${filename}`;
@@ -33,7 +34,7 @@ function imageUrl(image){
   if(fs.existsSync(image)){
     const ext=path.extname(image).toLowerCase()||'.png';
     const filename=`pixazo-input-${Date.now()}-${Math.random().toString(36).slice(2,8)}${ext}`;
-    const dir=path.join(__dirname,'generated');
+    const dir=GENERATED_DIR;
     fs.mkdirSync(dir,{recursive:true});
     fs.copyFileSync(image,path.join(dir,filename));
     return `${publicBaseUrl()}/generated/${filename}`;
