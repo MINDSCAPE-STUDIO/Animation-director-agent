@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const { DATA_DIR, STYLE_BIBLE_FILE: FILE } = require('./storage-paths');
+const {persistLocalFile}=require('./object-storage');
 
 const DEFAULT_BIBLE = {
   schema_version: 1,
@@ -43,6 +44,7 @@ function readBible(projectId = 'default') {
   if (!fs.existsSync(FILE)) {
     const bible = { ...DEFAULT_BIBLE, project_id: projectId, created_at: new Date().toISOString(), updated_at: new Date().toISOString() };
     fs.writeFileSync(FILE, JSON.stringify(bible, null, 2));
+    void persistLocalFile(FILE,'metadata/style-bible.json').catch(error=>console.error('Style bible backup failed: '+error.message));
     return bible;
   }
   const bible = JSON.parse(fs.readFileSync(FILE, 'utf8'));
@@ -61,6 +63,7 @@ function updateBible(projectId, patch = {}) {
   };
   ensureStore();
   fs.writeFileSync(FILE, JSON.stringify(next, null, 2));
+  void persistLocalFile(FILE,'metadata/style-bible.json').catch(error=>console.error('Style bible backup failed: '+error.message));
   return next;
 }
 
