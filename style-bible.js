@@ -1,8 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const DATA_DIR = path.join(__dirname, 'data');
-const FILE = path.join(DATA_DIR, 'style-bible.json');
+const { DATA_DIR, STYLE_BIBLE_FILE: FILE } = require('./storage-paths');
 
 const DEFAULT_BIBLE = {
   schema_version: 1,

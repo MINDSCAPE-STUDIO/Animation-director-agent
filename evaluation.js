@@ -1,9 +1,8 @@
 const fs=require('fs');
 const path=require('path');
-const os=require('os');
 const {isValidErrorCode,ERROR_SEVERITIES}=require('./error-taxonomy');
 
-const STORE=path.join(os.tmpdir(),'mindscape-evaluations.jsonl');
+const {EVALUATIONS_FILE:STORE}=require('./storage-paths');
 
 function now(){return new Date().toISOString()}
 function append(record){fs.appendFileSync(STORE,JSON.stringify(record)+'\n','utf8')}

@@ -1,9 +1,8 @@
 const fs=require('fs');
-const path=require('path');
 
 // v1: append-only local history. The schema is intentionally provider/model agnostic.
 // Replace the storage adapter with Postgres/SQLite later without changing the record shape.
-const HISTORY_FILE=process.env.GENERATION_HISTORY_FILE||path.join(__dirname,'generated','generation-history.jsonl');
+const {HISTORY_FILE}=require('./storage-paths');
 
 function ensureStore(){fs.mkdirSync(path.dirname(HISTORY_FILE),{recursive:true})}
 function now(){return new Date().toISOString()}

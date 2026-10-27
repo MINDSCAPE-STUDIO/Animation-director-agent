@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const { getGeneratedDir, getDataDir, getHistoryFile, getEvaluationFile, getStyleBibleFile, getMasterAssetsFile } = require('./storage-paths');
 
 const has = (env, name) => typeof env[name] === 'string' && env[name].trim().length > 0;
 const qwenConfigured = env => has(env, 'QWEN_CLOUD_API_KEY') || has(env, 'DASHSCOPE_API_KEY');
@@ -29,11 +30,39 @@ function resolveImageRoute(env = process.env) {
   };
 }
 function resolveImageFallback(env = process.env, excludeProvider = null) {
+  const selected = String(env.IMAGE_FALLBACK_PROVIDER || '').trim().toLowerCase();
+  if (selected) {
+    if (selected === 'replicate' && excludeProvider !== 'replicate' &&
+        has(env, 'REPLICATE_API_TOKEN') && has(env, 'IMAGE_FALLBACK_MODEL')) {
+      return {
+        ready: true, provider: 'replicate', model: env.IMAGE_FALLBACK_MODEL,
+        mode: 'fallback', billing_status: 'not_checked',
+        detail: 'Replicate credentials and model are configured; available credits and charges are not checked.'
+      };
+    }
+    if (selected === 'fal' && excludeProvider !== 'fal' && has(env, 'FAL_KEY')) {
+      return { ready: true, provider: 'fal', model: imageFallbackModel(env), mode: 'fallback', billing_status: 'not_checked' };
+    }
+    if (selected === 'google' && excludeProvider !== 'google' && has(env, 'GEMINI_API_KEY')) {
+      return { ready: true, provider: 'google', model: env.GEMINI_IMAGE_FALLBACK_MODEL || env.GEMINI_IMAGE_MODEL || 'gemini-3.1-flash-image', mode: 'fallback', billing_status: 'not_checked' };
+    }
+    return {
+      ready: false, provider: null, model: null, mode: 'unavailable',
+      missing_variables: selected === 'replicate'
+        ? ['REPLICATE_API_TOKEN', 'IMAGE_FALLBACK_MODEL']
+        : selected === 'fal' ? ['FAL_KEY'] : selected === 'google'
+          ? ['GEMINI_API_KEY'] : ['Valid IMAGE_FALLBACK_PROVIDER (replicate, fal, or google)']
+    };
+  }
+  // FAL is only selected automatically when its key has been explicitly configured.
   if (excludeProvider !== 'fal' && has(env, 'FAL_KEY'))
-    return { ready: true, provider: 'fal', model: imageFallbackModel(env), mode: 'fallback', missing_variables: [] };
+    return { ready: true, provider: 'fal', model: imageFallbackModel(env), mode: 'fallback', billing_status: 'not_checked' };
   if (excludeProvider !== 'google' && has(env, 'GEMINI_API_KEY'))
-    return { ready: true, provider: 'google', model: env.GEMINI_IMAGE_MODEL || 'gemini-3.1-flash-image', mode: 'fallback', missing_variables: [] };
-  return { ready: false, provider: null, model: null, mode: 'unavailable', missing_variables: ['GEMINI_API_KEY', 'FAL_KEY'] };
+    return { ready: true, provider: 'google', model: env.GEMINI_IMAGE_FALLBACK_MODEL || env.GEMINI_IMAGE_MODEL || 'gemini-3.1-flash-image', mode: 'fallback', billing_status: 'not_checked' };
+  return {
+    ready: false, provider: null, model: null, mode: 'unavailable',
+    missing_variables: ['IMAGE_FALLBACK_PROVIDER and compatible credentials/model']
+  };
 }
 
 function configuredVideoRoute(provider, type, env, preferred) {
@@ -117,20 +146,22 @@ function getFallbackReadiness(env = process.env) {
   const falReady = has(env, 'FAL_KEY');
   const pixazoReady = has(env, 'PIXAZO_API_KEY') && has(env, 'PUBLIC_BASE_URL');
   const replicateReady = has(env, 'REPLICATE_API_TOKEN');
-  const imageModel = imageFallbackModel(env);
+  const image = resolveImageFallback(env, env.IMAGE_PROVIDER || 'google');
   return {
-    image_generation: falReady ? { ready: true, provider: 'fal', model: imageModel } : { ready: false, provider: null, model: null },
+    image_generation: image.ready
+      ? { ready: true, provider: image.provider, model: image.model, billing_status: image.billing_status || 'not_checked', detail: image.detail || null }
+      : { ready: false, provider: null, model: null, detail: 'No compatible image fallback is configured. Replicate fallback requires explicit IMAGE_FALLBACK_PROVIDER=replicate and IMAGE_FALLBACK_MODEL; charges/credits are not verified.' },
     image_to_video: pixazoReady
       ? { ready: true, provider: 'pixazo_ltx', model: env.PIXAZO_MODEL || 'ltx-video' }
       : falReady && env.FAL_I2V_FALLBACK_MODEL
-        ? { ready: true, provider: 'fal', model: env.FAL_I2V_FALLBACK_MODEL }
+        ? { ready: true, provider: 'fal', model: env.FAL_I2V_FALLBACK_MODEL, billing_status: 'not_checked' }
         : replicateReady
-          ? { ready: true, provider: 'replicate', model: env.REPLICATE_I2V_MODEL || 'bytedance/seedance-1-pro-fast' }
+          ? { ready: true, provider: 'replicate', model: env.REPLICATE_I2V_MODEL || 'bytedance/seedance-1-pro-fast', billing_status: 'not_checked' }
           : { ready: false, provider: null, model: null },
     text_to_video: falReady && env.FAL_T2V_FALLBACK_MODEL
-      ? { ready: true, provider: 'fal', model: env.FAL_T2V_FALLBACK_MODEL }
+      ? { ready: true, provider: 'fal', model: env.FAL_T2V_FALLBACK_MODEL, billing_status: 'not_checked' }
       : replicateReady
-        ? { ready: true, provider: 'replicate', model: env.REPLICATE_T2V_MODEL || 'bytedance/seedance-1-pro-fast' }
+        ? { ready: true, provider: 'replicate', model: env.REPLICATE_T2V_MODEL || 'bytedance/seedance-1-pro-fast', billing_status: 'not_checked' }
         : { ready: false, provider: null, model: null }
   };
 }
@@ -155,32 +186,49 @@ function testDirectory(dir) {
   }
 }
 function getStorageHealth(env = process.env) {
-  const generatedDir = path.join(__dirname, 'generated');
-  const historyFile = env.GENERATION_HISTORY_FILE || path.join(__dirname, 'generated', 'generation-history.jsonl');
-  const mediaCheck = testDirectory(generatedDir);
-  const historyDirCheck = testDirectory(path.dirname(historyFile));
-  let historyFileWritable = false;
-  let historyError = null;
-  try {
-    fs.mkdirSync(path.dirname(historyFile), { recursive: true });
-    const fd = fs.openSync(historyFile, 'a');
-    fs.closeSync(fd);
-    historyFileWritable = true;
-  } catch (error) {
-    historyError = error.code || 'filesystem_error';
+  const generatedDir = getGeneratedDir(env);
+  const dataDir = getDataDir(env);
+  const historyFile = getHistoryFile(env);
+  const evaluationFile = getEvaluationFile(env);
+  const styleBibleFile = getStyleBibleFile(env);
+  const masterAssetsFile = getMasterAssetsFile(env);
+  const storageFiles = [historyFile, evaluationFile, styleBibleFile, masterAssetsFile];
+  const directories = [...new Set([generatedDir, dataDir, ...storageFiles.map(file => path.dirname(file))])];
+  const directoryChecks = directories.map(dir => ({dir, ...testDirectory(dir)}));
+  const filesWritable = [];
+  for (const file of storageFiles) {
+    try {
+      if (fs.existsSync(file)) {
+        const fd = fs.openSync(file, 'a');
+        fs.closeSync(fd);
+      }
+      filesWritable.push({file, ok: true, error: null});
+    } catch (error) {
+      filesWritable.push({file, ok: false, error: error.code || 'filesystem_error'});
+    }
   }
-  const writable = mediaCheck.ok && historyDirCheck.ok && historyFileWritable;
-  const persistent = writable && isPersistentPath(generatedDir) && isPersistentPath(historyFile);
+  const mediaCheck = directoryChecks.find(check => check.dir === generatedDir);
+  const historyDirCheck = directoryChecks.find(check => check.dir === path.dirname(historyFile));
+  const dataDirCheck = directoryChecks.find(check => check.dir === dataDir);
+  const writable = directoryChecks.every(check => check.ok) && filesWritable.every(check => check.ok);
+  const mountPaths = [generatedDir, dataDir, historyFile, evaluationFile, styleBibleFile, masterAssetsFile];
+  const persistenceEnabled = String(env.STORAGE_PERSISTENCE_ENABLED || '').toLowerCase() === 'true';
+  const persistent = writable && persistenceEnabled && mountPaths.every(isPersistentPath);
+  const firstError = directoryChecks.find(check => !check.ok) || filesWritable.find(check => !check.ok);
   return {
     writable, persistent, mode: persistent ? 'persistent' : 'ephemeral', backend: 'local-filesystem',
-    generated_media_writable: mediaCheck.ok, history_writable: historyFileWritable && historyDirCheck.ok,
+    generated_media_writable: Boolean(mediaCheck?.ok),
+    history_writable: Boolean(historyDirCheck?.ok && filesWritable.find(check => check.file === historyFile)?.ok),
+    metadata_writable: Boolean(dataDirCheck?.ok && filesWritable.filter(check => check.file !== historyFile).every(check => check.ok)),
+    persistent_storage_path_configured: has(env, 'PERSISTENT_STORAGE_DIR'),
+    persistence_enabled_flag: persistenceEnabled,
     history_file_configured: has(env, 'GENERATION_HISTORY_FILE'),
-    error_code: !mediaCheck.ok ? mediaCheck.error : !historyDirCheck.ok ? historyDirCheck.error : historyError,
+    error_code: firstError?.error || null,
     detail: !writable
-      ? 'A write/read test failed for generated media or the generation-history file.'
+      ? 'A filesystem write/read check failed for generated media, generation history, evaluations, style bible or master assets.'
       : persistent
-        ? 'Read/write checks passed and both history and generated media are under the persistent-disk mount /var/data.'
-        : 'Read/write checks passed, but history and/or generated media use the ephemeral filesystem. Files can be lost on restart or redeploy.'
+        ? 'Read/write checks passed and all local data paths are under /var/data with persistence explicitly enabled.'
+        : 'Read/write checks passed, but durable storage is not enabled/confirmed. On Render Free, local files can be lost on restart, spin-down or redeploy.'
   };
 }
 
