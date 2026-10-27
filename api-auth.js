@@ -17,7 +17,7 @@ function isPublicPath(pathname, method = 'GET') {
   if (pathname.startsWith('/generated/')) return true;
 
   // API routes stay protected even when an ID happens to end in ".png" or ".json".
-  if (PROTECTED_PREFIXES.some(prefix => pathname === prefix || pathname.startsWith(prefix + '/'))) {
+  if (PROTECTED_PREFIXES.some(prefix => pathname === prefix || pathname.startsWith(prefix + '/') || pathname.startsWith(prefix + '.'))) {
     return false;
   }
 
