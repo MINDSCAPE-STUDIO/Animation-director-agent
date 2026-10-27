@@ -3,10 +3,11 @@ const path = require('path');
 const crypto = require('crypto');
 
 const { DATA_DIR, MASTER_ASSETS_FILE: FILE } = require('./storage-paths');
+const {persistLocalFile}=require('./object-storage');
 
 function ensureStore() {
   if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
-  if (!fs.existsSync(FILE)) fs.writeFileSync(FILE, '{}', 'utf8');
+  if (!fs.existsSync(FILE)) { fs.writeFileSync(FILE, '{}', 'utf8'); void persistLocalFile(FILE,'metadata/master-assets.json').catch(error=>console.error('Master asset backup failed: '+error.message)); }
 }
 
 function readAll() {
@@ -17,6 +18,7 @@ function readAll() {
 function writeAll(data) {
   ensureStore();
   fs.writeFileSync(FILE, JSON.stringify(data, null, 2), 'utf8');
+  void persistLocalFile(FILE,'metadata/master-assets.json').catch(error=>console.error('Master asset backup failed: '+error.message));
 }
 
 function createMasterAsset(input = {}) {
