@@ -76,7 +76,7 @@ test('Cloudflare R2 adapter signs requests and rejects unsafe object keys', () =
 test('service worker does not cache API routes or authenticated responses', () => {
   const fs = require('node:fs');
   const sw = fs.readFileSync(require('node:path').join(__dirname, '..', 'sw.js'), 'utf8');
-  assert.match(sw, /mindscape-agent-v6/);
+  assert.match(sw, /mindscape-agent-v7/);
   assert.match(sw, /request\.headers\.has\('Authorization'\)/);
   assert.match(sw, /requestUrl\.pathname\.startsWith\('\/generated\/'\)/);
   for (const route of ['/jobs', '/generation-history', '/evaluations', '/style-bible', '/master-assets', '/health', '/ready']) {
