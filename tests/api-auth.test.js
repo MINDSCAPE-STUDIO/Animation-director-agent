@@ -45,3 +45,26 @@ test('key comparison is length-safe and timing-safe API rejects empty credential
 test('agent remains convenient for local development when no key is configured', () => {
   assert.equal(isAuthorized(req({}), ''), true);
 });
+
+
+test('Cloudflare R2 adapter signs requests and rejects unsafe object keys', () => {
+  const { isObjectStorageConfigured, buildSignedRequest } = require('../object-storage');
+  const env = {
+    OBJECT_STORAGE_ENDPOINT: 'https://acct123.r2.cloudflarestorage.com',
+    OBJECT_STORAGE_BUCKET: 'mindscape-test',
+    OBJECT_STORAGE_ACCESS_KEY_ID: 'test-access-id',
+    OBJECT_STORAGE_SECRET_ACCESS_KEY: 'test-secret-key',
+    OBJECT_STORAGE_REGION: 'auto',
+    OBJECT_STORAGE_PREFIX: 'test-prefix'
+  };
+  assert.equal(isObjectStorageConfigured(env), true);
+  const signed = buildSignedRequest(
+    'PUT', 'generated/clip.mp4', Buffer.from('test'), 'video/mp4',
+    env, new Date('2026-10-27T00:00:00.000Z')
+  );
+  assert.equal(signed.url.pathname, '/mindscape-test/test-prefix/generated/clip.mp4');
+  assert.match(signed.options.headers.Authorization, /^AWS4-HMAC-SHA256 Credential=test-access-id\//);
+  assert.match(signed.options.headers.Authorization, /Signature=[0-9a-f]{64}$/);
+  assert.equal(signed.options.headers.Authorization.includes('test-secret-key'), false);
+  assert.throws(() => buildSignedRequest('GET', '../escape', null, null, env), /Invalid object-storage key/);
+});
