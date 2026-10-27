@@ -60,3 +60,15 @@ jobs:
             exit 1
           fi
           curl -fsS "$PRODUCTION_URL/" -o /tmp/production-home.html
+          auth_enabled=$(node -e "try { const d=JSON.parse(require('fs').readFileSync('/tmp/production-health.json','utf8')); process.stdout.write(String(d.auth_enabled)); } catch {}")
+          if [ "$auth_enabled" != "true" ]; then
+            echo "Production health endpoint does not report API authentication enabled."
+            exit 1
+          fi
+          protected_status=$(curl -sS -o /tmp/production-protected.json -w "%{http_code}" "$PRODUCTION_URL/jobs")
+          echo "Unauthenticated /jobs HTTP $protected_status:"
+          cat /tmp/production-protected.json
+          if [ "$protected_status" != "401" ]; then
+            echo "Expected 401 from protected API route without an access key."
+            exit 1
+          fi
