@@ -19,6 +19,7 @@ jobs:
       - run: node --check model-router.js
       - run: node --check provider-readiness.js
       - run: node --check object-storage.js
+      - run: node --check sw.js
       - run: npm test
       - run: node --check pixazo-ltx-provider.js
       - run: node --check omniroute-router.js
