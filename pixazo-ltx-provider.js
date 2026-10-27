@@ -1,6 +1,7 @@
 const fs=require('fs');
 const path=require('path');
 const {GENERATED_DIR}=require('./storage-paths');
+const {persistGeneratedFile}=require('./object-storage');
 
 const PIXAZO_BASE_URL=String(process.env.PIXAZO_BASE_URL||'https://gateway.pixazo.ai').replace(/\/$/,'');
 const PIXAZO_I2V_ENDPOINT=process.env.PIXAZO_I2V_ENDPOINT||'/ltx-video/v1/image-to-video';
@@ -18,7 +19,7 @@ function publicBaseUrl(){
   return value;
 }
 
-function imageUrl(image){
+async function imageUrl(image){
   if(!image)throw Error('Pixazo Image → Video requires a reference image.');
   if(/^https:\/\//i.test(image))return image;
   if(/^data:image\//i.test(image)){
@@ -28,7 +29,9 @@ function imageUrl(image){
     const filename=`pixazo-input-${Date.now()}-${Math.random().toString(36).slice(2,8)}.${ext}`;
     const dir=GENERATED_DIR;
     fs.mkdirSync(dir,{recursive:true});
-    fs.writeFileSync(path.join(dir,filename),Buffer.from(match[2],'base64'));
+    const localFile=path.join(dir,filename);
+    fs.writeFileSync(localFile,Buffer.from(match[2],'base64'));
+    await persistGeneratedFile(localFile);
     return `${publicBaseUrl()}/generated/${filename}`;
   }
   if(fs.existsSync(image)){
@@ -36,7 +39,9 @@ function imageUrl(image){
     const filename=`pixazo-input-${Date.now()}-${Math.random().toString(36).slice(2,8)}${ext}`;
     const dir=GENERATED_DIR;
     fs.mkdirSync(dir,{recursive:true});
-    fs.copyFileSync(image,path.join(dir,filename));
+    const localFile=path.join(dir,filename);
+    fs.copyFileSync(image,localFile);
+    await persistGeneratedFile(localFile);
     return `${publicBaseUrl()}/generated/${filename}`;
   }
   throw Error('Pixazo reference image must be an HTTPS URL, data image, or an existing local file.');
@@ -65,7 +70,7 @@ async function submitPixazo(job){
   if(job.type!=='image_to_video')throw Error('Pixazo LTX free route currently supports Image → Video only.');
   const duration=Math.max(10,Math.min(12,Number(job.input?.duration)||10));
   const fps=Math.max(1,Math.min(60,Number(job.input?.fps)||12));
-  const image=imageUrl(job.input?.image||job.input?.images?.[0]);
+  const image=await imageUrl(job.input?.image||job.input?.images?.[0]);
   const body={
     prompt:job.prompt,
     image_url:image,
@@ -93,7 +98,23 @@ async function refreshPixazo(job){
   if(state==='COMPLETED'){
     const url=response?.output?.media_url?.[0]||response?.output?.preview_video?.url;
     if(!url)throw Error(`Pixazo completed without a video URL: ${JSON.stringify(response).slice(0,1600)}`);
-    return{...job,status:'completed',provider_state:'completed',providerResponse:{...job.providerResponse,status:response},result:url};
+    try{
+      const media=await fetch(url);
+      if(!media.ok)throw Error('result download HTTP '+media.status);
+      const bytes=Buffer.from(await media.arrayBuffer());
+      if(bytes.length>=1024){
+        fs.mkdirSync(GENERATED_DIR,{recursive:true});
+        const filename='mindscape-pixazo-'+Date.now()+'-'+Math.random().toString(36).slice(2,7)+'.mp4';
+        const outputFile=path.join(GENERATED_DIR,filename);
+        fs.writeFileSync(outputFile,bytes);
+        await persistGeneratedFile(outputFile);
+        return{...job,status:'completed',provider_state:'completed',providerResponse:{...job.providerResponse,status:response},result:'/generated/'+filename};
+      }
+      throw Error('result was unexpectedly small');
+    }catch(error){
+      console.warn('Could not cache Pixazo output; keeping provider URL:',error.message);
+      return{...job,status:'completed',provider_state:'completed',providerResponse:{...job.providerResponse,status:response},result:url};
+    }
   }
   if(state==='FAILED'||state==='ERROR'){
     return{...job,status:'failed',provider_state:state.toLowerCase(),error:response.error||'Pixazo generation failed',providerResponse:{...job.providerResponse,status:response}};
