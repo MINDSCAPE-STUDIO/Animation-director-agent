@@ -29,3 +29,19 @@ Replicate supports asynchronous predictions and webhooks for completed jobs. The
 
 ## 5. Production hardening still needed
 For public deployment, add persistent storage, authenticated users, signed webhook verification, object storage for outputs, rate limiting, job cancellation, provider-specific input schemas, and a visual evaluator model.
+
+
+## 6. Optional persistent storage with Cloudflare R2
+
+The app supports an S3-compatible object store. Cloudflare R2 is the suggested low-cost option for generated media and metadata. Its published free monthly allowance includes 10 GB-month storage, 1 million Class A operations, and 10 million Class B operations, with no internet egress charge; usage above those allowances can be billed. Review the official pricing and set usage alerts before production use: https://developers.cloudflare.com/r2/pricing/.
+
+Create an R2 bucket and an R2 API token with read/write access to that bucket. Add the following environment variables in Render, on the server only (never in browser code):
+
+- `OBJECT_STORAGE_ENDPOINT`: `https://<account-id>.r2.cloudflarestorage.com`
+- `OBJECT_STORAGE_BUCKET`: bucket name
+- `OBJECT_STORAGE_ACCESS_KEY_ID`: R2 S3 access-key ID
+- `OBJECT_STORAGE_SECRET_ACCESS_KEY`: matching secret access key
+- `OBJECT_STORAGE_REGION`: `auto`
+- `OBJECT_STORAGE_PREFIX`: `mindscape-studio`
+
+At startup the service verifies signed read/write access and restores generation history and metadata from the bucket. New metadata and generated media are backed up to it, and generated URLs can be served from object storage after the local Render cache is empty. The dashboard's readiness response reports storage health. If the object-storage variables are absent, the agent continues using the local filesystem, which is ephemeral on Render Free.
