@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { GENERATED_DIR } = require('./storage-paths');
+const { persistGeneratedFile } = require('./object-storage');
 
 const API_BASE = () => String(process.env.QWEN_VIDEO_API_BASE || 'https://maas.qwencloudapi.com/api/v1').replace(/\/$/, '');
 const TASK_BASE = () => String(process.env.QWEN_TASK_API_BASE || 'https://dashscope-intl.aliyuncs.com/api/v1').replace(/\/$/, '');
@@ -89,7 +90,9 @@ async function submitQwenCloud(job) {
       const publicDir = GENERATED_DIR;
       fs.mkdirSync(publicDir, { recursive: true });
       const filename = `mindscape-qwen-${Date.now()}-${Math.random().toString(36).slice(2, 7)}.mp4`;
-      fs.writeFileSync(path.join(publicDir, filename), bytes);
+      const outputFile=path.join(publicDir,filename);
+      fs.writeFileSync(outputFile, bytes);
+      await persistGeneratedFile(outputFile);
       return {
         output: `/generated/${filename}`,
         provider: 'qwencloud',
