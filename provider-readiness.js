@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { getGeneratedDir, getDataDir, getHistoryFile, getEvaluationFile, getStyleBibleFile, getMasterAssetsFile } = require('./storage-paths');
+const { isObjectStorageConfigured, getObjectStorageStatus } = require('./object-storage');
 
 const has = (env, name) => typeof env[name] === 'string' && env[name].trim().length > 0;
 const qwenConfigured = env => has(env, 'QWEN_CLOUD_API_KEY') || has(env, 'DASHSCOPE_API_KEY');
@@ -210,13 +211,22 @@ function getStorageHealth(env = process.env) {
   const mediaCheck = directoryChecks.find(check => check.dir === generatedDir);
   const historyDirCheck = directoryChecks.find(check => check.dir === path.dirname(historyFile));
   const dataDirCheck = directoryChecks.find(check => check.dir === dataDir);
-  const writable = directoryChecks.every(check => check.ok) && filesWritable.every(check => check.ok);
+  const localWritable = directoryChecks.every(check => check.ok) && filesWritable.every(check => check.ok);
+  const remoteConfigured = isObjectStorageConfigured(env);
+  const objectStorage = getObjectStorageStatus(env);
+  const remoteReady = remoteConfigured && objectStorage.writable;
+  const writable = localWritable && (!remoteConfigured || remoteReady);
   const mountPaths = [generatedDir, dataDir, historyFile, evaluationFile, styleBibleFile, masterAssetsFile];
   const persistenceEnabled = String(env.STORAGE_PERSISTENCE_ENABLED || '').toLowerCase() === 'true';
-  const persistent = writable && persistenceEnabled && mountPaths.every(isPersistentPath);
-  const firstError = directoryChecks.find(check => !check.ok) || filesWritable.find(check => !check.ok);
+  const localPersistent = localWritable && persistenceEnabled && mountPaths.every(isPersistentPath);
+  const persistent = writable && (remoteReady || localPersistent);
+  const firstError = directoryChecks.find(check => !check.ok) || filesWritable.find(check => !check.ok) ||
+    (remoteConfigured && !remoteReady ? {error: objectStorage.error_code || 'object_storage_unavailable'} : null);
   return {
-    writable, persistent, mode: persistent ? 'persistent' : 'ephemeral', backend: 'local-filesystem',
+    writable, persistent, mode: remoteReady ? 'object-storage' : localPersistent ? 'persistent' : 'ephemeral',
+    backend: remoteReady ? 'cloudflare-r2-compatible-object-storage' : 'local-filesystem',
+    object_storage: { configured: remoteConfigured, writable: remoteReady, backend: objectStorage.backend,
+      missing_variables: objectStorage.missing_variables, error_code: objectStorage.error_code, checked_at: objectStorage.checked_at },
     generated_media_writable: Boolean(mediaCheck?.ok),
     history_writable: Boolean(historyDirCheck?.ok && filesWritable.find(check => check.file === historyFile)?.ok),
     metadata_writable: Boolean(dataDirCheck?.ok && filesWritable.filter(check => check.file !== historyFile).every(check => check.ok)),
@@ -224,11 +234,15 @@ function getStorageHealth(env = process.env) {
     persistence_enabled_flag: persistenceEnabled,
     history_file_configured: has(env, 'GENERATION_HISTORY_FILE'),
     error_code: firstError?.error || null,
-    detail: !writable
+    detail: !localWritable
       ? 'A filesystem write/read check failed for generated media, generation history, evaluations, style bible or master assets.'
-      : persistent
-        ? 'Read/write checks passed and all local data paths are under /var/data with persistence explicitly enabled.'
-        : 'Read/write checks passed, but durable storage is not enabled/confirmed. On Render Free, local files can be lost on restart, spin-down or redeploy.'
+      : remoteConfigured && !remoteReady
+        ? 'Object storage is configured but its signed read/write check or metadata recovery failed. Check OBJECT_STORAGE_* settings and recent logs.'
+        : remoteReady
+          ? 'Filesystem checks passed and generated media plus metadata are backed up to the configured S3-compatible object store.'
+          : localPersistent
+            ? 'Read/write checks passed and all local data paths are under /var/data with persistence explicitly enabled.'
+            : 'Read/write checks passed, but no durable storage is enabled. Render Free local files can be lost after restart, spin-down or redeploy.'
   };
 }
 
