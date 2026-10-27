@@ -1,4 +1,5 @@
 const fs=require('fs');
+const path=require('path');
 
 // v1: append-only local history. The schema is intentionally provider/model agnostic.
 // Replace the storage adapter with Postgres/SQLite later without changing the record shape.
