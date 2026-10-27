@@ -3,9 +3,10 @@ const path=require('path');
 const {isValidErrorCode,ERROR_SEVERITIES}=require('./error-taxonomy');
 
 const {EVALUATIONS_FILE:STORE}=require('./storage-paths');
+const {persistLocalFile}=require('./object-storage');
 
 function now(){return new Date().toISOString()}
-function append(record){fs.appendFileSync(STORE,JSON.stringify(record)+'\n','utf8')}
+function append(record){fs.appendFileSync(STORE,JSON.stringify(record)+'\n','utf8');void persistLocalFile(STORE,'metadata/evaluations.jsonl').catch(error=>console.error('Evaluation backup failed: '+error.message))}
 function normalizeScore(value){if(value===undefined||value===null||value==='')return null;const n=Number(value);if(!Number.isFinite(n))throw new Error('Scores must be numeric.');return Math.max(0,Math.min(100,n))}
 
 function createEvaluation(input={}){
