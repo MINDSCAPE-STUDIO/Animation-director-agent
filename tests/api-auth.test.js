@@ -64,7 +64,22 @@ test('Cloudflare R2 adapter signs requests and rejects unsafe object keys', () =
   );
   assert.equal(signed.url.pathname, '/mindscape-test/test-prefix/generated/clip.mp4');
   assert.match(signed.options.headers.Authorization, /^AWS4-HMAC-SHA256 Credential=test-access-id\//);
-  assert.match(signed.options.headers.Authorization, /Signature=[0-9a-f]{64}$/);
+  assert.equal(
+    signed.options.headers.Authorization.match(/Signature=([0-9a-f]{64})$/)?.[1],
+    'edc27007768ebfa697cf920633d17a322676e3397689c387d243ad7a00cad906'
+  );
   assert.equal(signed.options.headers.Authorization.includes('test-secret-key'), false);
   assert.throws(() => buildSignedRequest('GET', '../escape', null, null, env), /Invalid object-storage key/);
+});
+
+
+test('service worker does not cache API routes or authenticated responses', () => {
+  const fs = require('node:fs');
+  const sw = fs.readFileSync(require('node:path').join(__dirname, '..', 'sw.js'), 'utf8');
+  assert.match(sw, /mindscape-agent-v6/);
+  assert.match(sw, /request\.headers\.has\('Authorization'\)/);
+  assert.match(sw, /requestUrl\.pathname\.startsWith\('\/generated\/'\)/);
+  for (const route of ['/jobs', '/generation-history', '/evaluations', '/style-bible', '/master-assets', '/health', '/ready']) {
+    assert.ok(sw.includes("'" + route + "'"), 'expected dynamic route exclusion for ' + route);
+  }
 });
