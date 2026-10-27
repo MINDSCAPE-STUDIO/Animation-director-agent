@@ -56,7 +56,76 @@
     [['routeStyleBar',style],['routeRefBar',ref],['routeSuccessBar',success]].forEach(([id,v])=>{if($(id))$(id).style.width=v===null?'0%':`${v}%`;});
   }
 
-  async function refresh(){try{const [jobsR,histR,evalR,healthR,readyR]=await Promise.all([fetch('/jobs'),fetch('/generation-history?limit=30'),fetch('/evaluations?limit=20'),fetch('/health'),fetch('/ready')]);const jobsD=await jobsR.json(),histD=await histR.json(),evalD=await evalR.json(),health=healthR.ok?await healthR.json():null,ready=await readyR.json().catch(()=>({ready:false,missing_secrets:['Readiness check unavailable'],checks:{}}));const jobs=jobsD.jobs||[],records=histD.records||[],evaluations=evalD.evaluations||[],active=jobs.filter(j=>['queued','running','waiting_for_gpu','retrying_gpu'].includes(j.status)).length,completed=jobs.filter(j=>j.status==='completed').length,failed=jobs.filter(j=>['failed','canceled'].includes(j.status)).length,review=evaluations.filter(e=>['needs_review','rejected','evaluation_error'].includes(e.status)).length;if($('metricActive'))$('metricActive').textContent=active;if($('metricCompleted'))$('metricCompleted').textContent=completed;if($('metricFailed'))$('metricFailed').textContent=failed;if($('metricReview'))$('metricReview').textContent=review;const providerHealth=ready.providers||ready.provider_readiness||null;const missing=providerHealth?.missing_variables||ready.missing_secrets||[];const imageConfigured=providerHealth?Boolean(providerHealth.tasks?.image_generation?.ready):ready.checks?.image_provider==='google'?(!missing.includes('GEMINI_API_KEY')):ready.checks?.image_provider==='fal'?(!missing.includes('FAL_KEY')):false;const videoConfigured=providerHealth?Boolean(providerHealth.tasks?.image_to_video?.ready&&providerHealth.tasks?.text_to_video?.ready):ready.checks?.video_provider==='qwencloud'?(!missing.includes('QWEN_CLOUD_API_KEY')&&!missing.includes('DASHSCOPE_API_KEY')):ready.checks?.video_provider==='fal'?(!missing.includes('FAL_KEY')):ready.checks?.video_provider==='pixazo_ltx'?(!missing.includes('PIXAZO_API_KEY')):ready.checks?.video_provider==='replicate'?(!missing.includes('REPLICATE_API_TOKEN')):false;const providerFailure=(isImg)=>jobs.filter(j=>isImg?!isVideo(j):isVideo(j)).filter(j=>['failed','canceled'].includes(j.status)).sort((a,b)=>new Date(b.updatedAt||b.createdAt||0)-new Date(a.updatedAt||a.createdAt||0))[0];const classify=(isImg,configured)=>{if(!configured)return{label:'Needs configuration',cls:'offline'};const j=providerFailure(isImg);const err=String(j?.error||j?.providerResponse?.error||'').toLowerCase();if(j&&(/429|quota|rate limit|resource_exhausted/.test(err)))return{label:'Quota / rate limit',cls:'offline'};if(j&&(/api key|unauthorized|forbidden|401|403|not configured/.test(err)))return{label:'Provider error',cls:'offline'};if(j)return{label:'Last job failed',cls:'offline'};return{label:'Configured · untested',cls:'online'};};const setChip=(id,state)=>{const el=$(id);if(el){el.textContent=`● ${state.label}`;el.className=`status-chip ${state.cls}`;}};setChip('nanoStatus',classify(true,imageConfigured));setChip('wanStatus',classify(false,videoConfigured));if($('systemStatus'))$('systemStatus').textContent=ready.ready?'Service Ready':'Configuration Attention';if($('lastUpdated'))$('lastUpdated').textContent=`Checked: ${new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}`;const storageInfo=health?.storage||ready.storage||null;
+  const API_KEY_SESSION_STORAGE = 'mindscape_agent_api_key_v1';
+  let apiKeyPromptPromise = null;
+  let apiKeyPromptDismissed = false;
+  let apiKeyFailureAlertShown = false;
+
+  function readSessionApiKey() {
+    try { return sessionStorage.getItem(API_KEY_SESSION_STORAGE) || ''; } catch { return ''; }
+  }
+
+  function askForApiKey() {
+    const saved = readSessionApiKey();
+    if (saved) return Promise.resolve(saved);
+    if (apiKeyPromptDismissed) return Promise.resolve(null);
+    if (apiKeyPromptPromise) return apiKeyPromptPromise;
+
+    apiKeyPromptPromise = Promise.resolve().then(() => {
+      const entered = window.prompt(
+        'MINDSCAPE API access is protected. Paste the Agent Access Key supplied for this deployment. It is stored only in this browser tab and is not saved in local storage.'
+      );
+      const key = String(entered || '').trim();
+      if (!key) {
+        apiKeyPromptDismissed = true;
+        return null;
+      }
+      try { sessionStorage.setItem(API_KEY_SESSION_STORAGE, key); } catch {}
+      return key;
+    }).finally(() => { apiKeyPromptPromise = null; });
+
+    return apiKeyPromptPromise;
+  }
+
+  async function apiFetch(input, options = {}) {
+    const requestWithKey = (key) => {
+      const headers = new Headers(options.headers || {});
+      if (key) headers.set('Authorization', 'Bearer ' + key);
+      return fetch(input, { ...options, headers });
+    };
+
+    let key = readSessionApiKey();
+    let response = await requestWithKey(key);
+    if (response.status !== 401) return response;
+
+    const firstBody = await response.clone().json().catch(() => null);
+    if (firstBody?.error !== 'unauthorized') return response;
+
+    if (key) {
+      try { sessionStorage.removeItem(API_KEY_SESSION_STORAGE); } catch {}
+      apiKeyPromptDismissed = false;
+    }
+    key = await askForApiKey();
+    if (!key) return response;
+
+    response = await requestWithKey(key);
+    if (response.status === 401) {
+      const retryBody = await response.clone().json().catch(() => null);
+      if (retryBody?.error === 'unauthorized') {
+        try { sessionStorage.removeItem(API_KEY_SESSION_STORAGE); } catch {}
+        apiKeyPromptDismissed = true;
+        if (!apiKeyFailureAlertShown) {
+          apiKeyFailureAlertShown = true;
+          window.alert('That Agent Access Key was rejected. Reload the page to try again.');
+        }
+      }
+    }
+    return response;
+  }
+
+  window.apiFetch = apiFetch;
+
+  async function refresh(){try{const [jobsR,histR,evalR,healthR,readyR]=await Promise.all([window.apiFetch('/jobs'),window.apiFetch('/generation-history?limit=30'),window.apiFetch('/evaluations?limit=20'),fetch('/health'),fetch('/ready')]);const jobsD=await jobsR.json(),histD=await histR.json(),evalD=await evalR.json(),health=healthR.ok?await healthR.json():null,ready=await readyR.json().catch(()=>({ready:false,missing_secrets:['Readiness check unavailable'],checks:{}}));const jobs=jobsD.jobs||[],records=histD.records||[],evaluations=evalD.evaluations||[],active=jobs.filter(j=>['queued','running','waiting_for_gpu','retrying_gpu'].includes(j.status)).length,completed=jobs.filter(j=>j.status==='completed').length,failed=jobs.filter(j=>['failed','canceled'].includes(j.status)).length,review=evaluations.filter(e=>['needs_review','rejected','evaluation_error'].includes(e.status)).length;if($('metricActive'))$('metricActive').textContent=active;if($('metricCompleted'))$('metricCompleted').textContent=completed;if($('metricFailed'))$('metricFailed').textContent=failed;if($('metricReview'))$('metricReview').textContent=review;const providerHealth=ready.providers||ready.provider_readiness||null;const missing=providerHealth?.missing_variables||ready.missing_secrets||[];const imageConfigured=providerHealth?Boolean(providerHealth.tasks?.image_generation?.ready):ready.checks?.image_provider==='google'?(!missing.includes('GEMINI_API_KEY')):ready.checks?.image_provider==='fal'?(!missing.includes('FAL_KEY')):false;const videoConfigured=providerHealth?Boolean(providerHealth.tasks?.image_to_video?.ready&&providerHealth.tasks?.text_to_video?.ready):ready.checks?.video_provider==='qwencloud'?(!missing.includes('QWEN_CLOUD_API_KEY')&&!missing.includes('DASHSCOPE_API_KEY')):ready.checks?.video_provider==='fal'?(!missing.includes('FAL_KEY')):ready.checks?.video_provider==='pixazo_ltx'?(!missing.includes('PIXAZO_API_KEY')):ready.checks?.video_provider==='replicate'?(!missing.includes('REPLICATE_API_TOKEN')):false;const providerFailure=(isImg)=>jobs.filter(j=>isImg?!isVideo(j):isVideo(j)).filter(j=>['failed','canceled'].includes(j.status)).sort((a,b)=>new Date(b.updatedAt||b.createdAt||0)-new Date(a.updatedAt||a.createdAt||0))[0];const classify=(isImg,configured)=>{if(!configured)return{label:'Needs configuration',cls:'offline'};const j=providerFailure(isImg);const err=String(j?.error||j?.providerResponse?.error||'').toLowerCase();if(j&&(/429|quota|rate limit|resource_exhausted/.test(err)))return{label:'Quota / rate limit',cls:'offline'};if(j&&(/api key|unauthorized|forbidden|401|403|not configured/.test(err)))return{label:'Provider error',cls:'offline'};if(j)return{label:'Last job failed',cls:'offline'};return{label:'Configured · untested',cls:'online'};};const setChip=(id,state)=>{const el=$(id);if(el){el.textContent=`● ${state.label}`;el.className=`status-chip ${state.cls}`;}};setChip('nanoStatus',classify(true,imageConfigured));setChip('wanStatus',classify(false,videoConfigured));if($('systemStatus'))$('systemStatus').textContent=ready.ready?'Service Ready':'Configuration Attention';if($('lastUpdated'))$('lastUpdated').textContent=`Checked: ${new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}`;const storageInfo=health?.storage||ready.storage||null;
 const storageConfigured=typeof storageInfo?.writable==='boolean'?storageInfo.writable:Boolean(health?.persistent_history);
 const storagePersistent=typeof storageInfo?.persistent==='boolean'?storageInfo.persistent:Boolean(health?.persistent_history);
 const fallbackInfo=ready.fallbacks||{};
