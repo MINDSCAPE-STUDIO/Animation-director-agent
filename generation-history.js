@@ -4,6 +4,7 @@ const path=require('path');
 // v1: append-only local history. The schema is intentionally provider/model agnostic.
 // Replace the storage adapter with Postgres/SQLite later without changing the record shape.
 const {HISTORY_FILE}=require('./storage-paths');
+const {persistLocalFile}=require('./object-storage');
 
 function ensureStore(){fs.mkdirSync(path.dirname(HISTORY_FILE),{recursive:true})}
 function now(){return new Date().toISOString()}
@@ -41,6 +42,7 @@ function appendGenerationEvent(job,event,extra={}){
   try{
     ensureStore();
     fs.appendFileSync(HISTORY_FILE,JSON.stringify(recordFromJob(job,event,extra))+'\n');
+    void persistLocalFile(HISTORY_FILE,'metadata/generation-history.jsonl').catch(error=>console.error('Generation history backup failed: '+error.message));
   }catch(error){
     console.error(`Generation history write failed: ${error.message}`);
   }
