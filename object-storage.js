@@ -113,6 +113,21 @@ async function requestObject(method, logicalKey, body, contentType, env = proces
     if (verb === 'GET' && (status === 404 || errorName === 'NoSuchKey' || errorName === 'NotFound')) return null;
     if (verb === 'DELETE' && (status === 404 || errorName === 'NoSuchKey' || errorName === 'NotFound')) return true;
     const detail = String(error && error.message || 'Unknown storage error').slice(0, 600);
+    if (verb === 'PUT' && status === 400 && /credential is malformed/i.test(detail)) {
+      const accessKeyId = env.OBJECT_STORAGE_ACCESS_KEY_ID || '';
+      const secretKey = env.OBJECT_STORAGE_SECRET_ACCESS_KEY || '';
+      console.error('Object storage credential diagnostic (redacted):', JSON.stringify({
+        endpointHost: cfg.endpoint.host,
+        region: cfg.region,
+        bucketConfigured: Boolean(cfg.bucket),
+        accessKeyIdLength: accessKeyId.trim().length,
+        accessKeyIdAlphanumeric: /^[A-Za-z0-9]+$/.test(accessKeyId.trim()),
+        accessKeyIdLooksLikeBucketId: /^[a-f0-9]{24}$/i.test(accessKeyId.trim()),
+        accessKeyIdHasOuterWhitespace: accessKeyId !== accessKeyId.trim(),
+        secretKeyPresent: Boolean(secretKey.trim()),
+        secretKeyHasOuterWhitespace: secretKey !== secretKey.trim()
+      }));
+    }
     const wrapped = new Error('Object storage ' + verb + ' failed (' + (status || 'unknown') + '): ' + detail);
     wrapped.code = 'object_storage_http_' + (status || 'error');
     updateState(false, wrapped, env);
