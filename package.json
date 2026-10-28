@@ -12,6 +12,7 @@
     "node": ">=20"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.32.0",
     "@gradio/client": "^2.7.0",
     "ffmpeg-static": "^5.2.0"
   }
