@@ -23,7 +23,7 @@ function config(env = process.env) {
       accessKey: env.OBJECT_STORAGE_ACCESS_KEY_ID.trim(),
       secretKey: env.OBJECT_STORAGE_SECRET_ACCESS_KEY.trim(),
       region: (env.OBJECT_STORAGE_REGION || 'auto').trim(),
-      prefix: (env.OBJECT_STORAGE_PREFIX || 'mindscape-studio').replace(/^\\/+|\\/+$/g, '')
+      prefix: (env.OBJECT_STORAGE_PREFIX || 'mindscape-studio').replace(/^\/+|\/+$/g, '')
     };
   } catch {
     return null;
@@ -33,7 +33,7 @@ function isObjectStorageConfigured(env = process.env) {
   return Boolean(config(env));
 }
 function safeKey(value) {
-  const key = String(value || '').replace(/^\\/+/, '');
+  const key = String(value || '').replace(/^\/+/, '');
   if (!key || key.split('/').some(part => !part || part === '.' || part === '..')) {
     throw new Error('Invalid object-storage key.');
   }
