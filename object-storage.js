@@ -200,6 +200,23 @@ async function restoreMetadataFiles() {
 }
 async function initializeObjectStorage() {
   if (!isObjectStorageConfigured()) {
+    const missing = missingVariables();
+    let endpointDiagnostic = { parseable: false, https: false, hasQuery: false, hasHash: false };
+    if (!missing.includes('OBJECT_STORAGE_ENDPOINT')) {
+      try {
+        const endpoint = new URL(process.env.OBJECT_STORAGE_ENDPOINT.trim());
+        endpointDiagnostic = {
+          parseable: true,
+          https: endpoint.protocol === 'https:',
+          hasQuery: Boolean(endpoint.search),
+          hasHash: Boolean(endpoint.hash)
+        };
+      } catch {}
+    }
+    console.error('Object storage initialization skipped: configuration validation failed (redacted):', JSON.stringify({
+      missingOrEmptyVariables: missing,
+      endpoint: endpointDiagnostic
+    }));
     state = { configured: false, writable: false, checked_at: new Date().toISOString(), error_code: null };
     return getObjectStorageStatus();
   }
