@@ -40,14 +40,17 @@ function safeKey(value) {
   return key;
 }
 function getS3Client(env, cfg) {
-  // Use the standard AWS SDK SigV4 signer instead of maintaining a custom signer.
-  // Backblaze B2 uses an S3 endpoint with path-style bucket addressing.
+  // Backblaze B2's S3-compatible API can reject AWS SDK's optional
+  // aws-chunked checksum trailers with "The request body was too small".
+  // Use ordinary payload signing/checksums unless an operation requires them.
   let client = clients.get(env);
   if (!client) {
     client = new S3Client({
       endpoint: cfg.endpoint.origin,
       region: cfg.region,
       forcePathStyle: true,
+      requestChecksumCalculation: 'WHEN_REQUIRED',
+      responseChecksumValidation: 'WHEN_REQUIRED',
       credentials: {
         accessKeyId: cfg.accessKey,
         secretAccessKey: cfg.secretKey
@@ -236,7 +239,3 @@ async function initializeObjectStorage() {
   }
   return getObjectStorageStatus();
 }
-module.exports = {
-  isObjectStorageConfigured, getObjectStorageStatus, initializeObjectStorage, persistLocalFile, persistGeneratedFile,
-  putObjectBuffer, getObjectBuffer, getGeneratedObjectBuffer
-};
