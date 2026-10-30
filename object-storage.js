@@ -239,3 +239,15 @@ async function initializeObjectStorage() {
   }
   return getObjectStorageStatus();
 }
+
+module.exports = {
+  initializeObjectStorage,
+  isObjectStorageConfigured,
+  getObjectStorageStatus,
+  putObjectBuffer,
+  getObjectBuffer,
+  deleteObject,
+  persistLocalFile,
+  persistGeneratedFile,
+  getGeneratedObjectBuffer
+};
