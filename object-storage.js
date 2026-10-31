@@ -131,6 +131,26 @@ async function requestObject(method, logicalKey, body, contentType, env = proces
         secretKeyHasOuterWhitespace: secretKey !== secretKey.trim()
       }));
     }
+    if (status === 403 && /signature|authorization|credential/i.test(detail)) {
+      const accessKeyId = env.OBJECT_STORAGE_ACCESS_KEY_ID || '';
+      const secretKey = env.OBJECT_STORAGE_SECRET_ACCESS_KEY || '';
+      const endpointRegionMatch = cfg.endpoint.hostname.match(/^s3[.-]([a-z0-9-]+)\\.backblazeb2\\.com$/i);
+      console.error('Object storage signature diagnostic (redacted):', JSON.stringify({
+        endpointHost: cfg.endpoint.host,
+        configuredRegion: cfg.region,
+        endpointRegion: endpointRegionMatch ? endpointRegionMatch[1] : null,
+        bucketConfigured: Boolean(cfg.bucket),
+        accessKeyIdPresent: Boolean(accessKeyId.trim()),
+        accessKeyIdLength: accessKeyId.trim().length,
+        accessKeyIdHasOuterWhitespace: accessKeyId !== accessKeyId.trim(),
+        secretKeyPresent: Boolean(secretKey.trim()),
+        secretKeyHasOuterWhitespace: secretKey !== secretKey.trim(),
+        errorName: String(error && (error.name || error.Code || error.code) || '').slice(0, 100),
+        requestId: error && error.$metadata ? error.$metadata.requestId || null : null,
+        extendedRequestId: error && error.$metadata ? error.$metadata.extendedRequestId || null : null,
+        attempts: error && error.$metadata ? error.$metadata.attempts || null : null
+      }));
+    }
     const wrapped = new Error('Object storage ' + verb + ' failed (' + (status || 'unknown') + '): ' + detail);
     wrapped.code = 'object_storage_http_' + (status || 'error');
     updateState(false, wrapped, env);
