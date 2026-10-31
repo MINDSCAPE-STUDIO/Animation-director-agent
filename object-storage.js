@@ -270,7 +270,7 @@ async function diagnoseB2NativeAuthentication(env = process.env) {
       keyHasListFilesCapability: capabilities.includes('listFiles'),
       keyPrefixRestrictionPresent: Boolean(allowed && typeof allowed.namePrefix === 'string' && allowed.namePrefix),
       keyPrefixRestrictionMatchesConfiguredPrefix: allowed && typeof allowed.namePrefix === 'string'
-        ? cfg.prefix === allowed.namePrefix.replace(/^\\/+|\\/+$/g, '')
+        ? cfg.prefix === allowed.namePrefix.replace(/^\/+|\/+$/g, '')
         : null
     }));
     // Deliberately discard the response; never log or persist authorizationToken.
