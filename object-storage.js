@@ -134,7 +134,7 @@ async function requestObject(method, logicalKey, body, contentType, env = proces
     if (status === 403 && /signature|authorization|credential/i.test(detail)) {
       const accessKeyId = env.OBJECT_STORAGE_ACCESS_KEY_ID || '';
       const secretKey = env.OBJECT_STORAGE_SECRET_ACCESS_KEY || '';
-      const endpointRegionMatch = cfg.endpoint.hostname.match(/^s3[.-]([a-z0-9-]+)\\.backblazeb2\\.com$/i);
+      const endpointRegionMatch = cfg.endpoint.hostname.match(/^s3[.-]([a-z0-9-]+)\.backblazeb2\.com$/i);
       console.error('Object storage signature diagnostic (redacted):', JSON.stringify({
         endpointHost: cfg.endpoint.host,
         configuredRegion: cfg.region,
