@@ -222,6 +222,67 @@ async function restoreMetadataFiles() {
     }
   }
 }
+async function diagnoseB2NativeAuthentication(env = process.env) {
+  const cfg = config(env);
+  if (!cfg) return;
+  const keyId = env.OBJECT_STORAGE_ACCESS_KEY_ID.trim();
+  const applicationKey = env.OBJECT_STORAGE_SECRET_ACCESS_KEY.trim();
+  const basicAuth = Buffer.from(keyId + ':' + applicationKey, 'utf8').toString('base64');
+  try {
+    const response = await fetch('https://api.backblazeb2.com/b2api/v4/b2_authorize_account', {
+      method: 'GET',
+      headers: { Authorization: 'Basic ' + basicAuth },
+      signal: AbortSignal.timeout(8000)
+    });
+    let data = null;
+    try { data = await response.json(); } catch {}
+    if (!response.ok) {
+      // Never log response bodies: errors can change, and auth responses contain tokens.
+      console.error('B2 Native API auth diagnostic (redacted):', JSON.stringify({
+        ok: false,
+        httpStatus: response.status,
+        errorCode: data && typeof data.code === 'string' ? data.code.slice(0, 80) : null,
+        endpointHost: cfg.endpoint.hostname
+      }));
+      return;
+    }
+    const storageApi = data && data.apiInfo && data.apiInfo.storageApi;
+    const allowed = data && data.allowed;
+    const bucketEntries = allowed && Array.isArray(allowed.buckets) ? allowed.buckets : [];
+    const namedBuckets = bucketEntries.map(item => item && item.name).filter(name => typeof name === 'string');
+    const capabilities = allowed && Array.isArray(allowed.capabilities) ? allowed.capabilities : [];
+    const nativeS3Host = storageApi && typeof storageApi.s3ApiUrl === 'string'
+      ? (() => { try { return new URL(storageApi.s3ApiUrl).hostname; } catch { return null; } })()
+      : null;
+    const nativeS3Region = nativeS3Host
+      ? ((nativeS3Host.match(/^s3\.([a-z0-9-]+)\.backblazeb2\.com$/i) || [null, null])[1])
+      : null;
+    console.log('B2 Native API auth diagnostic (redacted):', JSON.stringify({
+      ok: true,
+      httpStatus: response.status,
+      endpointHost: cfg.endpoint.hostname,
+      nativeS3Host,
+      configuredRegion: cfg.region,
+      nativeS3Region,
+      configuredBucketListedByName: namedBuckets.length ? namedBuckets.includes(cfg.bucket) : null,
+      keyHasWriteFilesCapability: capabilities.includes('writeFiles'),
+      keyHasReadFilesCapability: capabilities.includes('readFiles'),
+      keyHasListFilesCapability: capabilities.includes('listFiles'),
+      keyPrefixRestrictionPresent: Boolean(allowed && typeof allowed.namePrefix === 'string' && allowed.namePrefix),
+      keyPrefixRestrictionMatchesConfiguredPrefix: allowed && typeof allowed.namePrefix === 'string'
+        ? cfg.prefix === allowed.namePrefix.replace(/^\\/+|\\/+$/g, '')
+        : null
+    }));
+    // Deliberately discard the response; never log or persist authorizationToken.
+  } catch (error) {
+    console.error('B2 Native API auth diagnostic (redacted):', JSON.stringify({
+      ok: false,
+      failureType: error && error.name === 'TimeoutError' ? 'timeout' : 'network_or_parse_error',
+      endpointHost: cfg.endpoint.hostname
+    }));
+  }
+}
+
 async function initializeObjectStorage() {
   if (!isObjectStorageConfigured()) {
     const missing = missingVariables();
@@ -244,6 +305,7 @@ async function initializeObjectStorage() {
     state = { configured: false, writable: false, checked_at: new Date().toISOString(), error_code: null };
     return getObjectStorageStatus();
   }
+  await diagnoseB2NativeAuthentication();
   const probeKey = '.health/probe-' + process.pid + '-' + crypto.randomBytes(8).toString('hex') + '.txt';
   try {
     const payload = Buffer.from('mindscape-storage-probe:' + new Date().toISOString());
