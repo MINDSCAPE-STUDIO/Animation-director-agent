@@ -91,6 +91,9 @@ async function requestObject(method, logicalKey, body, contentType, env = proces
         Bucket: cfg.bucket,
         Key: key,
         Body: payload,
+        // Buffer uploads have a known size. Send it explicitly to avoid
+        // ambiguous/chunked request framing with S3-compatible providers.
+        ContentLength: payload.length,
         ...(contentType ? { ContentType: contentType } : {})
       }));
       updateState(true, null, env);
