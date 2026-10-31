@@ -22,7 +22,8 @@ function config(env = process.env) {
       bucket: env.OBJECT_STORAGE_BUCKET.trim(),
       accessKey: env.OBJECT_STORAGE_ACCESS_KEY_ID.trim(),
       secretKey: env.OBJECT_STORAGE_SECRET_ACCESS_KEY.trim(),
-      region: (env.OBJECT_STORAGE_REGION || 'auto').trim(),
+      // B2 requires the SigV4 signing region to match its endpoint; derive it from the endpoint when possible.
+      region: (endpoint.hostname.match(/^s3\.([a-z0-9-]+)\.backblazeb2\.com$/i) || [null, (env.OBJECT_STORAGE_REGION || 'auto').trim()])[1],
       prefix: (env.OBJECT_STORAGE_PREFIX || 'mindscape-studio').replace(/^\/+|\/+$/g, '')
     };
   } catch {
