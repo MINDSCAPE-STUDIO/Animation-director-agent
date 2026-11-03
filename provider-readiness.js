@@ -226,6 +226,7 @@ function getStorageHealth(env = process.env) {
     writable, persistent, mode: remoteReady ? 'object-storage' : localPersistent ? 'persistent' : 'ephemeral',
     backend: remoteReady ? 'cloudflare-r2-compatible-object-storage' : 'local-filesystem',
     object_storage: { configured: remoteConfigured, writable: remoteReady, backend: objectStorage.backend,
+      region: objectStorage.region,
       missing_variables: objectStorage.missing_variables, error_code: objectStorage.error_code, checked_at: objectStorage.checked_at },
     generated_media_writable: Boolean(mediaCheck?.ok),
     history_writable: Boolean(historyDirCheck?.ok && filesWritable.find(check => check.file === historyFile)?.ok),

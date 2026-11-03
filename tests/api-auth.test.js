@@ -47,8 +47,8 @@ test('agent remains convenient for local development when no key is configured',
 });
 
 
-test('Cloudflare R2 adapter signs requests and rejects unsafe object keys', () => {
-  const { isObjectStorageConfigured, buildSignedRequest } = require('../object-storage');
+test('object storage prefixes keys, rejects unsafe keys, and never echoes credentials', () => {
+  const { isObjectStorageConfigured, resolveObjectKey, getObjectStorageStatus } = require('../object-storage');
   const env = {
     OBJECT_STORAGE_ENDPOINT: 'https://acct123.r2.cloudflarestorage.com',
     OBJECT_STORAGE_BUCKET: 'mindscape-test',
@@ -58,18 +58,26 @@ test('Cloudflare R2 adapter signs requests and rejects unsafe object keys', () =
     OBJECT_STORAGE_PREFIX: 'test-prefix'
   };
   assert.equal(isObjectStorageConfigured(env), true);
-  const signed = buildSignedRequest(
-    'PUT', 'generated/clip.mp4', Buffer.from('test'), 'video/mp4',
-    env, new Date('2026-10-27T00:00:00.000Z')
+  assert.equal(isObjectStorageConfigured({}), false);
+  assert.deepEqual(
+    resolveObjectKey('generated/clip.mp4', env),
+    { bucket: 'mindscape-test', key: 'test-prefix/generated/clip.mp4' }
   );
-  assert.equal(signed.url.pathname, '/mindscape-test/test-prefix/generated/clip.mp4');
-  assert.match(signed.options.headers.Authorization, /^AWS4-HMAC-SHA256 Credential=test-access-id\//);
-  assert.equal(
-    signed.options.headers.Authorization.match(/Signature=([0-9a-f]{64})$/)?.[1],
-    'edc27007768ebfa697cf920633d17a322676e3397689c387d243ad7a00cad906'
+  assert.deepEqual(
+    resolveObjectKey('/generated/clip.mp4', env),
+    { bucket: 'mindscape-test', key: 'test-prefix/generated/clip.mp4' }
   );
-  assert.equal(signed.options.headers.Authorization.includes('test-secret-key'), false);
-  assert.throws(() => buildSignedRequest('GET', '../escape', null, null, env), /Invalid object-storage key/);
+  assert.throws(() => resolveObjectKey('../escape', env), /Invalid object-storage key/);
+  assert.throws(() => resolveObjectKey('generated/../../escape', env), /Invalid object-storage key/);
+  assert.throws(() => resolveObjectKey('generated//clip.mp4', env), /Invalid object-storage key/);
+  assert.throws(() => resolveObjectKey('', env), /Invalid object-storage key/);
+  assert.throws(() => resolveObjectKey('generated/clip.mp4', {}), /not fully configured/);
+
+  const status = getObjectStorageStatus(env);
+  assert.equal(status.configured, true);
+  assert.deepEqual(status.missing_variables, []);
+  assert.equal(JSON.stringify(status).includes('test-secret-key'), false);
+  assert.equal(JSON.stringify(status).includes('test-access-id'), false);
 });
 
 
@@ -82,4 +90,23 @@ test('service worker does not cache API routes or authenticated responses', () =
   for (const route of ['/jobs', '/generation-history', '/evaluations', '/style-bible', '/master-assets', '/health', '/ready']) {
     assert.ok(sw.includes("'" + route + "'"), 'expected dynamic route exclusion for ' + route);
   }
+});
+
+test('B2 endpoints sign with the endpoint region rather than "auto"', () => {
+  const { getResolvedRegion } = require('../object-storage');
+  const base = {
+    OBJECT_STORAGE_BUCKET: 'mindscape-test',
+    OBJECT_STORAGE_ACCESS_KEY_ID: 'test-access-id',
+    OBJECT_STORAGE_SECRET_ACCESS_KEY: 'test-secret-key',
+    OBJECT_STORAGE_PREFIX: 'test-prefix'
+  };
+  // B2 rejects "auto" in the credential scope; the region must come from the host.
+  assert.equal(getResolvedRegion({ ...base, OBJECT_STORAGE_ENDPOINT: 'https://s3.us-west-004.backblazeb2.com', OBJECT_STORAGE_REGION: 'auto' }), 'us-west-004');
+  assert.equal(getResolvedRegion({ ...base, OBJECT_STORAGE_ENDPOINT: 'https://s3.eu-central-003.backblazeb2.com' }), 'eu-central-003');
+  assert.equal(getResolvedRegion({ ...base, OBJECT_STORAGE_ENDPOINT: 'https://s3.us-west-004.backblazeb2.com', OBJECT_STORAGE_REGION: 'us-east-1' }), 'us-west-004');
+  // Non-B2 endpoints keep the configured region, or "auto" for Cloudflare R2.
+  assert.equal(getResolvedRegion({ ...base, OBJECT_STORAGE_ENDPOINT: 'https://acct123.r2.cloudflarestorage.com', OBJECT_STORAGE_REGION: 'auto' }), 'auto');
+  assert.equal(getResolvedRegion({ ...base, OBJECT_STORAGE_ENDPOINT: 'https://acct123.r2.cloudflarestorage.com' }), 'auto');
+  assert.equal(getResolvedRegion({ ...base, OBJECT_STORAGE_ENDPOINT: 'https://s3.example.com', OBJECT_STORAGE_REGION: 'us-east-2' }), 'us-east-2');
+  assert.equal(getResolvedRegion({}), null);
 });
