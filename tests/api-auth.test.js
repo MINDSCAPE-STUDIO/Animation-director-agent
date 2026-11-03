@@ -91,3 +91,22 @@ test('service worker does not cache API routes or authenticated responses', () =
     assert.ok(sw.includes("'" + route + "'"), 'expected dynamic route exclusion for ' + route);
   }
 });
+
+test('B2 endpoints sign with the endpoint region rather than "auto"', () => {
+  const { getResolvedRegion } = require('../object-storage');
+  const base = {
+    OBJECT_STORAGE_BUCKET: 'mindscape-test',
+    OBJECT_STORAGE_ACCESS_KEY_ID: 'test-access-id',
+    OBJECT_STORAGE_SECRET_ACCESS_KEY: 'test-secret-key',
+    OBJECT_STORAGE_PREFIX: 'test-prefix'
+  };
+  // B2 rejects "auto" in the credential scope; the region must come from the host.
+  assert.equal(getResolvedRegion({ ...base, OBJECT_STORAGE_ENDPOINT: 'https://s3.us-west-004.backblazeb2.com', OBJECT_STORAGE_REGION: 'auto' }), 'us-west-004');
+  assert.equal(getResolvedRegion({ ...base, OBJECT_STORAGE_ENDPOINT: 'https://s3.eu-central-003.backblazeb2.com' }), 'eu-central-003');
+  assert.equal(getResolvedRegion({ ...base, OBJECT_STORAGE_ENDPOINT: 'https://s3.us-west-004.backblazeb2.com', OBJECT_STORAGE_REGION: 'us-east-1' }), 'us-west-004');
+  // Non-B2 endpoints keep the configured region, or "auto" for Cloudflare R2.
+  assert.equal(getResolvedRegion({ ...base, OBJECT_STORAGE_ENDPOINT: 'https://acct123.r2.cloudflarestorage.com', OBJECT_STORAGE_REGION: 'auto' }), 'auto');
+  assert.equal(getResolvedRegion({ ...base, OBJECT_STORAGE_ENDPOINT: 'https://acct123.r2.cloudflarestorage.com' }), 'auto');
+  assert.equal(getResolvedRegion({ ...base, OBJECT_STORAGE_ENDPOINT: 'https://s3.example.com', OBJECT_STORAGE_REGION: 'us-east-2' }), 'us-east-2');
+  assert.equal(getResolvedRegion({}), null);
+});

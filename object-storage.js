@@ -12,6 +12,16 @@ function missingVariables(env = process.env) {
   return ['OBJECT_STORAGE_ENDPOINT', 'OBJECT_STORAGE_BUCKET', 'OBJECT_STORAGE_ACCESS_KEY_ID', 'OBJECT_STORAGE_SECRET_ACCESS_KEY']
     .filter(name => typeof env[name] !== 'string' || !env[name].trim());
 }
+// Backblaze B2 rejects a SigV4 request whose credential scope does not name the
+// endpoint's own region, so 'auto' (correct for Cloudflare R2, and the value in
+// .env.example) produces a 403 signature mismatch there. Derive the region from
+// the B2 endpoint host; fall back to the configured region for every other host.
+function deriveRegion(endpoint, configured) {
+  const host = String(endpoint?.hostname || '');
+  const b2 = host.match(/^s3\.([a-z0-9-]+)\.backblazeb2\.com$/i);
+  if (b2) return b2[1].toLowerCase();
+  return String(configured || '').trim() || 'auto';
+}
 function config(env = process.env) {
   if (missingVariables(env).length) return null;
   try {
@@ -22,7 +32,7 @@ function config(env = process.env) {
       bucket: env.OBJECT_STORAGE_BUCKET.trim(),
       accessKey: env.OBJECT_STORAGE_ACCESS_KEY_ID.trim(),
       secretKey: env.OBJECT_STORAGE_SECRET_ACCESS_KEY.trim(),
-      region: (env.OBJECT_STORAGE_REGION || 'auto').trim(),
+      region: deriveRegion(endpoint, env.OBJECT_STORAGE_REGION),
       prefix: (env.OBJECT_STORAGE_PREFIX || 'mindscape-studio').replace(/^\/+|\/+$/g, '')
     };
   } catch {
@@ -31,6 +41,11 @@ function config(env = process.env) {
 }
 function isObjectStorageConfigured(env = process.env) {
   return Boolean(config(env));
+}
+// The region that will actually appear in the SigV4 credential scope.
+function getResolvedRegion(env = process.env) {
+  const cfg = config(env);
+  return cfg ? cfg.region : null;
 }
 function safeKey(value) {
   const key = String(value || '').replace(/^\/+/, '');
@@ -184,6 +199,7 @@ function getObjectStorageStatus(env = process.env) {
     checked_at: current.checked_at || null,
     error_code: current.error_code || null,
     missing_variables: missingVariables(env),
+    region: getResolvedRegion(env),
     prefix: env.OBJECT_STORAGE_PREFIX || 'mindscape-studio',
     backend: 'Backblaze B2 (S3-compatible object storage)'
   };
@@ -247,6 +263,8 @@ async function initializeObjectStorage() {
 module.exports = {
   initializeObjectStorage,
   isObjectStorageConfigured,
+  deriveRegion,
+  getResolvedRegion,
   resolveObjectKey,
   getObjectStorageStatus,
   putObjectBuffer,
