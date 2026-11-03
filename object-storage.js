@@ -39,6 +39,11 @@ function safeKey(value) {
   }
   return key;
 }
+function resolveObjectKey(logicalKey, env = process.env) {
+  const cfg = config(env);
+  if (!cfg) throw new Error('Object storage is not fully configured.');
+  return { bucket: cfg.bucket, key: [cfg.prefix, safeKey(logicalKey)].filter(Boolean).join('/') };
+}
 function getS3Client(env, cfg) {
   // Backblaze B2's S3-compatible API can reject AWS SDK's optional
   // aws-chunked checksum trailers with "The request body was too small".
@@ -80,15 +85,14 @@ async function bodyToBuffer(body) {
 }
 async function requestObject(method, logicalKey, body, contentType, env = process.env) {
   const cfg = config(env);
-  if (!cfg) throw new Error('Object storage is not fully configured.');
-  const key = [cfg.prefix, safeKey(logicalKey)].filter(Boolean).join('/');
+  const { bucket, key } = resolveObjectKey(logicalKey, env);
   const client = getS3Client(env, cfg);
   const verb = method.toUpperCase();
   try {
     if (verb === 'PUT') {
       const payload = body == null ? Buffer.alloc(0) : Buffer.isBuffer(body) ? body : Buffer.from(body);
       await client.send(new PutObjectCommand({
-        Bucket: cfg.bucket,
+        Bucket: bucket,
         Key: key,
         Body: payload,
         ...(contentType ? { ContentType: contentType } : {})
@@ -97,13 +101,13 @@ async function requestObject(method, logicalKey, body, contentType, env = proces
       return true;
     }
     if (verb === 'GET') {
-      const response = await client.send(new GetObjectCommand({ Bucket: cfg.bucket, Key: key }));
+      const response = await client.send(new GetObjectCommand({ Bucket: bucket, Key: key }));
       const data = await bodyToBuffer(response.Body);
       updateState(true, null, env);
       return data;
     }
     if (verb === 'DELETE') {
-      await client.send(new DeleteObjectCommand({ Bucket: cfg.bucket, Key: key }));
+      await client.send(new DeleteObjectCommand({ Bucket: bucket, Key: key }));
       updateState(true, null, env);
       return true;
     }
@@ -243,6 +247,7 @@ async function initializeObjectStorage() {
 module.exports = {
   initializeObjectStorage,
   isObjectStorageConfigured,
+  resolveObjectKey,
   getObjectStorageStatus,
   putObjectBuffer,
   getObjectBuffer,
