@@ -108,6 +108,47 @@ test('B2 endpoints sign with the endpoint region rather than "auto"', () => {
 });
 
 
+test('object storage failures classify the provider error code without echoing raw error detail', () => {
+  const { classifyStorageError } = require('../object-storage');
+  assert.equal(classifyStorageError({ Code: 'SignatureDoesNotMatch', message: 'signature mismatch' }), 'SignatureDoesNotMatch');
+  assert.equal(classifyStorageError({ name: 'InvalidAccessKeyId', message: 'no such key' }), 'InvalidAccessKeyId');
+  assert.equal(classifyStorageError({ name: 'AccessDenied', message: 'Access Denied' }), 'AccessDenied');
+  // Every S3-compatible backend names its own failures, so unknown but
+  // well-formed codes still surface.
+  assert.equal(classifyStorageError({ name: 'Unauthorized' }), 'Unauthorized');
+  // Errors wrapped by requestObject keep their classification.
+  const wrapped = new Error('Object storage PUT failed (403): wrapped');
+  wrapped.storage_error_class = 'SignatureDoesNotMatch';
+  assert.equal(classifyStorageError(wrapped), 'SignatureDoesNotMatch');
+  // Messages without a code still classify the two most common auth failures.
+  assert.equal(classifyStorageError({ name: 'Error', message: 'The request signature we calculated does not match the signature you provided.' }), 'SignatureDoesNotMatch');
+  assert.equal(classifyStorageError({ name: 'Error', message: 'The AWS Access Key Id you provided does not exist in our records.' }), 'InvalidAccessKeyId');
+  // Anything that is not a simple alphanumeric code is dropped so signatures,
+  // string-to-sign payloads and account identifiers can never be surfaced.
+  assert.equal(classifyStorageError({ name: 'AWS4-HMAC-SHA256 Credential=secret', StringToSign: 'sensitive' }), null);
+  assert.equal(classifyStorageError({ name: 'x'.repeat(100) }), null);
+  assert.equal(classifyStorageError({ name: 'S3ServiceException' }), null);
+  assert.equal(classifyStorageError(null), null);
+});
+
+test('object storage status reports the classified error alongside the HTTP error code', () => {
+  const { getObjectStorageStatus } = require('../object-storage');
+  const env = {
+    OBJECT_STORAGE_ENDPOINT: 'https://s3.us-east-005.backblazeb2.com',
+    OBJECT_STORAGE_BUCKET: 'mindscape-test',
+    OBJECT_STORAGE_ACCESS_KEY_ID: 'test-access-id',
+    OBJECT_STORAGE_SECRET_ACCESS_KEY: 'test-secret-key'
+  };
+  const status = getObjectStorageStatus(env);
+  assert.equal(status.configured, true);
+  assert.equal(status.region, 'us-east-005');
+  assert.equal('error_class' in status, true);
+  assert.equal(status.error_class, null);
+  assert.equal(JSON.stringify(status).includes('test-secret-key'), false);
+  assert.equal(JSON.stringify(status).includes('test-access-id'), false);
+});
+
+
 test('service worker does not cache API routes or authenticated responses', () => {
   const fs = require('node:fs');
   const sw = fs.readFileSync(require('node:path').join(__dirname, '..', 'sw.js'), 'utf8');

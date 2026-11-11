@@ -159,6 +159,20 @@ test('storage health tests actual write access and separates writability from du
   }
 });
 
+test('storage health exposes the classified object-storage error for dashboards and CI', () => {
+  const status = getStorageHealth({
+    OBJECT_STORAGE_ENDPOINT: 'https://s3.us-east-005.backblazeb2.com',
+    OBJECT_STORAGE_BUCKET: 'mindscape-test',
+    OBJECT_STORAGE_ACCESS_KEY_ID: 'test-access-id',
+    OBJECT_STORAGE_SECRET_ACCESS_KEY: 'test-secret-key'
+  });
+  assert.equal(status.object_storage.configured, true);
+  assert.equal(status.object_storage.region, 'us-east-005');
+  assert.equal('error_class' in status.object_storage, true);
+  assert.equal(JSON.stringify(status).includes('test-secret-key'), false);
+  assert.equal(JSON.stringify(status).includes('test-access-id'), false);
+});
+
 test('image fallback stays off unless explicitly configured', () => {
   withEnv({
     IMAGE_PROVIDER: 'google',

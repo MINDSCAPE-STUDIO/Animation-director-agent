@@ -42,6 +42,32 @@ function config(env = process.env) {
 function isObjectStorageConfigured(env = process.env) {
   return Boolean(config(env));
 }
+// S3-compatible backends report the failure reason as an XML <Error><Code>
+// value (SignatureDoesNotMatch, InvalidAccessKeyId, AccessDenied, ...), which
+// the SDK copies onto error.Code/error.name. That same SDK error also carries
+// fields such as StringToSign that must never be surfaced, so only simple
+// alphanumeric codes pass through and everything else is dropped.
+function classifyStorageError(error) {
+  if (error && error.storage_error_class) return String(error.storage_error_class).slice(0, 64) || null;
+  const code = String((error && (error.Code || error.name)) || '');
+  if (/^[A-Za-z][A-Za-z0-9]{2,63}$/.test(code) && code !== 'Error' && code !== 'S3ServiceException') return code;
+  const message = String((error && error.message) || '');
+  if (/signature (we )?calculated|signature you provided/i.test(message)) return 'SignatureDoesNotMatch';
+  if (/access key .* does not exist/i.test(message)) return 'InvalidAccessKeyId';
+  return null;
+}
+function credentialShapeDiagnostic(env = process.env) {
+  const accessKeyId = env.OBJECT_STORAGE_ACCESS_KEY_ID || '';
+  const secretKey = env.OBJECT_STORAGE_SECRET_ACCESS_KEY || '';
+  return {
+    accessKeyIdLength: accessKeyId.trim().length,
+    accessKeyIdAlphanumeric: /^[A-Za-z0-9]+$/.test(accessKeyId.trim()),
+    accessKeyIdLooksLikeBucketId: /^[a-f0-9]{24}$/i.test(accessKeyId.trim()),
+    accessKeyIdHasOuterWhitespace: accessKeyId !== accessKeyId.trim(),
+    secretKeyPresent: Boolean(secretKey.trim()),
+    secretKeyHasOuterWhitespace: secretKey !== secretKey.trim()
+  };
+}
 // The region that will actually appear in the SigV4 credential scope.
 function getResolvedRegion(env = process.env) {
   const cfg = config(env);
@@ -86,7 +112,8 @@ function updateState(writable, error = null, env = process.env) {
     configured: isObjectStorageConfigured(env),
     writable: Boolean(writable),
     checked_at: new Date().toISOString(),
-    error_code: error ? String(error.code || 'object_storage_error').slice(0, 80) : null
+    error_code: error ? String(error.code || 'object_storage_error').slice(0, 80) : null,
+    error_class: error ? classifyStorageError(error) : null
   };
 }
 async function bodyToBuffer(body) {
@@ -136,22 +163,30 @@ async function requestObject(method, logicalKey, body, contentType, env = proces
     if (verb === 'DELETE' && (status === 404 || errorName === 'NoSuchKey' || errorName === 'NotFound')) return true;
     const detail = String(error && error.message || 'Unknown storage error').slice(0, 600);
     if (verb === 'PUT' && status === 400 && /credential is malformed/i.test(detail)) {
-      const accessKeyId = env.OBJECT_STORAGE_ACCESS_KEY_ID || '';
-      const secretKey = env.OBJECT_STORAGE_SECRET_ACCESS_KEY || '';
       console.error('Object storage credential diagnostic (redacted):', JSON.stringify({
         endpointHost: cfg.endpoint.host,
         region: cfg.region,
         bucketConfigured: Boolean(cfg.bucket),
-        accessKeyIdLength: accessKeyId.trim().length,
-        accessKeyIdAlphanumeric: /^[A-Za-z0-9]+$/.test(accessKeyId.trim()),
-        accessKeyIdLooksLikeBucketId: /^[a-f0-9]{24}$/i.test(accessKeyId.trim()),
-        accessKeyIdHasOuterWhitespace: accessKeyId !== accessKeyId.trim(),
-        secretKeyPresent: Boolean(secretKey.trim()),
-        secretKeyHasOuterWhitespace: secretKey !== secretKey.trim()
+        ...credentialShapeDiagnostic(env)
+      }));
+    }
+    // B2 answers authorization problems with 401/403; the XML error code
+    // separates bad credentials (InvalidAccessKeyId), signature bugs
+    // (SignatureDoesNotMatch) and missing permissions (AccessDenied), so the
+    // failure can be acted on instead of staying an opaque HTTP status.
+    if (status === 401 || status === 403) {
+      console.error('Object storage authorization diagnostic (redacted):', JSON.stringify({
+        httpStatus: status,
+        s3ErrorClass: classifyStorageError(error),
+        endpointHost: cfg.endpoint.host,
+        region: cfg.region,
+        bucketConfigured: Boolean(cfg.bucket),
+        ...credentialShapeDiagnostic(env)
       }));
     }
     const wrapped = new Error('Object storage ' + verb + ' failed (' + (status || 'unknown') + '): ' + detail);
     wrapped.code = 'object_storage_http_' + (status || 'error');
+    wrapped.storage_error_class = classifyStorageError(error);
     updateState(false, wrapped, env);
     throw wrapped;
   }
@@ -192,12 +227,13 @@ function getGeneratedObjectBuffer(filename) {
 }
 function getObjectStorageStatus(env = process.env) {
   const configured = isObjectStorageConfigured(env);
-  const current = env === process.env ? state : { writable: false, checked_at: null, error_code: null };
+  const current = env === process.env ? state : { writable: false, checked_at: null, error_code: null, error_class: null };
   return {
     configured,
     writable: configured && Boolean(current.writable),
     checked_at: current.checked_at || null,
     error_code: current.error_code || null,
+    error_class: current.error_class || null,
     missing_variables: missingVariables(env),
     region: getResolvedRegion(env),
     prefix: env.OBJECT_STORAGE_PREFIX || 'mindscape-studio',
@@ -240,7 +276,7 @@ async function initializeObjectStorage() {
       missingOrEmptyVariables: missing,
       endpoint: endpointDiagnostic
     }));
-    state = { configured: false, writable: false, checked_at: new Date().toISOString(), error_code: null };
+    state = { configured: false, writable: false, checked_at: new Date().toISOString(), error_code: null, error_class: null };
     return getObjectStorageStatus();
   }
   const probeKey = '.health/probe-' + process.pid + '-' + crypto.randomBytes(8).toString('hex') + '.txt';
@@ -263,6 +299,7 @@ async function initializeObjectStorage() {
 module.exports = {
   initializeObjectStorage,
   isObjectStorageConfigured,
+  classifyStorageError,
   deriveRegion,
   getResolvedRegion,
   resolveObjectKey,
