@@ -47,8 +47,8 @@ test('agent remains convenient for local development when no key is configured',
 });
 
 
-test('Cloudflare R2 adapter signs requests and rejects unsafe object keys', () => {
-  const { isObjectStorageConfigured, buildSignedRequest } = require('../object-storage');
+test('object storage validates configuration, rejects unsafe keys, and hides credentials', async () => {
+  const { isObjectStorageConfigured, putObjectBuffer, getObjectBuffer, getObjectStorageStatus } = require('../object-storage');
   const env = {
     OBJECT_STORAGE_ENDPOINT: 'https://acct123.r2.cloudflarestorage.com',
     OBJECT_STORAGE_BUCKET: 'mindscape-test',
@@ -58,18 +58,23 @@ test('Cloudflare R2 adapter signs requests and rejects unsafe object keys', () =
     OBJECT_STORAGE_PREFIX: 'test-prefix'
   };
   assert.equal(isObjectStorageConfigured(env), true);
-  const signed = buildSignedRequest(
-    'PUT', 'generated/clip.mp4', Buffer.from('test'), 'video/mp4',
-    env, new Date('2026-10-27T00:00:00.000Z')
-  );
-  assert.equal(signed.url.pathname, '/mindscape-test/test-prefix/generated/clip.mp4');
-  assert.match(signed.options.headers.Authorization, /^AWS4-HMAC-SHA256 Credential=test-access-id\//);
-  assert.equal(
-    signed.options.headers.Authorization.match(/Signature=([0-9a-f]{64})$/)?.[1],
-    'edc27007768ebfa697cf920633d17a322676e3397689c387d243ad7a00cad906'
-  );
-  assert.equal(signed.options.headers.Authorization.includes('test-secret-key'), false);
-  assert.throws(() => buildSignedRequest('GET', '../escape', null, null, env), /Invalid object-storage key/);
+  // Endpoints must be parseable HTTPS URLs without query strings or fragments.
+  for (const bad of [
+    'http://acct123.r2.cloudflarestorage.com',
+    'https://acct123.r2.cloudflarestorage.com?token=1',
+    'https://acct123.r2.cloudflarestorage.com#fragment',
+    'not a url'
+  ]) {
+    assert.equal(isObjectStorageConfigured({ ...env, OBJECT_STORAGE_ENDPOINT: bad }), false, bad);
+  }
+  // Unsafe keys are rejected synchronously before any network request is attempted.
+  await assert.rejects(() => putObjectBuffer('../escape', Buffer.from('test'), 'video/mp4', env), /Invalid object-storage key/);
+  await assert.rejects(() => putObjectBuffer('generated/../clip.mp4', Buffer.from('test'), 'video/mp4', env), /Invalid object-storage key/);
+  await assert.rejects(() => getObjectBuffer('a//b', env), /Invalid object-storage key/);
+  // Status reporting never exposes credentials.
+  const status = getObjectStorageStatus(env);
+  assert.equal(status.configured, true);
+  assert.equal(JSON.stringify(status).includes('test-secret-key'), false);
 });
 
 

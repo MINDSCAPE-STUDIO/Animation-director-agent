@@ -5,7 +5,8 @@ const { persistGeneratedFile } = require('./object-storage');
 
 const API_BASE = () => String(process.env.QWEN_VIDEO_API_BASE || 'https://maas.qwencloudapi.com/api/v1').replace(/\/$/, '');
 const TASK_BASE = () => String(process.env.QWEN_TASK_API_BASE || 'https://dashscope-intl.aliyuncs.com/api/v1').replace(/\/$/, '');
-const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+const TASK_DEADLINE_MS = () => Number(process.env.QWEN_VIDEO_TIMEOUT_MS || 900000);
+const POLL_INTERVAL_MS = () => Number(process.env.QWEN_VIDEO_POLL_INTERVAL_MS || 15000);
 
 function apiKey() {
   const key = process.env.QWEN_CLOUD_API_KEY || process.env.DASHSCOPE_API_KEY;
@@ -68,46 +69,73 @@ async function submitQwenCloud(job) {
   }, 'submission');
   const taskId = submitted?.output?.task_id;
   if (!taskId) throw new Error(`QwenCloud returned no task_id: ${JSON.stringify(submitted).slice(0, 1200)}`);
-
-  const deadline = Date.now() + Number(process.env.QWEN_VIDEO_TIMEOUT_MS || 900000);
-  let status = 'PENDING';
-  let task = null;
-  while (Date.now() < deadline) {
-    await sleep(Number(process.env.QWEN_VIDEO_POLL_INTERVAL_MS || 15000));
-    task = await request(`${TASK_BASE()}/tasks/${encodeURIComponent(taskId)}`, {
-      method: 'GET',
-      headers: { Authorization: `Bearer ${key}` }
-    }, 'status check');
-    const output = task?.output || {};
-    status = String(output.task_status || '').toUpperCase();
-    if (status === 'SUCCEEDED') {
-      const videoUrl = output.video_url;
-      if (!videoUrl || !/^https?:\/\//i.test(videoUrl)) throw new Error('QwenCloud marked the task successful but returned no valid video_url.');
-      const videoResponse = await fetch(videoUrl);
-      if (!videoResponse.ok) throw new Error(`QwenCloud video download failed (${videoResponse.status}).`);
-      const bytes = Buffer.from(await videoResponse.arrayBuffer());
-      if (bytes.length < 1024) throw new Error('QwenCloud returned an unexpectedly small video file.');
-      const publicDir = GENERATED_DIR;
-      fs.mkdirSync(publicDir, { recursive: true });
-      const filename = `mindscape-qwen-${Date.now()}-${Math.random().toString(36).slice(2, 7)}.mp4`;
-      const outputFile=path.join(publicDir,filename);
-      fs.writeFileSync(outputFile, bytes);
-      await persistGeneratedFile(outputFile);
-      return {
-        output: `/generated/${filename}`,
-        provider: 'qwencloud',
-        model,
-        task_id: taskId,
-        duration: Number(output?.usage?.output_video_duration) || duration,
-        resolution,
-        bytes: bytes.length
-      };
-    }
-    if (status === 'FAILED' || status === 'CANCELED' || status === 'CANCELLED' || status === 'UNKNOWN') {
-      throw new Error(`QwenCloud task ${status}: ${output.message || output.code || 'no provider error details'}`);
-    }
-  }
-  throw new Error(`QwenCloud video generation timed out while task ${taskId} was in state ${status}. The task may still be processing; check QwenCloud task history before retrying to avoid duplicate charges.`);
+  return {
+    ...job,
+    status: 'running',
+    provider_state: 'provider_queue',
+    providerResponse: { task_id: taskId, model, duration, resolution },
+    submittedAt: new Date().toISOString()
+  };
 }
 
-module.exports = { submitQwenCloud };
+async function downloadQwenCloudVideo(videoUrl) {
+  const videoResponse = await fetch(videoUrl);
+  if (!videoResponse.ok) throw new Error(`QwenCloud video download failed (${videoResponse.status}).`);
+  const bytes = Buffer.from(await videoResponse.arrayBuffer());
+  if (bytes.length < 1024) throw new Error('QwenCloud returned an unexpectedly small video file.');
+  fs.mkdirSync(GENERATED_DIR, { recursive: true });
+  const filename = `mindscape-qwen-${Date.now()}-${Math.random().toString(36).slice(2, 7)}.mp4`;
+  const outputFile = path.join(GENERATED_DIR, filename);
+  fs.writeFileSync(outputFile, bytes);
+  await persistGeneratedFile(outputFile);
+  return { result: `/generated/${filename}`, bytes: bytes.length };
+}
+
+async function refreshQwenCloud(job) {
+  const taskId = job.providerResponse?.task_id;
+  if (!taskId) return job;
+
+  const lastPolledAt = Number(job.providerResponse?.polledAt) || 0;
+  if (Date.now() - lastPolledAt < POLL_INTERVAL_MS()) return job;
+
+  const submittedAt = Date.parse(job.submittedAt || job.createdAt || '') || 0;
+  if (submittedAt && Date.now() - submittedAt > TASK_DEADLINE_MS()) {
+    throw new Error(`QwenCloud video generation timed out while task ${taskId} was in state ${job.provider_state || 'running'}. The task may still be processing; check QwenCloud task history before retrying to avoid duplicate charges.`);
+  }
+
+  const task = await request(`${TASK_BASE()}/tasks/${encodeURIComponent(taskId)}`, {
+    method: 'GET',
+    headers: { Authorization: `Bearer ${apiKey()}` }
+  }, 'status check');
+  const output = task?.output || {};
+  const status = String(output.task_status || '').toUpperCase();
+  const providerResponse = { ...job.providerResponse, task, polledAt: Date.now() };
+
+  if (status === 'SUCCEEDED') {
+    const videoUrl = output.video_url;
+    if (!videoUrl || !/^https?:\/\//i.test(videoUrl)) throw new Error('QwenCloud marked the task successful but returned no valid video_url.');
+    const media = await downloadQwenCloudVideo(videoUrl);
+    return {
+      ...job,
+      status: 'completed',
+      provider_state: 'completed',
+      providerResponse,
+      result: media.result,
+      duration: Number(output?.usage?.output_video_duration) || providerResponse.duration,
+      resolution: providerResponse.resolution,
+      bytes: media.bytes
+    };
+  }
+  if (status === 'FAILED' || status === 'CANCELED' || status === 'CANCELLED' || status === 'UNKNOWN') {
+    return {
+      ...job,
+      status: status === 'CANCELED' || status === 'CANCELLED' ? 'canceled' : 'failed',
+      provider_state: status.toLowerCase(),
+      error: `QwenCloud task ${status}: ${output.message || output.code || 'no provider error details'}`,
+      providerResponse
+    };
+  }
+  return { ...job, status: 'running', provider_state: status.toLowerCase() || 'provider_queue', providerResponse };
+}
+
+module.exports = { submitQwenCloud, refreshQwenCloud };

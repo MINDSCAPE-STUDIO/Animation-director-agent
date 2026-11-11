@@ -1,47 +1,396 @@
-const {createGenerationJob,submit,refresh:refreshProvider,quotaFallbackJob}=require('./model-router');
-const {refreshPixazo}=require('./pixazo-ltx-provider');
-const {appendGenerationEvent,listGenerationHistory}=require('./generation-history');
-const {buildEvaluationFromGeneration}=require('./evaluation-hooks');
-const {recordEvaluation}=require('./model-performance');
-const {createEvaluation}=require('./evaluation');
-const {evaluateWithGemini}=require('./gemini-visual-provider');
-const {buildCorrectionPlan,applyCorrection}=require('./auto-correction');
+const { createGenerationJob, submit, refresh: refreshProvider, quotaFallbackJob } = require('./model-router');
+const { refreshPixazo } = require('./pixazo-ltx-provider');
+const { refreshQwenCloud } = require('./qwencloud-video-provider');
+const { appendGenerationEvent, listGenerationHistory } = require('./generation-history');
+const { buildEvaluationFromGeneration } = require('./evaluation-hooks');
+const { recordEvaluation } = require('./model-performance');
+const { createEvaluation } = require('./evaluation');
+const { evaluateWithGemini } = require('./gemini-visual-provider');
+const { buildCorrectionPlan, applyCorrection } = require('./auto-correction');
 
-function visualScores(observations={}){const get=n=>typeof observations[n]?.score==='number'?observations[n].score:null;const avg=names=>{const v=names.map(get).filter(x=>x!==null);return v.length?Number((v.reduce((a,b)=>a+b,0)/v.length).toFixed(2)):null};return{character_identity:avg(['character_identity','proportions','clothing']),style_consistency:avg(['palette','line_style','shading','texture']),motion_quality:get('motion'),camera_accuracy:get('camera'),environment_consistency:avg(['environment','lighting']),prompt_adherence:avg(['character_identity','clothing','environment','camera','motion'])}}
-function isZeroGpuQueueTimeout(error){const message=String(error?.message||error||'').toLowerCase();return message.includes('no gpu was available after 60s')||message.includes('zerogpu')&&message.includes('queue timeout')||message.includes('gpu was not available')&&message.includes('60s')}
-function isZeroGpuQuotaExhausted(error){const message=String(error?.message||error||'').toLowerCase();return message.includes('exceeded your free zerogpu quota')||message.includes('exceeded your zerogpu runs limit')||message.includes('zerogpu runs limit')||message.includes('zerogpu quota')&&message.includes('try again in')}
-function sleep(ms){return new Promise(resolve=>setTimeout(resolve,ms))}
-function isTerminal(status){return ['completed','failed','canceled'].includes(status)}
-
-class GenerationQueue{
-constructor(){this.jobs=new Map();this.recoverPersistedJobs()}
-recoverPersistedJobs(){try{const history=listGenerationHistory(1000);const latest=new Map();for(const event of [...history].reverse()){if(event.job_id&&!latest.has(event.job_id))latest.set(event.job_id,event)}for(const event of latest.values()){if(event.status&&!isTerminal(event.status)){this.jobs.set(event.job_id,{id:event.job_id,project_id:event.project_id,shot_id:event.shot_id,type:event.generation_type,provider:event.provider,model:event.model,attempt:event.attempt||1,prompt:event.prompt,input:event.input||{},status:event.status,result:event.result,error:event.error,createdAt:event.recorded_at,maxAttempts:3,recovered:true})}}}catch(error){console.error(`Generation queue recovery failed: ${error.message}`)}}
-async enqueue(input){const job=createGenerationJob(input);this.jobs.set(job.id,job);appendGenerationEvent(job,'queued');void this.start(job);return job}
-recordPendingEvaluation(job){try{const evaluation=buildEvaluationFromGeneration(job,{status:'pending',evaluator:'pending'});recordEvaluation(evaluation);return evaluation}catch(error){console.error(`Evaluation initialization for ${job.id} failed:`,error);return null}}
-async recordTerminalEvaluation(job){try{if(String(process.env.ENABLE_VISUAL_EVALUATION||'').toLowerCase()!=='true')return null;if(job.status!=='completed'){const evaluation=createEvaluation({...buildEvaluationFromGeneration(job,{status:'not_evaluated',evaluator:'pending'}),status:'not_evaluated'});recordEvaluation(evaluation);return evaluation}const visual=await evaluateWithGemini({projectId:job.project_id||job.projectId||'default',assetId:job.master_asset_id||job.asset_id||job.input?.master_asset_id||null,generation:job});const errors=visual.findings||[];const status=errors.some(e=>e.severity==='high'||e.severity==='critical')?'rejected':errors.length?'needs_review':'approved';const scores=visualScores(visual.observations);const evaluation=createEvaluation({...buildEvaluationFromGeneration(job,{status,evaluator:`gemini:${visual.model}`,scores,errors,notes:visual.summary,evaluated_at:new Date().toISOString()}),status,evaluator:`gemini:${visual.model}`,scores,errors,notes:visual.summary});recordEvaluation(evaluation);return evaluation}catch(error){console.error(`Visual evaluation for ${job.id} failed:`,error);const evaluation=createEvaluation({...buildEvaluationFromGeneration(job,{status:'evaluation_error',evaluator:'gemini',errors:[{category:'technical',code:'provider_error',severity:'medium',confidence:100,description:error.message,auto_detected:true,correction_attempted:false}]}),status:'evaluation_error',evaluator:'gemini',notes:`Visual evaluator unavailable: ${error.message}`});recordEvaluation(evaluation);return evaluation}}
-async autoCorrect(job,evaluation){if(!evaluation||!['rejected','needs_review'].includes(evaluation.status))return null;const plan=buildCorrectionPlan({job,evaluation,maxAttempts:Number(job.maxAttempts)||3});if(!plan.enabled)return null;const corrected=applyCorrection({...job},plan);const retry=createGenerationJob({...job,...corrected,input:{...(job.input||{})},prompt:corrected.prompt});const next={...retry,attempt:plan.next_attempt,maxAttempts:Number(job.maxAttempts)||3,correction_of:job.id,correction_codes:plan.error_codes,correction_plan:plan};this.jobs.set(next.id,next);appendGenerationEvent(next,'auto_correction',{correction_of:job.id,error_codes:plan.error_codes,attempt:plan.next_attempt});void this.start(next);return next}
-async submitWithProviderRecovery(job){
- let currentJob=job;let fallbackUsed=false;let lastError=null;
- for(let attempt=1;attempt<=3;attempt++){
-  try{return await submit(currentJob)}
-  catch(error){
-   lastError=error;
-   if(!fallbackUsed){const fallback=quotaFallbackJob(currentJob,error);if(fallback){fallbackUsed=true;currentJob=fallback;const eventJob={...currentJob,id:job.id,status:'running',provider_state:'quota_fallback',fallback_from:fallback.fallback_from,error:'Primary provider quota/rate limit reached; switching to configured fallback provider '+fallback.provider+'.'};this.jobs.set(job.id,eventJob);appendGenerationEvent(eventJob,'provider_fallback_started',{from:fallback.fallback_from,to:fallback.provider,reason:'provider_quota_or_rate_limit'});continue;}}
-   if(isZeroGpuQuotaExhausted(error))throw Object.assign(error,{code:'ZEROGPU_QUOTA_EXHAUSTED'});
-   if(!isZeroGpuQueueTimeout(error)||attempt===3)throw error;
-   const waitMs=5000*attempt;const waiting={...currentJob,id:job.id,status:'waiting_for_gpu',provider_state:'zerogpu_queue_timeout',retry_attempt:attempt,max_provider_retries:3,retry_in_ms:waitMs,error:'ZeroGPU had no available GPU within the provider queue window. Retrying automatically ('+attempt+'/3).'};this.jobs.set(job.id,waiting);appendGenerationEvent(waiting,'provider_retry_scheduled',{provider:'huggingface_zero_gpu',reason:'queue_timeout',attempt,retry_in_ms:waitMs});await sleep(waitMs);const resumed={...currentJob,id:job.id,status:'running',provider_state:'retrying_gpu',retry_attempt:attempt};this.jobs.set(job.id,resumed);appendGenerationEvent(resumed,'provider_retry_started',{provider:'huggingface_zero_gpu',attempt});
-  }
- }
- throw lastError||new Error('Generation failed')
+function visualScores(observations = {}) {
+  const get = n => typeof observations[n]?.score === 'number' ? observations[n].score : null;
+  const avg = names => {
+    const v = names.map(get).filter(x => x !== null);
+    return v.length ? Number((v.reduce((a, b) => a + b, 0) / v.length).toFixed(2)) : null;
+  };
+  return {
+    character_identity: avg(['character_identity', 'proportions', 'clothing']),
+    style_consistency: avg(['palette', 'line_style', 'shading', 'texture']),
+    motion_quality: get('motion'),
+    camera_accuracy: get('camera'),
+    environment_consistency: avg(['environment', 'lighting']),
+    prompt_adherence: avg(['character_identity', 'clothing', 'environment', 'camera', 'motion'])
+  };
 }
-normalizeSubmission(job){if((job.provider==='fal'||job.provider==='pixazo_ltx')&&job.providerResponse?.request_id){return{...job,status:'running',provider_state:'provider_queue',submittedAt:job.submittedAt||new Date().toISOString()}}return job}
-async refreshFal(job){const key=process.env.FAL_KEY;if(!key)return job;const response=job.providerResponse||{};const statusUrl=response.status_url||response.statusUrl;if(!statusUrl)return job;const r=await fetch(statusUrl,{headers:{Authorization:`Key ${key}`}});if(!r.ok)throw new Error(`fal status ${r.status}: ${await r.text()}`);const status=await r.json();const state=String(status.status||'').toLowerCase();if(state==='completed'||state==='succeeded'){let result=status.response||status.result||status.output||null;const responseUrl=response.response_url||response.responseUrl;if(!result&&responseUrl){const rr=await fetch(responseUrl,{headers:{Authorization:`Key ${key}`}});if(!rr.ok)throw new Error(`fal response ${rr.status}: ${await rr.text()}`);result=await rr.json()}return{...job,status:'completed',provider_state:'completed',providerResponse:{...response,status},result}}if(state==='failed'||state==='canceled'||state==='cancelled')return{...job,status:state.startsWith('cancel')?'canceled':'failed',provider_state:state,error:status.error||status.message||null,providerResponse:{...response,status}};return{...job,status:'running',provider_state:state||'provider_queue',providerResponse:{...response,status}}}
-async refreshJob(job){if(job.provider==='fal')return this.refreshFal(job);if(job.provider==='pixazo_ltx')return refreshPixazo(job);return refreshProvider(job)}
-async monitor(job){let current=job;const deadline=Date.now()+Number(process.env.PROVIDER_POLL_TIMEOUT_MS||900000);while(!isTerminal(current.status)&&Date.now()<deadline){await sleep(Number(process.env.PROVIDER_POLL_INTERVAL_MS||5000));current=await this.refreshJob(current);this.jobs.set(job.id,current);if(current.status!==job.status){appendGenerationEvent(current,current.status==='completed'?'completed':'provider_status_changed',{provider_state:current.provider_state})}}if(!isTerminal(current.status)){const timeout={...current,status:'failed',provider_state:'provider_timeout',error:'Provider did not reach a terminal state before the polling deadline.'};this.jobs.set(job.id,timeout);appendGenerationEvent(timeout,'failed',{error_type:'ProviderTimeout'});return timeout}return current}
-async start(job){try{const running={...job,status:'running',startedAt:new Date().toISOString(),provider_state:'starting'};this.jobs.set(job.id,running);appendGenerationEvent(running,'started');this.recordPendingEvaluation(running);let submitted=await this.submitWithProviderRecovery(running);submitted=this.normalizeSubmission(submitted);this.jobs.set(job.id,submitted);if(submitted.status==='running'){appendGenerationEvent(submitted,'provider_submitted',{provider_state:submitted.provider_state});submitted=await this.monitor(submitted);this.jobs.set(job.id,submitted)}else{appendGenerationEvent(submitted,'completed')}if(submitted.status==='completed'){const evaluation=await this.recordTerminalEvaluation(submitted);if(String(process.env.ENABLE_AUTO_CORRECTION||'').toLowerCase()==='true') await this.autoCorrect(submitted,evaluation)}else if(!isTerminal(submitted.status)){appendGenerationEvent(submitted,'provider_status_changed')}return submitted}catch(error){console.error(`Generation job ${job.id} failed:`,error);const failed={...job,status:'failed',error:error.message,failedAt:new Date().toISOString(),provider_state:isZeroGpuQuotaExhausted(error)?'zerogpu_quota_exhausted':isZeroGpuQueueTimeout(error)?'zerogpu_unavailable':'provider_error'};this.jobs.set(job.id,failed);appendGenerationEvent(failed,'failed',{error_type:error.name||'Error',provider_state:failed.provider_state});await this.recordTerminalEvaluation(failed);return failed}}
-async refresh(id){const job=this.jobs.get(id);if(!job)return null;if(isTerminal(job.status))return job;try{const next=await this.refreshJob(job);this.jobs.set(id,next);if(next.status!==job.status){appendGenerationEvent(next,next.status==='completed'?'completed':'provider_status_changed',{provider_state:next.provider_state});if(isTerminal(next.status)){const evaluation=await this.recordTerminalEvaluation(next);if(String(process.env.ENABLE_AUTO_CORRECTION||'').toLowerCase()==='true') await this.autoCorrect(next,evaluation)}}return next}catch(error){const failed={...job,status:'failed',error:error.message,failedAt:new Date().toISOString(),provider_state:'provider_error'};this.jobs.set(id,failed);appendGenerationEvent(failed,'failed',{error_type:error.name||'Error'});await this.recordTerminalEvaluation(failed);return failed}}
-get(id){return this.jobs.get(id)||null}
-list(){return [...this.jobs.values()].sort((a,b)=>String(b.createdAt||'').localeCompare(String(a.createdAt||''))).slice(0,50)}
-async retry(id){const old=this.jobs.get(id);if(!old||old.attempt>=old.maxAttempts)return old;const retry=createGenerationJob({...old,input:{...(old.input||{})},prompt:old.prompt});const next={...retry,attempt:Number(old.attempt)+1,maxAttempts:old.maxAttempts};this.jobs.set(next.id,next);appendGenerationEvent(next,'retry',{retry_of:id});void this.start(next);return next}}
 
-module.exports={GenerationQueue};
+function isZeroGpuQueueTimeout(error) {
+  const message = String(error?.message || error || '').toLowerCase();
+  return message.includes('no gpu was available after 60s') || message.includes('zerogpu') && message.includes('queue timeout') || message.includes('gpu was not available') && message.includes('60s');
+}
+
+function isZeroGpuQuotaExhausted(error) {
+  const message = String(error?.message || error || '').toLowerCase();
+  return message.includes('exceeded your free zerogpu quota') || message.includes('exceeded your zerogpu runs limit') || message.includes('zerogpu runs limit') || message.includes('zerogpu quota') && message.includes('try again in');
+}
+
+function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)) }
+function isTerminal(status) { return ['completed', 'failed', 'canceled'].includes(status) }
+
+class GenerationQueue {
+  constructor() {
+    this.jobs = new Map();
+    this.recoverPersistedJobs();
+  }
+
+  recoverPersistedJobs() {
+    try {
+      const history = listGenerationHistory(1000);
+      const latest = new Map();
+      for (const event of [...history].reverse()) {
+        if (event.job_id && !latest.has(event.job_id)) latest.set(event.job_id, event);
+      }
+      for (const event of latest.values()) {
+        if (event.status && !isTerminal(event.status)) {
+          this.jobs.set(event.job_id, {
+            id: event.job_id,
+            project_id: event.project_id,
+            shot_id: event.shot_id,
+            type: event.generation_type,
+            provider: event.provider,
+            model: event.model,
+            attempt: event.attempt || 1,
+            prompt: event.prompt,
+            input: event.input || {},
+            status: event.status,
+            result: event.result,
+            error: event.error,
+            createdAt: event.recorded_at,
+            maxAttempts: 3,
+            recovered: true
+          });
+        }
+      }
+    } catch (error) {
+      console.error(`Generation queue recovery failed: ${error.message}`);
+    }
+  }
+
+  async enqueue(input) {
+    const job = createGenerationJob(input);
+    this.jobs.set(job.id, job);
+    appendGenerationEvent(job, 'queued');
+    void this.start(job);
+    return job;
+  }
+
+  recordPendingEvaluation(job) {
+    try {
+      const evaluation = buildEvaluationFromGeneration(job, { status: 'pending', evaluator: 'pending' });
+      recordEvaluation(evaluation);
+      return evaluation;
+    } catch (error) {
+      console.error(`Evaluation initialization for ${job.id} failed:`, error);
+      return null;
+    }
+  }
+
+  async recordTerminalEvaluation(job) {
+    try {
+      if (String(process.env.ENABLE_VISUAL_EVALUATION || '').toLowerCase() !== 'true') return null;
+      if (job.status !== 'completed') {
+        const evaluation = createEvaluation({
+          ...buildEvaluationFromGeneration(job, { status: 'not_evaluated', evaluator: 'pending' }),
+          status: 'not_evaluated'
+        });
+        recordEvaluation(evaluation);
+        return evaluation;
+      }
+      const visual = await evaluateWithGemini({
+        projectId: job.project_id || job.projectId || 'default',
+        assetId: job.master_asset_id || job.asset_id || job.input?.master_asset_id || null,
+        generation: job
+      });
+      const errors = visual.findings || [];
+      const status = errors.some(e => e.severity === 'high' || e.severity === 'critical') ? 'rejected' : errors.length ? 'needs_review' : 'approved';
+      const scores = visualScores(visual.observations);
+      const evaluation = createEvaluation({
+        ...buildEvaluationFromGeneration(job, {
+          status,
+          evaluator: `gemini:${visual.model}`,
+          scores,
+          errors,
+          notes: visual.summary,
+          evaluated_at: new Date().toISOString()
+        }),
+        status,
+        evaluator: `gemini:${visual.model}`,
+        scores,
+        errors,
+        notes: visual.summary
+      });
+      recordEvaluation(evaluation);
+      return evaluation;
+    } catch (error) {
+      console.error(`Visual evaluation for ${job.id} failed:`, error);
+      const evaluation = createEvaluation({
+        ...buildEvaluationFromGeneration(job, {
+          status: 'evaluation_error',
+          evaluator: 'gemini',
+          errors: [{
+            category: 'technical',
+            code: 'provider_error',
+            severity: 'medium',
+            confidence: 100,
+            description: error.message,
+            auto_detected: true,
+            correction_attempted: false
+          }]
+        }),
+        status: 'evaluation_error',
+        evaluator: 'gemini',
+        notes: `Visual evaluator unavailable: ${error.message}`
+      });
+      recordEvaluation(evaluation);
+      return evaluation;
+    }
+  }
+
+  async autoCorrect(job, evaluation) {
+    if (!evaluation || !['rejected', 'needs_review'].includes(evaluation.status)) return null;
+    const plan = buildCorrectionPlan({ job, evaluation, maxAttempts: Number(job.maxAttempts) || 3 });
+    if (!plan.enabled) return null;
+    const corrected = applyCorrection({ ...job }, plan);
+    const retry = createGenerationJob({
+      ...job,
+      ...corrected,
+      input: { ...(job.input || {}) },
+      prompt: corrected.prompt
+    });
+    const next = {
+      ...retry,
+      attempt: plan.next_attempt,
+      maxAttempts: Number(job.maxAttempts) || 3,
+      correction_of: job.id,
+      correction_codes: plan.error_codes,
+      correction_plan: plan
+    };
+    this.jobs.set(next.id, next);
+    appendGenerationEvent(next, 'auto_correction', { correction_of: job.id, error_codes: plan.error_codes, attempt: plan.next_attempt });
+    void this.start(next);
+    return next;
+  }
+
+  async submitWithProviderRecovery(job) {
+    let currentJob = job;
+    let fallbackUsed = false;
+    let lastError = null;
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      try {
+        return await submit(currentJob);
+      } catch (error) {
+        lastError = error;
+        if (!fallbackUsed) {
+          const fallback = quotaFallbackJob(currentJob, error);
+          if (fallback) {
+            fallbackUsed = true;
+            currentJob = fallback;
+            const eventJob = {
+              ...currentJob,
+              id: job.id,
+              status: 'running',
+              provider_state: 'quota_fallback',
+              fallback_from: fallback.fallback_from,
+              error: 'Primary provider quota/rate limit reached; switching to configured fallback provider ' + fallback.provider + '.'
+            };
+            this.jobs.set(job.id, eventJob);
+            appendGenerationEvent(eventJob, 'provider_fallback_started', {
+              from: fallback.fallback_from,
+              to: fallback.provider,
+              reason: 'provider_quota_or_rate_limit'
+            });
+            continue;
+          }
+        }
+        if (isZeroGpuQuotaExhausted(error)) throw Object.assign(error, { code: 'ZEROGPU_QUOTA_EXHAUSTED' });
+        if (!isZeroGpuQueueTimeout(error) || attempt === 3) throw error;
+        const waitMs = 5000 * attempt;
+        const waiting = {
+          ...currentJob,
+          id: job.id,
+          status: 'waiting_for_gpu',
+          provider_state: 'zerogpu_queue_timeout',
+          retry_attempt: attempt,
+          max_provider_retries: 3,
+          retry_in_ms: waitMs,
+          error: 'ZeroGPU had no available GPU within the provider queue window. Retrying automatically (' + attempt + '/3).'
+        };
+        this.jobs.set(job.id, waiting);
+        appendGenerationEvent(waiting, 'provider_retry_scheduled', {
+          provider: 'huggingface_zero_gpu',
+          reason: 'queue_timeout',
+          attempt,
+          retry_in_ms: waitMs
+        });
+        await sleep(waitMs);
+        const resumed = { ...currentJob, id: job.id, status: 'running', provider_state: 'retrying_gpu', retry_attempt: attempt };
+        this.jobs.set(job.id, resumed);
+        appendGenerationEvent(resumed, 'provider_retry_started', { provider: 'huggingface_zero_gpu', attempt });
+      }
+    }
+    throw lastError || new Error('Generation failed');
+  }
+
+  normalizeSubmission(job) {
+    if ((job.provider === 'fal' || job.provider === 'pixazo_ltx') && job.providerResponse?.request_id) {
+      return { ...job, status: 'running', provider_state: 'provider_queue', submittedAt: job.submittedAt || new Date().toISOString() };
+    }
+    return job;
+  }
+
+  async refreshFal(job) {
+    const key = process.env.FAL_KEY;
+    if (!key) return job;
+    const response = job.providerResponse || {};
+    const statusUrl = response.status_url || response.statusUrl;
+    if (!statusUrl) return job;
+    const r = await fetch(statusUrl, { headers: { Authorization: `Key ${key}` } });
+    if (!r.ok) throw new Error(`fal status ${r.status}: ${await r.text()}`);
+    const status = await r.json();
+    const state = String(status.status || '').toLowerCase();
+    if (state === 'completed' || state === 'succeeded') {
+      let result = status.response || status.result || status.output || null;
+      const responseUrl = response.response_url || response.responseUrl;
+      if (!result && responseUrl) {
+        const rr = await fetch(responseUrl, { headers: { Authorization: `Key ${key}` } });
+        if (!rr.ok) throw new Error(`fal response ${rr.status}: ${await rr.text()}`);
+        result = await rr.json();
+      }
+      return { ...job, status: 'completed', provider_state: 'completed', providerResponse: { ...response, status }, result };
+    }
+    if (state === 'failed' || state === 'canceled' || state === 'cancelled') {
+      return {
+        ...job,
+        status: state.startsWith('cancel') ? 'canceled' : 'failed',
+        provider_state: state,
+        error: status.error || status.message || null,
+        providerResponse: { ...response, status }
+      };
+    }
+    return { ...job, status: 'running', provider_state: state || 'provider_queue', providerResponse: { ...response, status } };
+  }
+
+  async refreshJob(job) {
+    if (job.provider === 'fal') return this.refreshFal(job);
+    if (job.provider === 'pixazo_ltx') return refreshPixazo(job);
+    if (job.provider === 'qwencloud') return refreshQwenCloud(job);
+    return refreshProvider(job);
+  }
+
+  async monitor(job) {
+    let current = job;
+    const deadline = Date.now() + Number(process.env.PROVIDER_POLL_TIMEOUT_MS || 900000);
+    while (!isTerminal(current.status) && Date.now() < deadline) {
+      await sleep(Number(process.env.PROVIDER_POLL_INTERVAL_MS || 5000));
+      current = await this.refreshJob(current);
+      this.jobs.set(job.id, current);
+      if (current.status !== job.status) {
+        appendGenerationEvent(current, current.status === 'completed' ? 'completed' : 'provider_status_changed', { provider_state: current.provider_state });
+      }
+    }
+    if (!isTerminal(current.status)) {
+      const timeout = {
+        ...current,
+        status: 'failed',
+        provider_state: 'provider_timeout',
+        error: 'Provider did not reach a terminal state before the polling deadline.'
+      };
+      this.jobs.set(job.id, timeout);
+      appendGenerationEvent(timeout, 'failed', { error_type: 'ProviderTimeout' });
+      return timeout;
+    }
+    return current;
+  }
+
+  async start(job) {
+    try {
+      const running = { ...job, status: 'running', startedAt: new Date().toISOString(), provider_state: 'starting' };
+      this.jobs.set(job.id, running);
+      appendGenerationEvent(running, 'started');
+      this.recordPendingEvaluation(running);
+      let submitted = await this.submitWithProviderRecovery(running);
+      submitted = this.normalizeSubmission(submitted);
+      this.jobs.set(job.id, submitted);
+      if (submitted.status === 'running') {
+        appendGenerationEvent(submitted, 'provider_submitted', { provider_state: submitted.provider_state });
+        submitted = await this.monitor(submitted);
+        this.jobs.set(job.id, submitted);
+      } else {
+        appendGenerationEvent(submitted, 'completed');
+      }
+      if (submitted.status === 'completed') {
+        const evaluation = await this.recordTerminalEvaluation(submitted);
+        if (String(process.env.ENABLE_AUTO_CORRECTION || '').toLowerCase() === 'true') await this.autoCorrect(submitted, evaluation);
+      } else if (!isTerminal(submitted.status)) {
+        appendGenerationEvent(submitted, 'provider_status_changed');
+      }
+      return submitted;
+    } catch (error) {
+      console.error(`Generation job ${job.id} failed:`, error);
+      const failed = {
+        ...job,
+        status: 'failed',
+        error: error.message,
+        failedAt: new Date().toISOString(),
+        provider_state: isZeroGpuQuotaExhausted(error) ? 'zerogpu_quota_exhausted' : isZeroGpuQueueTimeout(error) ? 'zerogpu_unavailable' : 'provider_error'
+      };
+      this.jobs.set(job.id, failed);
+      appendGenerationEvent(failed, 'failed', { error_type: error.name || 'Error', provider_state: failed.provider_state });
+      await this.recordTerminalEvaluation(failed);
+      return failed;
+    }
+  }
+
+  async refresh(id) {
+    const job = this.jobs.get(id);
+    if (!job) return null;
+    if (isTerminal(job.status)) return job;
+    try {
+      const next = await this.refreshJob(job);
+      this.jobs.set(id, next);
+      if (next.status !== job.status) {
+        appendGenerationEvent(next, next.status === 'completed' ? 'completed' : 'provider_status_changed', { provider_state: next.provider_state });
+        if (isTerminal(next.status)) {
+          const evaluation = await this.recordTerminalEvaluation(next);
+          if (String(process.env.ENABLE_AUTO_CORRECTION || '').toLowerCase() === 'true') await this.autoCorrect(next, evaluation);
+        }
+      }
+      return next;
+    } catch (error) {
+      const failed = { ...job, status: 'failed', error: error.message, failedAt: new Date().toISOString(), provider_state: 'provider_error' };
+      this.jobs.set(id, failed);
+      appendGenerationEvent(failed, 'failed', { error_type: error.name || 'Error' });
+      await this.recordTerminalEvaluation(failed);
+      return failed;
+    }
+  }
+
+  get(id) { return this.jobs.get(id) || null }
+
+  list() {
+    return [...this.jobs.values()].sort((a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || ''))).slice(0, 50);
+  }
+
+  async retry(id) {
+    const old = this.jobs.get(id);
+    if (!old || old.attempt >= old.maxAttempts) return old;
+    const retry = createGenerationJob({ ...old, input: { ...(old.input || {}) }, prompt: old.prompt });
+    const next = { ...retry, attempt: Number(old.attempt) + 1, maxAttempts: old.maxAttempts };
+    this.jobs.set(next.id, next);
+    appendGenerationEvent(next, 'retry', { retry_of: id });
+    void this.start(next);
+    return next;
+  }
+}
+
+module.exports = { GenerationQueue };

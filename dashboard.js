@@ -20,40 +20,73 @@
     const anchor = document.getElementById('generation-queue');
     if (!anchor || !anchor.parentNode) return;
     const section = document.createElement('section'); section.id = 'production-intelligence'; section.className = 'production-intelligence';
-    section.innerHTML = `<div class="intelligence-header"><div><span class="section-kicker">DIRECTOR CONTROL</span><h2>Production Intelligence</h2><p>The dashboard shows what the pipeline is doing, why it chose a model, and where attention is required.</p></div><span class="intelligence-live"><i></i> Learning layer</span></div><div class="intelligence-grid"><article class="intel-card timeline-card"><div class="intel-title"><div><span>SHOT FLOW</span><h3>Current production path</h3></div><b id="timelineState">READY</b></div><div class="shot-timeline"><div class="timeline-track"><span id="timelineProgress"></span></div><div class="timeline-node done"><i>01</i><strong>Brief</strong><small>Director</small></div><div class="timeline-node done"><i>02</i><strong>Style</strong><small>Bible</small></div><div class="timeline-node active"><i>03</i><strong>Asset</strong><small>Qwen Image 2.1</small></div><div class="timeline-node"><i>04</i><strong>Motion</strong><small>Wan 2.2</small></div><div class="timeline-node"><i>05</i><strong>Evaluate</strong><small>Quality gate</small></div><div class="timeline-node"><i>06</i><strong>Learn</strong><small>Memory</small></div></div><div class="timeline-footer"><span><b id="timelineJobs">0</b> tracked jobs</span><span><b id="timelineReviews">0</b> review signals</span><span><b id="timelineFailures">0</b> failures</span></div></article><article class="intel-card routing-card"><div class="intel-title"><div><span>MODEL ROUTING</span><h3>Why this engine?</h3></div><b class="route-badge">ADAPTIVE</b></div><div class="route-model"><div class="route-orb nano">◎</div><div><strong id="routeModel">Qwen Image 2.1</strong><small id="routeReason">Selected for reference-image asset generation</small></div><span id="routeScore">—</span></div><div class="route-bars"><label>Style consistency <span id="routeStyle">—</span></label><div><i id="routeStyleBar"></i></div><label>Reference adherence <span id="routeRef">—</span></label><div><i id="routeRefBar"></i></div><label>Historical success <span id="routeSuccess">—</span></label><div><i id="routeSuccessBar"></i></div></div><button class="route-detail" type="button" id="routeDetail">View routing factors <span>→</span></button></article><article class="intel-card learning-card"><div class="intel-title"><div><span>LEARNING MEMORY</span><h3>What the system learned</h3></div><b class="memory-count" id="memoryCount">0 signals</b></div><div class="learning-item"><span class="learning-icon green">✓</span><div><strong>Approved patterns</strong><small id="approvedSignal">No approved pattern recorded yet.</small></div></div><div class="learning-item"><span class="learning-icon amber">△</span><div><strong>Recurring issue</strong><small id="errorSignal">No recurring error detected.</small></div></div><div class="learning-item"><span class="learning-icon blue">⌁</span><div><strong>Model evidence</strong><small id="modelSignal">Performance history is being collected.</small></div></div></article></div>`;
+    section.innerHTML = `<div class="intelligence-header"><div><span class="section-kicker">DIRECTOR CONTROL</span><h2>Production Intelligence</h2><p>The dashboard shows what the pipeline is doing, why it chose a model, and where attention is required.</p></div><span class="intelligence-live"><i></i> Learning layer</span></div><div class="intelligence-grid"><article class="intel-card timeline-card"><div class="intel-title"><div><span>SHOT FLOW</span><h3>Current production path</h3></div><b id="timelineState">READY</b></div><div class="shot-timeline"><div class="timeline-track"><span id="timelineProgress"></span></div><div class="timeline-node done"><i>01</i><strong>Brief</strong><small>Director</small></div><div class="timeline-node done"><i>02</i><strong>Style</strong><small>Bible</small></div><div class="timeline-node active"><i>03</i><strong>Asset</strong><small id="timelineAssetModel">Image engine</small></div><div class="timeline-node"><i>04</i><strong>Motion</strong><small id="timelineMotionModel">Video engine</small></div><div class="timeline-node"><i>05</i><strong>Evaluate</strong><small>Quality gate</small></div><div class="timeline-node"><i>06</i><strong>Learn</strong><small>Memory</small></div></div><div class="timeline-footer"><span><b id="timelineJobs">0</b> tracked jobs</span><span><b id="timelineReviews">0</b> review signals</span><span><b id="timelineFailures">0</b> failures</span></div></article><article class="intel-card routing-card"><div class="intel-title"><div><span>MODEL ROUTING</span><h3>Why this engine?</h3></div><b class="route-badge">ADAPTIVE</b></div><div class="route-model"><div class="route-orb nano">◎</div><div><strong id="routeModel">—</strong><small id="routeReason">Waiting for routing telemetry…</small></div><span id="routeScore">—</span></div><div class="route-bars"><label>Style consistency <span id="routeStyle">—</span></label><div><i id="routeStyleBar"></i></div><label>Reference adherence <span id="routeRef">—</span></label><div><i id="routeRefBar"></i></div><label>Historical success <span id="routeSuccess">—</span></label><div><i id="routeSuccessBar"></i></div></div><button class="route-detail" type="button" id="routeDetail">View routing factors <span>→</span></button></article><article class="intel-card learning-card"><div class="intel-title"><div><span>LEARNING MEMORY</span><h3>What the system learned</h3></div><b class="memory-count" id="memoryCount">0 signals</b></div><div class="learning-item"><span class="learning-icon green">✓</span><div><strong>Approved patterns</strong><small id="approvedSignal">No approved pattern recorded yet.</small></div></div><div class="learning-item"><span class="learning-icon amber">△</span><div><strong>Recurring issue</strong><small id="errorSignal">No recurring error detected.</small></div></div><div class="learning-item"><span class="learning-icon blue">⌁</span><div><strong>Model evidence</strong><small id="modelSignal">Performance history is being collected.</small></div></div></article></div>`;
     anchor.parentNode.insertBefore(section, anchor);
-    document.getElementById('routeDetail')?.addEventListener('click', () => document.getElementById('model-performance')?.scrollIntoView({behavior:'smooth'}));
+    document.getElementById('routeDetail')?.addEventListener('click', () => document.getElementById('modelHealth')?.scrollIntoView({behavior:'smooth'}));
   }
 
-  function renderQueue(jobs) { const rows=$('queueRows'); if(!rows)return; const active=jobs.filter(j=>['queued','running','waiting_for_gpu','retrying_gpu'].includes(j.status)).length; if($('queueActiveCount'))$('queueActiveCount').textContent=active; if($('navQueueCount'))$('navQueueCount').textContent=active; if(!jobs.length){rows.innerHTML='<tr><td colspan="9" class="empty-state">No jobs in the queue.</td></tr>';return;} rows.innerHTML=jobs.slice(0,12).map((j,i)=>{const video=isVideo(j),engine=video?'Wan 2.2':'Qwen Image 2.1',progress=j.status==='completed'?100:j.status==='failed'||j.status==='canceled'?0:(j.progress??(j.status==='running'?58:8));return `<tr><td>${i+1}</td><td><span class="type-pill ${video?'video':'image'}">${video?'Video':'Image'}</span></td><td>Shadow of Innocence</td><td>${esc(j.shot_id||j.shot?.shot_id||j.input?.shot_id||'—')}</td><td><span class="engine-mini">● ${engine}</span></td><td><span class="status-pill ${statusClass(j.status)}">${statusLabel(j.status)}</span></td><td><div class="progress-cell"><span><i style="width:${progress}%"></i></span><b>${progress}%</b></div></td><td>${fmtTime(j.createdAt||j.created_at||j.created)}</td><td><button class="row-menu" title="Job details">•••</button></td></tr>`}).join(''); }
+  function renderQueue(jobs) {
+    const rows = $('queueRows'); if (!rows) return;
+    const active = jobs.filter(j => ['queued','running','waiting_for_gpu','retrying_gpu'].includes(j.status)).length;
+    if ($('queueActiveCount')) $('queueActiveCount').textContent = active;
+    if ($('navQueueCount')) $('navQueueCount').textContent = active;
+    if (!jobs.length) { rows.innerHTML = '<tr><td colspan="9" class="empty-state">No jobs in the queue.</td></tr>'; return; }
+    rows.innerHTML = jobs.slice(0, 12).map((j, i) => {
+      const video = isVideo(j);
+      const engine = j.model || j.provider || (video ? 'Video engine' : 'Image engine');
+      const progress = j.status === 'completed' ? 100 : j.status === 'failed' || j.status === 'canceled' ? 0 : (j.progress ?? (j.status === 'running' ? 58 : 8));
+      return `<tr><td>${i + 1}</td><td><span class="type-pill ${video ? 'video' : 'image'}">${video ? 'Video' : 'Image'}</span></td><td>Shadow of Innocence</td><td>${esc(j.shot_id || j.shot?.shot_id || j.input?.shot_id || '—')}</td><td><span class="engine-mini">● ${esc(engine)}</span></td><td><span class="status-pill ${statusClass(j.status)}">${statusLabel(j.status)}</span></td><td><div class="progress-cell"><span><i style="width:${progress}%"></i></span><b>${progress}%</b></div></td><td>${fmtTime(j.createdAt || j.created_at || j.created)}</td><td><button class="row-menu" title="Job details">•••</button></td></tr>`;
+    }).join('');
+  }
 
-  function renderRecent(records,evaluations){const el=$('recentActivity');if(!el)return;const items=[];(records||[]).slice(0,5).forEach(r=>items.push({kind:r.status==='failed'?'fail':'success',title:r.event||(r.status==='completed'?'Generation completed':'Generation event'),sub:r.model||r.provider||r.job_id||'generation',time:r.timestamp||r.createdAt}));(evaluations||[]).slice(0,3).forEach(e=>items.push({kind:'review',title:'Evaluation flagged for review',sub:e.job_id||e.generation_id||'evaluation',time:e.createdAt||e.timestamp}));items.sort((a,b)=>new Date(b.time||0)-new Date(a.time||0));el.innerHTML=items.slice(0,6).map(x=>`<div class="activity-item"><span class="activity-icon ${x.kind}">${x.kind==='fail'?'△':x.kind==='review'?'▶':'▧'}</span><div><strong>${esc(x.title)}</strong><small>${esc(x.sub)}</small></div><time>${esc(fmtTime(x.time))}</time><em class="activity-tag ${x.kind}">${x.kind==='fail'?'Retrying':x.kind==='review'?'Needs Review':'Success'}</em></div>`).join('')||'<div class="empty-state">No generation activity recorded yet.</div>';}
+  function renderRecent(records, evaluations) {
+    const el = $('recentActivity'); if (!el) return;
+    const items = [];
+    (records || []).slice(0, 5).forEach(r => items.push({ kind: r.status === 'failed' ? 'fail' : 'success', title: r.event || (r.status === 'completed' ? 'Generation completed' : 'Generation event'), sub: r.model || r.provider || r.job_id || 'generation', time: r.timestamp || r.createdAt }));
+    (evaluations || []).slice(0, 3).forEach(e => items.push({ kind: 'review', title: 'Evaluation flagged for review', sub: e.job_id || e.generation_id || 'evaluation', time: e.createdAt || e.timestamp }));
+    items.sort((a, b) => new Date(b.time || 0) - new Date(a.time || 0));
+    el.innerHTML = items.slice(0, 6).map(x => `<div class="activity-item"><span class="activity-icon ${x.kind}">${x.kind === 'fail' ? '△' : x.kind === 'review' ? '▶' : '▧'}</span><div><strong>${esc(x.title)}</strong><small>${esc(x.sub)}</small></div><time>${esc(fmtTime(x.time))}</time><em class="activity-tag ${x.kind}">${x.kind === 'fail' ? 'Retrying' : x.kind === 'review' ? 'Needs Review' : 'Success'}</em></div>`).join('') || '<div class="empty-state">No generation activity recorded yet.</div>';
+  }
 
-  function updateEngineStats(jobs){const groups={nano:jobs.filter(j=>!isVideo(j)),wan:jobs.filter(isVideo)};[['nano',groups.nano],['wan',groups.wan]].forEach(([key,list])=>{const total=list.length,done=list.filter(j=>j.status==='completed').length,success=total?Math.round(done/total*1000)/10:null,latencyValues=list.map(j=>Number(j.duration_ms||j.latency_ms||j.latency||0)).filter(Boolean),latency=latencyValues.length?(latencyValues.reduce((a,b)=>a+b,0)/latencyValues.length/1000).toFixed(1)+'s':'—';if($(`${key}Jobs`))$(`${key}Jobs`).textContent=total||'0';if($(`${key}Success`))$(`${key}Success`).textContent=success==null?'—':`${success}%`;if($(`${key}Latency`))$(`${key}Latency`).textContent=latency;});}
+  function updateEngineStats(jobs) {
+    const groups = { nano: jobs.filter(j => !isVideo(j)), wan: jobs.filter(isVideo) };
+    [['nano', groups.nano], ['wan', groups.wan]].forEach(([key, list]) => {
+      const total = list.length;
+      const done = list.filter(j => j.status === 'completed').length;
+      const success = total ? Math.round(done / total * 1000) / 10 : null;
+      const latencyValues = list.map(j => Number(j.duration_ms || j.latency_ms || j.latency || 0)).filter(Boolean);
+      const latency = latencyValues.length ? (latencyValues.reduce((a, b) => a + b, 0) / latencyValues.length / 1000).toFixed(1) + 's' : '—';
+      if ($(`${key}Jobs`)) $(`${key}Jobs`).textContent = total || '0';
+      if ($(`${key}Success`)) $(`${key}Success`).textContent = success == null ? '—' : `${success}%`;
+      if ($(`${key}Latency`)) $(`${key}Latency`).textContent = latency;
+    });
+  }
 
-  function updateIntelligence(jobs,evaluations,records){
-    const active=jobs.filter(j=>['queued','running','waiting_for_gpu','retrying_gpu'].includes(j.status)).length;
-    const failed=jobs.filter(j=>['failed','canceled'].includes(j.status)).length;
-    const reviews=evaluations.filter(e=>['needs_review','rejected','evaluation_error'].includes(e.status)).length;
-    if($('timelineJobs'))$('timelineJobs').textContent=jobs.length;
-    if($('timelineReviews'))$('timelineReviews').textContent=reviews;
-    if($('timelineFailures'))$('timelineFailures').textContent=failed;
-    if($('timelineState'))$('timelineState').textContent=active?'RUNNING':jobs.length?'MONITORING':'READY';
-    if($('timelineProgress'))$('timelineProgress').style.width=`${active?56:jobs.length?82:18}%`;
-    if($('memoryCount'))$('memoryCount').textContent=`${evaluations.length+records.length} signals`;
-    if($('approvedSignal'))$('approvedSignal').textContent=evaluations.length?`${evaluations.filter(e=>['approved','passed','accepted'].includes(String(e.status||'').toLowerCase())).length} evaluation outcomes available to memory.`:'No approved pattern recorded yet.';
-    if($('errorSignal'))$('errorSignal').textContent=failed?`${failed} generation failure${failed===1?'':'s'} recorded; investigate before repeating.`:reviews?`${reviews} item${reviews===1?'':'s'} currently need visual review.`:'No recurring error detected.';
-    if($('modelSignal'))$('modelSignal').textContent=jobs.length?`Evidence from ${jobs.length} tracked job${jobs.length===1?'':'s'} is available for future routing.`:'Performance history is being collected.';
-    const videoJobs=jobs.filter(isVideo),imageJobs=jobs.filter(j=>!isVideo(j));
-    const videoProvider=videoJobs.slice().reverse().find(j=>j.provider)?.provider;
-    const imageProvider=imageJobs.slice().reverse().find(j=>j.provider)?.provider;
-    if($('routeModel'))$('routeModel').textContent=videoProvider||imageProvider||'No provider recorded';
-    if($('routeReason'))$('routeReason').textContent='Shows provider recorded on tracked jobs; does not predict or select a future route.';
-    const completed=jobs.filter(j=>j.status==='completed').length,successCount=completed+failed;
-    const success=successCount?Math.round(completed/successCount*100):null;
-    const style=null,ref=null;
-    [['routeStyle',style],['routeRef',ref],['routeSuccess',success]].forEach(([id,v])=>{if($(id))$(id).textContent=v===null?'N/A':`${v}%`;});
-    [['routeStyleBar',style],['routeRefBar',ref],['routeSuccessBar',success]].forEach(([id,v])=>{if($(id))$(id).style.width=v===null?'0%':`${v}%`;});
+  function updateIntelligence(jobs, evaluations, records) {
+    const active = jobs.filter(j => ['queued','running','waiting_for_gpu','retrying_gpu'].includes(j.status)).length;
+    const failed = jobs.filter(j => ['failed','canceled'].includes(j.status)).length;
+    const reviews = evaluations.filter(e => ['needs_review','rejected','evaluation_error'].includes(e.status)).length;
+    if ($('timelineJobs')) $('timelineJobs').textContent = jobs.length;
+    if ($('timelineReviews')) $('timelineReviews').textContent = reviews;
+    if ($('timelineFailures')) $('timelineFailures').textContent = failed;
+    if ($('timelineState')) $('timelineState').textContent = active ? 'RUNNING' : jobs.length ? 'MONITORING' : 'READY';
+    if ($('timelineProgress')) $('timelineProgress').style.width = `${active ? 56 : jobs.length ? 82 : 18}%`;
+    if ($('memoryCount')) $('memoryCount').textContent = `${evaluations.length + records.length} signals`;
+    if ($('approvedSignal')) $('approvedSignal').textContent = evaluations.length ? `${evaluations.filter(e => ['approved','passed','accepted'].includes(String(e.status || '').toLowerCase())).length} evaluation outcomes available to memory.` : 'No approved pattern recorded yet.';
+    if ($('errorSignal')) $('errorSignal').textContent = failed ? `${failed} generation failure${failed === 1 ? '' : 's'} recorded; investigate before repeating.` : reviews ? `${reviews} item${reviews === 1 ? '' : 's'} currently need visual review.` : 'No recurring error detected.';
+    if ($('modelSignal')) $('modelSignal').textContent = jobs.length ? `Evidence from ${jobs.length} tracked job${jobs.length === 1 ? '' : 's'} is available for future routing.` : 'Performance history is being collected.';
+    const videoJobs = jobs.filter(isVideo);
+    const imageJobs = jobs.filter(j => !isVideo(j));
+    const videoProvider = videoJobs.slice().reverse().find(j => j.provider)?.provider;
+    const imageProvider = imageJobs.slice().reverse().find(j => j.provider)?.provider;
+    if ($('routeModel')) $('routeModel').textContent = videoProvider || imageProvider || 'No provider recorded';
+    if ($('routeReason')) $('routeReason').textContent = 'Shows provider recorded on tracked jobs; does not predict or select a future route.';
+    const completed = jobs.filter(j => j.status === 'completed').length;
+    const successCount = completed + failed;
+    const success = successCount ? Math.round(completed / successCount * 100) : null;
+    const style = null, ref = null;
+    [['routeStyle', style], ['routeRef', ref], ['routeSuccess', success]].forEach(([id, v]) => { if ($(id)) $(id).textContent = v === null ? 'N/A' : `${v}%`; });
+    [['routeStyleBar', style], ['routeRefBar', ref], ['routeSuccessBar', success]].forEach(([id, v]) => { if ($(id)) $(id).style.width = v === null ? '0%' : `${v}%`; });
   }
 
   const API_KEY_SESSION_STORAGE = 'mindscape_agent_api_key_v1';
@@ -125,31 +158,155 @@
 
   window.apiFetch = apiFetch;
 
-  async function refresh(){try{const safeRequest=async(url,authenticated,fallback)=>{try{const response=await (authenticated?window.apiFetch(url):fetch(url));const data=await response.json().catch(()=>fallback);return {ok:response.ok,json:async()=>data};}catch{return {ok:false,json:async()=>fallback};}};const [jobsR,histR,evalR,healthR,readyR]=await Promise.all([safeRequest('/jobs',true,{jobs:[]}),safeRequest('/generation-history?limit=30',true,{records:[]}),safeRequest('/evaluations?limit=20',true,{evaluations:[]}),safeRequest('/health',false,null),safeRequest('/ready',false,{ready:false,missing_secrets:['Readiness check unavailable'],checks:{}})]);const jobsD=await jobsR.json(),histD=await histR.json(),evalD=await evalR.json(),health=healthR.ok?await healthR.json():null,ready=await readyR.json().catch(()=>({ready:false,missing_secrets:['Readiness check unavailable'],checks:{}}));const jobs=jobsD.jobs||[],records=histD.records||[],evaluations=evalD.evaluations||[],active=jobs.filter(j=>['queued','running','waiting_for_gpu','retrying_gpu'].includes(j.status)).length,completed=jobs.filter(j=>j.status==='completed').length,failed=jobs.filter(j=>['failed','canceled'].includes(j.status)).length,review=evaluations.filter(e=>['needs_review','rejected','evaluation_error'].includes(e.status)).length;if($('metricActive'))$('metricActive').textContent=active;if($('metricCompleted'))$('metricCompleted').textContent=completed;if($('metricFailed'))$('metricFailed').textContent=failed;if($('metricReview'))$('metricReview').textContent=review;const providerHealth=ready.providers||ready.provider_readiness||null;const missing=providerHealth?.missing_variables||ready.missing_secrets||[];const imageConfigured=providerHealth?Boolean(providerHealth.tasks?.image_generation?.ready):ready.checks?.image_provider==='google'?(!missing.includes('GEMINI_API_KEY')):ready.checks?.image_provider==='fal'?(!missing.includes('FAL_KEY')):false;const videoConfigured=providerHealth?Boolean(providerHealth.tasks?.image_to_video?.ready&&providerHealth.tasks?.text_to_video?.ready):ready.checks?.video_provider==='qwencloud'?(!missing.includes('QWEN_CLOUD_API_KEY')&&!missing.includes('DASHSCOPE_API_KEY')):ready.checks?.video_provider==='fal'?(!missing.includes('FAL_KEY')):ready.checks?.video_provider==='pixazo_ltx'?(!missing.includes('PIXAZO_API_KEY')):ready.checks?.video_provider==='replicate'?(!missing.includes('REPLICATE_API_TOKEN')):false;const providerFailure=(isImg)=>jobs.filter(j=>isImg?!isVideo(j):isVideo(j)).filter(j=>['failed','canceled'].includes(j.status)).sort((a,b)=>new Date(b.updatedAt||b.createdAt||0)-new Date(a.updatedAt||a.createdAt||0))[0];const classify=(isImg,configured)=>{if(!configured)return{label:'Needs configuration',cls:'offline'};const j=providerFailure(isImg);const err=String(j?.error||j?.providerResponse?.error||'').toLowerCase();if(j&&(/429|quota|rate limit|resource_exhausted/.test(err)))return{label:'Quota / rate limit',cls:'offline'};if(j&&(/api key|unauthorized|forbidden|401|403|not configured/.test(err)))return{label:'Provider error',cls:'offline'};if(j)return{label:'Last job failed',cls:'offline'};return{label:'Configured · untested',cls:'online'};};const setChip=(id,state)=>{const el=$(id);if(el){el.textContent=`● ${state.label}`;el.className=`status-chip ${state.cls}`;}};setChip('nanoStatus',classify(true,imageConfigured));setChip('wanStatus',classify(false,videoConfigured));if($('systemStatus'))$('systemStatus').textContent=ready.ready?'Service Ready':'Configuration Attention';if($('lastUpdated'))$('lastUpdated').textContent=`Checked: ${new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}`;const storageInfo=health?.storage||ready.storage||null;
-const storageConfigured=typeof storageInfo?.writable==='boolean'?storageInfo.writable:Boolean(health?.persistent_history);
-const storagePersistent=typeof storageInfo?.persistent==='boolean'?storageInfo.persistent:Boolean(health?.persistent_history);
-const fallbackInfo=ready.fallbacks||{};
-const fallbackSummary='Fallbacks (credentials/config only): images '+(fallbackInfo.image_generation?.ready?'ready':'not configured')+', image-to-video '+(fallbackInfo.image_to_video?.ready?'ready':'not configured')+', text-to-video '+(fallbackInfo.text_to_video?.ready?'ready':'not configured')+'. Live quota and billing are not tested.';
-const taskRoutes=providerHealth?.tasks||{};
-const routeDescription=Object.entries(taskRoutes).map(([task,route])=>task.replace(/_/g,' ') + ': ' + (route.ready?route.provider+' ('+route.mode+')':'unavailable')).join('; ');
-const modelDetail=providerHealth?(providerHealth.ready?'Provider routes are configured. ':'Unavailable task route(s) or credentials: '+(missing.length?missing.join(', '):'check provider settings')+'. ')+routeDescription+'. Quotas and billing are not tested.':ready.ready?'Primary provider credentials appear configured. '+fallbackSummary:missing.length?'Missing required credential(s): '+missing.join(', ')+'. '+fallbackSummary:'Provider readiness check is not ready; inspect /ready and current provider configuration. '+fallbackSummary;
-const storageDetail=!storageConfigured?(storageInfo?.detail||'A filesystem write/read test failed. Check directory permissions and storage path.'):storagePersistent?(storageInfo?.detail||'History and generated media are using persistent storage.'):(storageInfo?.detail||'Filesystem writes work, but local files may be lost after a restart or redeploy.');
-const stateAvailable=Boolean(histR.ok&&Array.isArray(histD.records)&&evalR.ok&&Array.isArray(evalD.evaluations));
-const healthChecks=[
-['healthApi',Boolean(healthR.ok&&health?.ok),'Online','The health endpoint did not return a successful response.'],
-['healthQueue',Boolean(jobsR.ok&&Array.isArray(jobsD.jobs)),'Operational','The jobs endpoint failed or returned an unexpected response.'],
-['healthState',stateAvailable,stateAvailable?'Available':'Unavailable','Generation history and evaluation state endpoints must both respond with valid data.'],
-['healthModels',providerHealth?Boolean(providerHealth.ready):Boolean(readyR.ok&&ready.ready),providerHealth?(providerHealth.ready?'Configured':'Missing route/config'):ready.ready?'Configured':missing.length?'Missing key(s)':'Not ready',modelDetail],
-['healthStorage',storageConfigured,storageConfigured?(storagePersistent?'Writable · persistent':'Writable · ephemeral'):'Write test failed',storageDetail]
-];
-const passedHealthChecks=healthChecks.filter(([,ok])=>ok).length;
-const healthScore=Math.round(passedHealthChecks/healthChecks.length*100);
-if($('healthPercent'))$('healthPercent').textContent=`${healthScore}%`;
-const healthRing=document.querySelector('.health-ring');
-if(healthRing){const ringColor=healthScore>=80?'#29e6a1':healthScore>=60?'#ffc46d':'#ff788e';healthRing.style.background=`conic-gradient(${ringColor} 0 ${healthScore}%, #1b3142 ${healthScore}% 100%)`;}
-const healthCaption=document.querySelector('.health-ring span');
-if(healthCaption){healthCaption.textContent=`${passedHealthChecks} of ${healthChecks.length} checks passing`;healthCaption.title=healthChecks.map(([,ok,label,detail])=>`${label}: ${detail}`).join('\\n')+'\\nProvider quotas and billing are not tested by configuration checks.';}
-healthChecks.forEach(([id,ok,label,detail])=>{const el=$(id);if(!el)return;el.textContent=label;el.title=detail;el.style.color=ok?(id==='healthStorage'&&!storagePersistent?'#ffc46d':'#49dcab'):'#ff8595';});const note=$('activityChartNote');if(note)note.textContent=records.length?`Showing ${records.length} recorded history events elsewhere on the dashboard; a time-series chart is not yet implemented.`:'No generation activity recorded yet. Chart is hidden until real telemetry exists.';updateEngineStats(jobs);renderQueue(jobs);renderRecent(records,evaluations);updateIntelligence(jobs,evaluations,records);}catch(e){if($('systemStatus'))$('systemStatus').textContent='System Attention';if($('lastUpdated'))$('lastUpdated').textContent='Telemetry unavailable';if($('healthPercent'))$('healthPercent').textContent='Unavailable';const ring=document.querySelector('.health-ring');if(ring)ring.style.background='conic-gradient(#ff788e 0 100%, #1b3142 100% 100%)';const caption=document.querySelector('.health-ring span');if(caption){caption.textContent='Health telemetry failed — refresh to retry';caption.title=String(e?.message||e||'Unknown dashboard error');}['healthApi','healthQueue','healthState','healthModels','healthStorage'].forEach(id=>{const el=$(id);if(el){el.textContent='Unavailable';el.style.color='#ff8595';el.title='Dashboard telemetry failed; refresh to retry.';}});}}
+  async function refresh() {
+    try {
+      const safeRequest = async (url, authenticated, fallback) => {
+        try {
+          const response = await (authenticated ? window.apiFetch(url) : fetch(url));
+          const data = await response.json().catch(() => fallback);
+          return { ok: response.ok, json: async () => data };
+        } catch {
+          return { ok: false, json: async () => fallback };
+        }
+      };
+      const [jobsR, histR, evalR, healthR, readyR] = await Promise.all([
+        safeRequest('/jobs', true, { jobs: [] }),
+        safeRequest('/generation-history?limit=30', true, { records: [] }),
+        safeRequest('/evaluations?limit=20', true, { evaluations: [] }),
+        safeRequest('/health', false, null),
+        safeRequest('/ready', false, { ready: false, missing_secrets: ['Readiness check unavailable'], checks: {} })
+      ]);
+      const jobsD = await jobsR.json();
+      const histD = await histR.json();
+      const evalD = await evalR.json();
+      const health = healthR.ok ? await healthR.json() : null;
+      const ready = await readyR.json().catch(() => ({ ready: false, missing_secrets: ['Readiness check unavailable'], checks: {} }));
+      const jobs = jobsD.jobs || [];
+      const records = histD.records || [];
+      const evaluations = evalD.evaluations || [];
+      const active = jobs.filter(j => ['queued','running','waiting_for_gpu','retrying_gpu'].includes(j.status)).length;
+      const completed = jobs.filter(j => j.status === 'completed').length;
+      const failed = jobs.filter(j => ['failed','canceled'].includes(j.status)).length;
+      const review = evaluations.filter(e => ['needs_review','rejected','evaluation_error'].includes(e.status)).length;
+      if ($('metricActive')) $('metricActive').textContent = active;
+      if ($('metricCompleted')) $('metricCompleted').textContent = completed;
+      if ($('metricFailed')) $('metricFailed').textContent = failed;
+      if ($('metricReview')) $('metricReview').textContent = review;
+      const providerHealth = ready.providers || ready.provider_readiness || null;
+      const missing = providerHealth?.missing_variables || ready.missing_secrets || [];
+      const imageConfigured = providerHealth ? Boolean(providerHealth.tasks?.image_generation?.ready)
+        : ready.checks?.image_provider === 'google' ? (!missing.includes('GEMINI_API_KEY'))
+          : ready.checks?.image_provider === 'fal' ? (!missing.includes('FAL_KEY'))
+            : false;
+      const videoConfigured = providerHealth ? Boolean(providerHealth.tasks?.image_to_video?.ready && providerHealth.tasks?.text_to_video?.ready)
+        : ready.checks?.video_provider === 'qwencloud' ? (!missing.includes('QWEN_CLOUD_API_KEY') && !missing.includes('DASHSCOPE_API_KEY'))
+          : ready.checks?.video_provider === 'fal' ? (!missing.includes('FAL_KEY'))
+            : ready.checks?.video_provider === 'pixazo_ltx' ? (!missing.includes('PIXAZO_API_KEY'))
+              : ready.checks?.video_provider === 'replicate' ? (!missing.includes('REPLICATE_API_TOKEN'))
+                : false;
+      const providerFailure = (isImg) => jobs
+        .filter(j => isImg ? !isVideo(j) : isVideo(j))
+        .filter(j => ['failed','canceled'].includes(j.status))
+        .sort((a, b) => new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0))[0];
+      const classify = (isImg, configured) => {
+        if (!configured) return { label: 'Needs configuration', cls: 'offline' };
+        const j = providerFailure(isImg);
+        const err = String(j?.error || j?.providerResponse?.error || '').toLowerCase();
+        if (j && (/429|quota|rate limit|resource_exhausted/.test(err))) return { label: 'Quota / rate limit', cls: 'offline' };
+        if (j && (/api key|unauthorized|forbidden|401|403|not configured/.test(err))) return { label: 'Provider error', cls: 'offline' };
+        if (j) return { label: 'Last job failed', cls: 'offline' };
+        return { label: 'Configured · untested', cls: 'online' };
+      };
+      const setChip = (id, state) => {
+        const el = $(id);
+        if (el) { el.textContent = `● ${state.label}`; el.className = `status-chip ${state.cls}`; }
+      };
+      setChip('nanoStatus', classify(true, imageConfigured));
+      setChip('wanStatus', classify(false, videoConfigured));
+      const imageRoute = providerHealth?.tasks?.image_generation || null;
+      const videoRoute = providerHealth?.tasks?.image_to_video || providerHealth?.tasks?.text_to_video || null;
+      const engineName = (route, fallback) => (route?.model ? `${route.provider} · ${route.model}` : route?.provider) || fallback;
+      if ($('nanoEngineName')) $('nanoEngineName').textContent = engineName(imageRoute, String(ready.checks?.image_provider || 'Image engine'));
+      if ($('wanEngineName')) $('wanEngineName').textContent = engineName(videoRoute, String(ready.checks?.video_provider || 'Video engine'));
+      if ($('timelineAssetModel')) $('timelineAssetModel').textContent = engineName(imageRoute, 'Image engine');
+      if ($('timelineMotionModel')) $('timelineMotionModel').textContent = engineName(videoRoute, 'Video engine');
+      if ($('systemStatus')) $('systemStatus').textContent = ready.ready ? 'Service Ready' : 'Configuration Attention';
+      if ($('lastUpdated')) $('lastUpdated').textContent = `Checked: ${new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}`;
+      const storageInfo = health?.storage || ready.storage || null;
+      const storageConfigured = typeof storageInfo?.writable === 'boolean' ? storageInfo.writable : Boolean(health?.persistent_history);
+      const storagePersistent = typeof storageInfo?.persistent === 'boolean' ? storageInfo.persistent : Boolean(health?.persistent_history);
+      const fallbackInfo = ready.fallbacks || {};
+      const fallbackSummary = 'Fallbacks (credentials/config only): images ' + (fallbackInfo.image_generation?.ready ? 'ready' : 'not configured') + ', image-to-video ' + (fallbackInfo.image_to_video?.ready ? 'ready' : 'not configured') + ', text-to-video ' + (fallbackInfo.text_to_video?.ready ? 'ready' : 'not configured') + '. Live quota and billing are not tested.';
+      const taskRoutes = providerHealth?.tasks || {};
+      const routeDescription = Object.entries(taskRoutes).map(([task, route]) => task.replace(/_/g, ' ') + ': ' + (route.ready ? route.provider + ' (' + route.mode + ')' : 'unavailable')).join('; ');
+      const modelDetail = providerHealth
+        ? (providerHealth.ready ? 'Provider routes are configured. ' : 'Unavailable task route(s) or credentials: ' + (missing.length ? missing.join(', ') : 'check provider settings') + '. ') + routeDescription + '. Quotas and billing are not tested.'
+        : ready.ready ? 'Primary provider credentials appear configured. ' + fallbackSummary
+          : missing.length ? 'Missing required credential(s): ' + missing.join(', ') + '. ' + fallbackSummary
+            : 'Provider readiness check is not ready; inspect /ready and current provider configuration. ' + fallbackSummary;
+      const storageDetail = !storageConfigured
+        ? (storageInfo?.detail || 'A filesystem write/read test failed. Check directory permissions and storage path.')
+        : storagePersistent
+          ? (storageInfo?.detail || 'History and generated media are using persistent storage.')
+          : (storageInfo?.detail || 'Filesystem writes work, but local files may be lost after a restart or redeploy.');
+      const stateAvailable = Boolean(histR.ok && Array.isArray(histD.records) && evalR.ok && Array.isArray(evalD.evaluations));
+      const healthChecks = [
+        ['healthApi', Boolean(healthR.ok && health?.ok), 'Online', 'The health endpoint did not return a successful response.'],
+        ['healthQueue', Boolean(jobsR.ok && Array.isArray(jobsD.jobs)), 'Operational', 'The jobs endpoint failed or returned an unexpected response.'],
+        ['healthState', stateAvailable, stateAvailable ? 'Available' : 'Unavailable', 'Generation history and evaluation state endpoints must both respond with valid data.'],
+        ['healthModels', providerHealth ? Boolean(providerHealth.ready) : Boolean(readyR.ok && ready.ready), providerHealth ? (providerHealth.ready ? 'Configured' : 'Missing route/config') : ready.ready ? 'Configured' : missing.length ? 'Missing key(s)' : 'Not ready', modelDetail],
+        ['healthStorage', storageConfigured, storageConfigured ? (storagePersistent ? 'Writable · persistent' : 'Writable · ephemeral') : 'Write test failed', storageDetail]
+      ];
+      const passedHealthChecks = healthChecks.filter(([, ok]) => ok).length;
+      const healthScore = Math.round(passedHealthChecks / healthChecks.length * 100);
+      if ($('healthPercent')) $('healthPercent').textContent = `${healthScore}%`;
+      const healthRing = document.querySelector('.health-ring');
+      if (healthRing) {
+        const ringColor = healthScore >= 80 ? '#29e6a1' : healthScore >= 60 ? '#ffc46d' : '#ff788e';
+        healthRing.style.background = `conic-gradient(${ringColor} 0 ${healthScore}%, #1b3142 ${healthScore}% 100%)`;
+      }
+      const healthCaption = document.querySelector('.health-ring span');
+      if (healthCaption) {
+        healthCaption.textContent = `${passedHealthChecks} of ${healthChecks.length} checks passing`;
+        healthCaption.title = healthChecks.map(([, ok, label, detail]) => `${label}: ${detail}`).join('\\n') + '\\nProvider quotas and billing are not tested by configuration checks.';
+      }
+      healthChecks.forEach(([id, ok, label, detail]) => {
+        const el = $(id);
+        if (!el) return;
+        el.textContent = label;
+        el.title = detail;
+        el.style.color = ok ? (id === 'healthStorage' && !storagePersistent ? '#ffc46d' : '#49dcab') : '#ff8595';
+      });
+      const note = $('activityChartNote');
+      if (note) note.textContent = records.length ? `Showing ${records.length} recorded history events elsewhere on the dashboard; a time-series chart is not yet implemented.` : 'No generation activity recorded yet. Chart is hidden until real telemetry exists.';
+      updateEngineStats(jobs);
+      renderQueue(jobs);
+      renderRecent(records, evaluations);
+      updateIntelligence(jobs, evaluations, records);
+    } catch (e) {
+      if ($('systemStatus')) $('systemStatus').textContent = 'System Attention';
+      if ($('lastUpdated')) $('lastUpdated').textContent = 'Telemetry unavailable';
+      if ($('healthPercent')) $('healthPercent').textContent = 'Unavailable';
+      const ring = document.querySelector('.health-ring');
+      if (ring) ring.style.background = 'conic-gradient(#ff788e 0 100%, #1b3142 100% 100%)';
+      const caption = document.querySelector('.health-ring span');
+      if (caption) { caption.textContent = 'Health telemetry failed — refresh to retry'; caption.title = String(e?.message || e || 'Unknown dashboard error'); }
+      ['healthApi','healthQueue','healthState','healthModels','healthStorage'].forEach(id => {
+        const el = $(id);
+        if (el) { el.textContent = 'Unavailable'; el.style.color = '#ff8595'; el.title = 'Dashboard telemetry failed; refresh to retry.'; }
+      });
+    }
+  }
 
-  document.querySelectorAll('.nav-item').forEach(a=>a.addEventListener('click',()=>{document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));a.classList.add('active');}));document.querySelectorAll('.action-btn,.dark-btn,.icon-btn,.profile-btn').forEach(b=>b.addEventListener('mousedown',()=>b.classList.add('pressed')));document.querySelectorAll('button').forEach(b=>b.addEventListener('mouseup',()=>b.classList.remove('pressed')));window.refreshDashboard = refresh;$('refreshDashboard')?.addEventListener('click',refresh);refresh();setInterval(refresh,15000);
+  document.querySelectorAll('.nav-item').forEach(a => a.addEventListener('click', () => {
+    document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
+    a.classList.add('active');
+  }));
+  document.querySelectorAll('.action-btn,.dark-btn,.icon-btn,.profile-btn').forEach(b => b.addEventListener('mousedown', () => b.classList.add('pressed')));
+  document.querySelectorAll('button').forEach(b => b.addEventListener('mouseup', () => b.classList.remove('pressed')));
+  window.refreshDashboard = refresh;
+  $('refreshDashboard')?.addEventListener('click', refresh);
+  ensureIntelligencePanel();
+  refresh();
+  setInterval(refresh, 15000);
 })();

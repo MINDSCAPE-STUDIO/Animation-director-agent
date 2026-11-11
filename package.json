@@ -6,7 +6,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node bootstrap.js",
-    "test": "node --test tests/quota-fallback.test.js tests/api-auth.test.js"
+    "test": "node --test tests/quota-fallback.test.js tests/api-auth.test.js tests/qwencloud-provider.test.js tests/dashboard-boot.test.js"
   },
   "engines": {
     "node": ">=20"
