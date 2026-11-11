@@ -253,3 +253,21 @@ test('Pixazo submission preserves provider queue state rather than reporting fal
     else process.env.PUBLIC_BASE_URL = oldBase;
   }
 });
+
+test('a provider that reports success with no output is recorded as a failure', () => {
+  const { guardEmptyCompletion } = require('../generation-queue');
+  const base = { id: 'job_1', status: 'completed', provider: 'fal', model: 'x' };
+  assert.equal(guardEmptyCompletion({ ...base, result: null }).status, 'failed');
+  assert.equal(guardEmptyCompletion({ ...base, result: undefined }).status, 'failed');
+  assert.equal(guardEmptyCompletion({ ...base, result: '' }).status, 'failed');
+  assert.equal(guardEmptyCompletion({ ...base, result: {} }).status, 'failed');
+  assert.equal(guardEmptyCompletion({ ...base, result: [] }).status, 'failed');
+  const empty = guardEmptyCompletion({ ...base, result: null });
+  assert.equal(empty.provider_state, 'provider_empty_output');
+  assert.match(empty.error, /no output/);
+  // real outputs still pass through untouched
+  assert.equal(guardEmptyCompletion({ ...base, result: '/generated/a.mp4' }).status, 'completed');
+  assert.equal(guardEmptyCompletion({ ...base, result: { video: { url: 'u' } } }).status, 'completed');
+  // only completed jobs are touched
+  assert.equal(guardEmptyCompletion({ ...base, status: 'running', result: null }).status, 'running');
+});

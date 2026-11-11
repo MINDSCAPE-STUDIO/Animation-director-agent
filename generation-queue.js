@@ -37,6 +37,28 @@ function isZeroGpuQuotaExhausted(error) {
 function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)) }
 function isTerminal(status) { return ['completed', 'failed', 'canceled'].includes(status) }
 
+// A provider can report success without returning any media (missing output
+// field, expired URL, malformed response). Recording that as "completed" hides
+// the failure behind a green status and a null asset, so treat it as a failure.
+function hasOutput(job) {
+  const result = job?.result;
+  if (result === null || result === undefined) return false;
+  if (typeof result === 'string') return result.trim().length > 0;
+  if (Array.isArray(result)) return result.length > 0;
+  if (typeof result === 'object') return Object.keys(result).length > 0;
+  return true;
+}
+function guardEmptyCompletion(job) {
+  if (!job || job.status !== 'completed' || hasOutput(job)) return job;
+  return {
+    ...job,
+    status: 'failed',
+    provider_state: 'provider_empty_output',
+    error: 'Provider reported success but returned no output.',
+    failedAt: new Date().toISOString()
+  };
+}
+
 class GenerationQueue {
   constructor() {
     this.jobs = new Map();
@@ -323,10 +345,13 @@ class GenerationQueue {
       this.jobs.set(job.id, submitted);
       if (submitted.status === 'running') {
         appendGenerationEvent(submitted, 'provider_submitted', { provider_state: submitted.provider_state });
-        submitted = await this.monitor(submitted);
+        submitted = guardEmptyCompletion(await this.monitor(submitted));
         this.jobs.set(job.id, submitted);
       } else {
         appendGenerationEvent(submitted, 'completed');
+      }
+      if (submitted.status === 'failed' && submitted.provider_state === 'provider_empty_output') {
+        appendGenerationEvent(submitted, 'failed', { error_type: 'EmptyProviderOutput', provider_state: submitted.provider_state });
       }
       if (submitted.status === 'completed') {
         const evaluation = await this.recordTerminalEvaluation(submitted);
@@ -356,7 +381,7 @@ class GenerationQueue {
     if (!job) return null;
     if (isTerminal(job.status)) return job;
     try {
-      const next = await this.refreshJob(job);
+      const next = guardEmptyCompletion(await this.refreshJob(job));
       this.jobs.set(id, next);
       if (next.status !== job.status) {
         appendGenerationEvent(next, next.status === 'completed' ? 'completed' : 'provider_status_changed', { provider_state: next.provider_state });
@@ -393,4 +418,4 @@ class GenerationQueue {
   }
 }
 
-module.exports = { GenerationQueue };
+module.exports = { GenerationQueue, guardEmptyCompletion, hasOutput };
