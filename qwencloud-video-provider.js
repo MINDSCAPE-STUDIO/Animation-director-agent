@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const { safeLocalFile } = require('./media-reference');
 const { GENERATED_DIR } = require('./storage-paths');
 const { persistGeneratedFile } = require('./object-storage');
 
@@ -18,10 +19,11 @@ function imageAsDataUrl(image) {
   if (typeof image !== 'string' || !image) throw new Error('QwenCloud Image → Video requires a reference image.');
   if (/^data:image\/(png|jpeg|jpg|webp|bmp);base64,/i.test(image)) return image;
   if (/^https?:\/\//i.test(image)) return image;
-  if (!fs.existsSync(image)) throw new Error('Reference image file is unavailable to the QwenCloud provider.');
-  const ext = path.extname(image).toLowerCase();
+  const file = safeLocalFile(image);
+  if (!file) throw new Error('Reference image file is unavailable or outside the allowed media directories.');
+  const ext = path.extname(file).toLowerCase();
   const mime = ext === '.jpg' || ext === '.jpeg' ? 'image/jpeg' : ext === '.webp' ? 'image/webp' : ext === '.bmp' ? 'image/bmp' : 'image/png';
-  return `data:${mime};base64,${fs.readFileSync(image).toString('base64')}`;
+  return `data:${mime};base64,${fs.readFileSync(file).toString('base64')}`;
 }
 
 async function request(url, options, label) {

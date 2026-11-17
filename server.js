@@ -233,8 +233,14 @@ const server = http.createServer(async (req, res) => {
     send(res, 404, { error: 'not_found' });
   } catch (e) {
     console.error(`HTTP request failed: ${e.stack || e}`);
-    send(res, 500, { error: e.message });
+    send(res, 500, { error: 'internal_server_error' });
   }
 });
 
-server.listen(port, () => console.log(`Animation Director Agent listening on ${port}`));
+// Without an API key every mutating route is open, so only expose the service
+// on loopback. Render sets MINDSCAPE_API_KEY and keeps the public bind.
+const bindHost = apiKey ? undefined : '127.0.0.1';
+server.listen(port, bindHost, () => {
+  console.log(`Animation Director Agent listening on ${bindHost || '0.0.0.0'}:${port}`);
+  if (!apiKey) console.warn('MINDSCAPE_API_KEY is not set; bound to localhost only. Set a key before exposing this service publicly.');
+});

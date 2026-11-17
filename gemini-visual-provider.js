@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { buildAssetContract } = require('./master-assets');
+const { safeLocalFile, GENERATED_DIR } = require('./media-reference');
 const { getStyleContract } = require('./style-bible');
 const { ERROR_SEVERITIES, isValidErrorCode } = require('./error-taxonomy');
 
@@ -43,12 +44,13 @@ async function mediaToInline(value) {
   if (!value) return null;
   const data = dataUrlParts(value);
   if (data) return data;
-  if (fs.existsSync(value)) {
-    const ext = path.extname(value).toLowerCase();
+  const file = safeLocalFile(value);
+  if (file) {
+    const ext = path.extname(file).toLowerCase();
     const mime = ext === '.mp4' ? 'video/mp4' : ext === '.webm' ? 'video/webm' : ext === '.jpg' || ext === '.jpeg' ? 'image/jpeg' : ext === '.webp' ? 'image/webp' : 'image/png';
-    const stat = fs.statSync(value);
+    const stat = fs.statSync(file);
     if (stat.size > 95 * 1024 * 1024) throw Error('Visual evaluator input exceeds the inline 95 MB safety limit.');
-    return { mimeType: mime, data: fs.readFileSync(value).toString('base64') };
+    return { mimeType: mime, data: fs.readFileSync(file).toString('base64') };
   }
   if (/^https?:\/\//i.test(value)) {
     const r = await fetch(value);
@@ -65,7 +67,7 @@ function outputReference(generation) {
   const result = generation?.result || {};
   const output = result.output || result.url || result.video_url || result.image_url || null;
   if (!output) return null;
-  if (typeof output === 'string' && output.startsWith('/')) return path.join(__dirname, output.replace(/^\//, ''));
+  if (typeof output === 'string' && output.startsWith('/generated/')) return path.join(GENERATED_DIR, output.slice('/generated/'.length));
   return output;
 }
 
@@ -137,4 +139,4 @@ async function evaluateWithGemini({ projectId = 'default', assetId = null, gener
   return { model, usageMetadata: data.usageMetadata || null, ...sanitize(raw) };
 }
 
-module.exports = { evaluateWithGemini, DIMENSIONS, DEFAULT_MODEL };
+module.exports = { evaluateWithGemini, outputReference, DIMENSIONS, DEFAULT_MODEL };

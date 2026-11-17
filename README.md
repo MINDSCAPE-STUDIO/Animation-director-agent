@@ -26,6 +26,9 @@ Required secrets:
 - `QWEN_CLOUD_API_KEY` — QwenCloud/DashScope API key required for Wan 2.7 video generation (set `VIDEO_PROVIDER=qwencloud`)
 - `PIXAZO_API_KEY` — required only when `VIDEO_PROVIDER=pixazo_ltx`
 - `PUBLIC_BASE_URL` — public HTTPS base URL used to expose temporary reference images to Pixazo; Render is configured with `https://animation-director-agent.onrender.com`
+- `MINDSCAPE_API_KEY` — API key for all mutating routes. Without it the service runs unauthenticated and should not be exposed publicly.
+
+Optional switches: `ENABLE_VISUAL_EVALUATION=true` and `ENABLE_AUTO_CORRECTION=true` (both off by default). See `.env.example` for the full list of settings.
 
 Never commit provider keys to GitHub. Add them to the Render service's Environment settings.
 
@@ -35,14 +38,16 @@ Requires Node.js 20+.
 
 ```bash
 npm install
-npm start
+cp .env.example .env     # fill in GEMINI_API_KEY and QWEN_CLOUD_API_KEY
+npm run start:local      # loads .env via node --env-file
 ```
 
-Open `http://localhost:8787`.
+The app does not read `.env` on its own; `npm start` alone will not load it.
+Open `http://localhost:8787` and check `GET /health` and `GET /ready`.
 
 ## Visual evaluation
 
-Every successfully generated job is automatically sent to the configured visual evaluator. The evaluator compares the output against the project Style Bible and selected Master Asset and records structured findings for:
+When `ENABLE_VISUAL_EVALUATION=true`, every successfully generated job is automatically sent to the configured visual evaluator. With `ENABLE_AUTO_CORRECTION=true`, rejected or needs-review evaluations can trigger a corrective retry. The evaluator compares the output against the project Style Bible and selected Master Asset and records structured findings for:
 
 - character identity and proportions
 - clothing

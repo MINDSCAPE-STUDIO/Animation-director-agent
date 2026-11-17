@@ -1,4 +1,5 @@
 const fs = require('fs');
+const { safeLocalFile } = require('./media-reference');
 
 const API = 'https://generativelanguage.googleapis.com/v1beta/models';
 const DEFAULT_MODEL = 'gemini-3.1-flash-image';
@@ -19,11 +20,12 @@ async function toInlineData(image) {
     if (!/^image\/(png|jpeg|jpg|webp)$/i.test(mime)) throw Error('Reference URL must point to PNG, JPG or WebP.');
     return { mimeType: mime, data: Buffer.from(await r.arrayBuffer()).toString('base64') };
   }
-  if (fs.existsSync(image)) {
-    const ext = image.toLowerCase().endsWith('.webp') ? 'webp' : image.toLowerCase().endsWith('.jpg') || image.toLowerCase().endsWith('.jpeg') ? 'jpeg' : 'png';
-    return { mimeType: `image/${ext}`, data: fs.readFileSync(image).toString('base64') };
+  const file = safeLocalFile(image);
+  if (file) {
+    const ext = file.toLowerCase().endsWith('.webp') ? 'webp' : file.toLowerCase().endsWith('.jpg') || file.toLowerCase().endsWith('.jpeg') ? 'jpeg' : 'png';
+    return { mimeType: `image/${ext}`, data: fs.readFileSync(file).toString('base64') };
   }
-  throw Error('Reference image could not be found.');
+  throw Error('Reference image could not be found or is outside the allowed media directories.');
 }
 
 async function generateImage({ prompt, input = {} }) {

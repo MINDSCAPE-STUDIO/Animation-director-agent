@@ -71,7 +71,7 @@ function createGenerationJob(job) {
   const route = selectModel(job);
   const input = { ...(job.input || {}) };
   if (job.type.includes('video')) {
-    input.duration = Math.max(10, Math.min(12, Number(input.duration) || 10));
+    input.duration = Math.max(2, Math.min(15, Number(input.duration) || 10));
     input.fps = Number(input.fps) || 12;
     input.resolution = input.resolution || process.env.VIDEO_RESOLUTION || '480p';
     input.aspect_ratio = input.aspect_ratio || '16:9';
