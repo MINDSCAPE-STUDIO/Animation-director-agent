@@ -54,7 +54,7 @@ Providers are asynchronous: the service submits a job, polls task status, and on
 
 For public deployment, add persistent storage, rate limiting, job cancellation, signed webhook verification, and per-user access control. Keep `MINDSCAPE_API_KEY` set, and restrict `ALLOWED_ORIGIN` to your dashboard origin rather than `*`.
 
-## 6. Optional persistent storage
+## 6. Persistent storage (Cloudflare R2)
 
 Local writes are always checked, but the service only reports storage as *persistent* when:
 
@@ -63,7 +63,9 @@ Local writes are always checked, but the service only reports storage as *persis
 
 On platforms without a `/var/data` mount (for example Termux), storage is reported as `ephemeral` even though files remain on device between restarts.
 
-For Cloudflare R2 or another S3-compatible store, create a bucket and a read/write API token, then set:
+Cloudflare R2 is the recommended durable store. In the Cloudflare dashboard, create an R2 bucket, then use **R2 → Manage API Tokens → Create Account API token** with **Object Read & Write** permission scoped to that bucket. Copy the Access Key ID and Secret Access Key when shown — the secret cannot be retrieved later. Cloudflare requires R2 to be enabled/a payment method on the account before API tokens can be created; check current R2 pricing and free allowance.
+
+Replace the existing `OBJECT_STORAGE_*` values in Render with the R2 values (do not leave the old B2 endpoint or keys in place). Set:
 
 - `OBJECT_STORAGE_ENDPOINT`: `https://<account-id>.r2.cloudflarestorage.com`
 - `OBJECT_STORAGE_BUCKET`: bucket name
@@ -73,3 +75,5 @@ For Cloudflare R2 or another S3-compatible store, create a bucket and a read/wri
 - `OBJECT_STORAGE_PREFIX`: `mindscape-studio`
 
 At startup the service verifies signed read/write access and restores generation history and metadata from the bucket. New metadata and generated media are backed up to it, and generated URLs can be served from object storage after the local cache is empty. If these variables are absent, the agent continues with the local filesystem. Review current provider pricing and set usage alerts before production use.
+
+Verify the switch with `GET /health` and `GET /ready`: `storage.object_storage.backend` should report `Cloudflare R2`, `storage.mode` should be `object-storage`, `storage.persistent` should be `true`, and `/ready` should return HTTP 200. If the old B2 credentials are still configured, health continues to report `InvalidAccessKeyId` and readiness stays 503.

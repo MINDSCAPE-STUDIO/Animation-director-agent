@@ -28,6 +28,8 @@ Required secrets:
 - `PUBLIC_BASE_URL` — public HTTPS base URL used to expose temporary reference images to Pixazo; Render is configured with `https://animation-director-agent.onrender.com`
 - `MINDSCAPE_API_KEY` — API key for all mutating routes. Without it the service runs unauthenticated and should not be exposed publicly.
 
+Durable storage (recommended): create a **Cloudflare R2** bucket and an S3-compatible API token with Object Read & Write, then set `OBJECT_STORAGE_ENDPOINT` (`https://<ACCOUNT_ID>.r2.cloudflarestorage.com`), `OBJECT_STORAGE_BUCKET`, `OBJECT_STORAGE_ACCESS_KEY_ID`, `OBJECT_STORAGE_SECRET_ACCESS_KEY`, `OBJECT_STORAGE_REGION=auto` and `OBJECT_STORAGE_PREFIX=mindscape-studio`. Leave the four credentials blank to bypass object storage entirely; generated media and history then stay on the local filesystem and are not durable. See [README-DEPLOY.md](README-DEPLOY.md#6-persistent-storage-cloudflare-r2) for the step-by-step setup.
+
 Optional switches: `ENABLE_VISUAL_EVALUATION=true` and `ENABLE_AUTO_CORRECTION=true` (both off by default). See `.env.example` for the full list of settings.
 
 Never commit provider keys to GitHub. Add them to the Render service's Environment settings.

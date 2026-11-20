@@ -42,6 +42,17 @@ function config(env = process.env) {
 function isObjectStorageConfigured(env = process.env) {
   return Boolean(config(env));
 }
+// The same S3-compatible adapter serves R2, B2 and other backends. Report the
+// actual backend instead of hard-coding the original provider's name.
+function backendLabel(env = process.env) {
+  let host = '';
+  try {
+    host = new URL(String(env.OBJECT_STORAGE_ENDPOINT || '').trim()).hostname;
+  } catch {}
+  if (/\.r2\.cloudflarestorage\.com$/i.test(host)) return 'Cloudflare R2 (S3-compatible object storage)';
+  if (/backblazeb2\.com$/i.test(host)) return 'Backblaze B2 (S3-compatible object storage)';
+  return 'S3-compatible object storage';
+}
 // S3-compatible backends report the failure reason as an XML <Error><Code>
 // value (SignatureDoesNotMatch, InvalidAccessKeyId, AccessDenied, ...), which
 // the SDK copies onto error.Code/error.name. That same SDK error also carries
@@ -237,7 +248,7 @@ function getObjectStorageStatus(env = process.env) {
     missing_variables: missingVariables(env),
     region: getResolvedRegion(env),
     prefix: env.OBJECT_STORAGE_PREFIX || 'mindscape-studio',
-    backend: 'Backblaze B2 (S3-compatible object storage)'
+    backend: backendLabel(env)
   };
 }
 async function restoreMetadataFiles() {

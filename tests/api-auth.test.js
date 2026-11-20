@@ -146,6 +146,13 @@ test('object storage status reports the classified error alongside the HTTP erro
   assert.equal(status.error_class, null);
   assert.equal(JSON.stringify(status).includes('test-secret-key'), false);
   assert.equal(JSON.stringify(status).includes('test-access-id'), false);
+  const r2Status = getObjectStorageStatus({
+    ...env,
+    OBJECT_STORAGE_ENDPOINT: 'https://acct123.r2.cloudflarestorage.com',
+    OBJECT_STORAGE_REGION: 'auto'
+  });
+  assert.match(r2Status.backend, /Cloudflare R2/);
+  assert.equal(r2Status.region, 'auto');
 });
 
 
