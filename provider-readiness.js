@@ -227,6 +227,7 @@ function getStorageHealth(env = process.env) {
     backend: remoteReady ? 'cloudflare-r2-compatible-object-storage' : 'local-filesystem',
     object_storage: { configured: remoteConfigured, writable: remoteReady, backend: objectStorage.backend,
       region: objectStorage.region,
+      disabled: objectStorage.disabled, reason: objectStorage.reason,
       missing_variables: objectStorage.missing_variables, error_code: objectStorage.error_code, error_class: objectStorage.error_class, checked_at: objectStorage.checked_at },
     generated_media_writable: Boolean(mediaCheck?.ok),
     history_writable: Boolean(historyDirCheck?.ok && filesWritable.find(check => check.file === historyFile)?.ok),
@@ -243,7 +244,9 @@ function getStorageHealth(env = process.env) {
           ? 'Filesystem checks passed and generated media plus metadata are backed up to the configured S3-compatible object store.'
           : localPersistent
             ? 'Read/write checks passed and all local data paths are under /var/data with persistence explicitly enabled.'
-            : 'Read/write checks passed, but no durable storage is enabled. Render Free local files can be lost after restart, spin-down or redeploy.'
+            : objectStorage.disabled
+              ? 'Read/write checks passed; stale Backblaze B2 settings are ignored and no durable storage is enabled. Configure Cloudflare R2 for persistence.'
+              : 'Read/write checks passed, but no durable storage is enabled. Render Free local files can be lost after restart, spin-down or redeploy.'
   };
 }
 

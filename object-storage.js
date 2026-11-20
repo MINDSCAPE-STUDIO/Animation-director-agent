@@ -12,10 +12,22 @@ function missingVariables(env = process.env) {
   return ['OBJECT_STORAGE_ENDPOINT', 'OBJECT_STORAGE_BUCKET', 'OBJECT_STORAGE_ACCESS_KEY_ID', 'OBJECT_STORAGE_SECRET_ACCESS_KEY']
     .filter(name => typeof env[name] !== 'string' || !env[name].trim());
 }
-// Backblaze B2 rejects a SigV4 request whose credential scope does not name the
-// endpoint's own region, so 'auto' (correct for Cloudflare R2, and the value in
-// .env.example) produces a 403 signature mismatch there. Derive the region from
-// the B2 endpoint host; fall back to the configured region for every other host.
+// Backblaze B2 is deliberately ignored: the deployment used to carry stale B2
+// credentials that can never work with the R2-oriented configuration, and a
+// configured-but-broken backend made /ready fail forever. If a B2 endpoint is
+// present, treat object storage as disabled until an R2 endpoint is supplied.
+function isB2Endpoint(endpoint) {
+  return /\.backblazeb2\.com$/i.test(String(endpoint?.hostname || ''));
+}
+function isB2Configured(env = process.env) {
+  try {
+    return isB2Endpoint(new URL(String(env.OBJECT_STORAGE_ENDPOINT || '').trim()));
+  } catch {
+    return false;
+  }
+}
+// Kept as a pure helper for diagnostics and older integrations; B2 endpoints
+// are now rejected by config(), so this no longer affects live requests.
 function deriveRegion(endpoint, configured) {
   const host = String(endpoint?.hostname || '');
   const b2 = host.match(/^s3\.([a-z0-9-]+)\.backblazeb2\.com$/i);
@@ -27,6 +39,7 @@ function config(env = process.env) {
   try {
     const endpoint = new URL(env.OBJECT_STORAGE_ENDPOINT.trim());
     if (endpoint.protocol !== 'https:' || endpoint.search || endpoint.hash) return null;
+    if (isB2Endpoint(endpoint)) return null;
     return {
       endpoint,
       bucket: env.OBJECT_STORAGE_BUCKET.trim(),
@@ -50,7 +63,7 @@ function backendLabel(env = process.env) {
     host = new URL(String(env.OBJECT_STORAGE_ENDPOINT || '').trim()).hostname;
   } catch {}
   if (/\.r2\.cloudflarestorage\.com$/i.test(host)) return 'Cloudflare R2 (S3-compatible object storage)';
-  if (/backblazeb2\.com$/i.test(host)) return 'Backblaze B2 (S3-compatible object storage)';
+  if (/backblazeb2\.com$/i.test(host)) return 'Backblaze B2 (ignored; configure Cloudflare R2)';
   return 'S3-compatible object storage';
 }
 // S3-compatible backends report the failure reason as an XML <Error><Code>
@@ -248,7 +261,9 @@ function getObjectStorageStatus(env = process.env) {
     missing_variables: missingVariables(env),
     region: getResolvedRegion(env),
     prefix: env.OBJECT_STORAGE_PREFIX || 'mindscape-studio',
-    backend: backendLabel(env)
+    backend: backendLabel(env),
+    disabled: isB2Configured(env) && !configured,
+    reason: isB2Configured(env) && !configured ? 'backblaze_b2_ignored' : null
   };
 }
 async function restoreMetadataFiles() {
@@ -283,10 +298,14 @@ async function initializeObjectStorage() {
         };
       } catch {}
     }
-    console.error('Object storage initialization skipped: configuration validation failed (redacted):', JSON.stringify({
-      missingOrEmptyVariables: missing,
-      endpoint: endpointDiagnostic
-    }));
+    if (isB2Configured()) {
+      console.error('Object storage disabled: stale Backblaze B2 endpoint ignored. Set OBJECT_STORAGE_ENDPOINT to Cloudflare R2 to enable durable storage.');
+    } else {
+      console.error('Object storage initialization skipped: configuration validation failed (redacted):', JSON.stringify({
+        missingOrEmptyVariables: missing,
+        endpoint: endpointDiagnostic
+      }));
+    }
     state = { configured: false, writable: false, checked_at: new Date().toISOString(), error_code: null, error_class: null };
     return getObjectStorageStatus();
   }

@@ -88,18 +88,29 @@ test('object storage validates configuration, rejects unsafe keys, and hides cre
 });
 
 
-test('B2 endpoints sign with the endpoint region rather than "auto"', () => {
-  const { getResolvedRegion } = require('../object-storage');
+test('Backblaze B2 endpoints are ignored so stale B2 config cannot break readiness', () => {
+  const { getResolvedRegion, isObjectStorageConfigured, getObjectStorageStatus, deriveRegion } = require('../object-storage');
   const base = {
     OBJECT_STORAGE_BUCKET: 'mindscape-test',
     OBJECT_STORAGE_ACCESS_KEY_ID: 'test-access-id',
     OBJECT_STORAGE_SECRET_ACCESS_KEY: 'test-secret-key',
     OBJECT_STORAGE_PREFIX: 'test-prefix'
   };
-  // B2 rejects "auto" in the credential scope; the region must come from the host.
-  assert.equal(getResolvedRegion({ ...base, OBJECT_STORAGE_ENDPOINT: 'https://s3.us-west-004.backblazeb2.com', OBJECT_STORAGE_REGION: 'auto' }), 'us-west-004');
-  assert.equal(getResolvedRegion({ ...base, OBJECT_STORAGE_ENDPOINT: 'https://s3.eu-central-003.backblazeb2.com' }), 'eu-central-003');
-  assert.equal(getResolvedRegion({ ...base, OBJECT_STORAGE_ENDPOINT: 'https://s3.us-west-004.backblazeb2.com', OBJECT_STORAGE_REGION: 'us-east-1' }), 'us-west-004');
+  for (const endpoint of [
+    'https://s3.us-west-004.backblazeb2.com',
+    'https://s3.eu-central-003.backblazeb2.com'
+  ]) {
+    const env = { ...base, OBJECT_STORAGE_ENDPOINT: endpoint, OBJECT_STORAGE_REGION: 'auto' };
+    assert.equal(isObjectStorageConfigured(env), false, endpoint);
+    assert.equal(getResolvedRegion(env), null, endpoint);
+    const status = getObjectStorageStatus(env);
+    assert.equal(status.configured, false);
+    assert.equal(status.disabled, true);
+    assert.equal(status.reason, 'backblaze_b2_ignored');
+  }
+  // The pure region helper still describes what B2 would require, but it is no
+  // longer used for live requests because B2 endpoints are rejected.
+  assert.equal(deriveRegion(new URL('https://s3.us-west-004.backblazeb2.com'), 'auto'), 'us-west-004');
   // Non-B2 endpoints keep the configured region, or "auto" for Cloudflare R2.
   assert.equal(getResolvedRegion({ ...base, OBJECT_STORAGE_ENDPOINT: 'https://acct123.r2.cloudflarestorage.com', OBJECT_STORAGE_REGION: 'auto' }), 'auto');
   assert.equal(getResolvedRegion({ ...base, OBJECT_STORAGE_ENDPOINT: 'https://acct123.r2.cloudflarestorage.com' }), 'auto');
@@ -131,7 +142,7 @@ test('object storage failures classify the provider error code without echoing r
   assert.equal(classifyStorageError(null), null);
 });
 
-test('object storage status reports the classified error alongside the HTTP error code', () => {
+test('object storage status reports ignored B2 and R2 configuration without leaking credentials', () => {
   const { getObjectStorageStatus } = require('../object-storage');
   const env = {
     OBJECT_STORAGE_ENDPOINT: 'https://s3.us-east-005.backblazeb2.com',
@@ -140,8 +151,10 @@ test('object storage status reports the classified error alongside the HTTP erro
     OBJECT_STORAGE_SECRET_ACCESS_KEY: 'test-secret-key'
   };
   const status = getObjectStorageStatus(env);
-  assert.equal(status.configured, true);
-  assert.equal(status.region, 'us-east-005');
+  assert.equal(status.configured, false);
+  assert.equal(status.disabled, true);
+  assert.equal(status.reason, 'backblaze_b2_ignored');
+  assert.equal(status.region, null);
   assert.equal('error_class' in status, true);
   assert.equal(status.error_class, null);
   assert.equal(JSON.stringify(status).includes('test-secret-key'), false);
@@ -152,6 +165,7 @@ test('object storage status reports the classified error alongside the HTTP erro
     OBJECT_STORAGE_REGION: 'auto'
   });
   assert.match(r2Status.backend, /Cloudflare R2/);
+  assert.equal(r2Status.configured, true);
   assert.equal(r2Status.region, 'auto');
 });
 

@@ -65,7 +65,7 @@ On platforms without a `/var/data` mount (for example Termux), storage is report
 
 Cloudflare R2 is the recommended durable store. In the Cloudflare dashboard, create an R2 bucket, then use **R2 → Manage API Tokens → Create Account API token** with **Object Read & Write** permission scoped to that bucket. Copy the Access Key ID and Secret Access Key when shown — the secret cannot be retrieved later. Cloudflare requires R2 to be enabled/a payment method on the account before API tokens can be created; check current R2 pricing and free allowance.
 
-Replace the existing `OBJECT_STORAGE_*` values in Render with the R2 values (do not leave the old B2 endpoint or keys in place). Set:
+Replace the existing `OBJECT_STORAGE_*` values in Render with the R2 values. Legacy Backblaze B2 endpoints are now ignored by the app, so stale B2 settings no longer break `/ready`, but they also provide no persistence. Set:
 
 - `OBJECT_STORAGE_ENDPOINT`: `https://<account-id>.r2.cloudflarestorage.com`
 - `OBJECT_STORAGE_BUCKET`: bucket name
@@ -76,4 +76,4 @@ Replace the existing `OBJECT_STORAGE_*` values in Render with the R2 values (do 
 
 At startup the service verifies signed read/write access and restores generation history and metadata from the bucket. New metadata and generated media are backed up to it, and generated URLs can be served from object storage after the local cache is empty. If these variables are absent, the agent continues with the local filesystem. Review current provider pricing and set usage alerts before production use.
 
-Verify the switch with `GET /health` and `GET /ready`: `storage.object_storage.backend` should report `Cloudflare R2`, `storage.mode` should be `object-storage`, `storage.persistent` should be `true`, and `/ready` should return HTTP 200. If the old B2 credentials are still configured, health continues to report `InvalidAccessKeyId` and readiness stays 503.
+Verify the switch with `GET /health` and `GET /ready`: `storage.object_storage.backend` should report `Cloudflare R2`, `storage.mode` should be `object-storage`, `storage.persistent` should be `true`, and `/ready` should return HTTP 200. If old B2 credentials are still present, health reports `storage.object_storage.backend` as `Backblaze B2 (ignored; configure Cloudflare R2)`, `disabled: true`, `reason: backblaze_b2_ignored`, and storage stays ephemeral.

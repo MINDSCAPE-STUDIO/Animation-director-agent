@@ -159,16 +159,22 @@ test('storage health tests actual write access and separates writability from du
   }
 });
 
-test('storage health exposes the classified object-storage error for dashboards and CI', () => {
+test('storage health ignores stale B2 config and stays ready with ephemeral storage', () => {
   const status = getStorageHealth({
     OBJECT_STORAGE_ENDPOINT: 'https://s3.us-east-005.backblazeb2.com',
     OBJECT_STORAGE_BUCKET: 'mindscape-test',
     OBJECT_STORAGE_ACCESS_KEY_ID: 'test-access-id',
     OBJECT_STORAGE_SECRET_ACCESS_KEY: 'test-secret-key'
   });
-  assert.equal(status.object_storage.configured, true);
-  assert.equal(status.object_storage.region, 'us-east-005');
+  assert.equal(status.writable, true);
+  assert.equal(status.persistent, false);
+  assert.equal(status.mode, 'ephemeral');
+  assert.equal(status.object_storage.configured, false);
+  assert.equal(status.object_storage.disabled, true);
+  assert.equal(status.object_storage.reason, 'backblaze_b2_ignored');
+  assert.equal(status.object_storage.region, null);
   assert.equal('error_class' in status.object_storage, true);
+  assert.match(status.detail, /Backblaze B2 settings are ignored/);
   assert.equal(JSON.stringify(status).includes('test-secret-key'), false);
   assert.equal(JSON.stringify(status).includes('test-access-id'), false);
 });
